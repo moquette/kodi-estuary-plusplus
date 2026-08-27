@@ -1,0 +1,1023 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus>
+
+	<!--
+		Skin Shortcuts 3.0.1 config for Estuary 8, converted from MOD V2's v2
+		files that still sit beside it (mainmenu.DATA.xml, overrides.xml,
+		template.xml). Those are inert under v3 and were deliberately left in
+		place. Upstream never ported Skin Shortcuts at all, so this file and
+		its four siblings are Estuary 8's own and have no upstream counterpart.
+
+		Routing. MOD V2's Home.xml picks a widget panel with
+		Container(9000).ListItem.Property(widget), and its 15-line <onright>
+		block at Home.xml:1860-1874 does the same. v3 does not synthesise that
+		property, but <item widget="..."> is a first-class attribute
+		(loaders/menu.py:426-428): it lands in item.properties and the includes
+		builder emits every item property verbatim (builders/includes.py:322-327).
+		So all 13 stock panels plus the two Personal ones route with no markup
+		change. This is the v3 spelling of overrides.xml's <widgetdefault>.
+	-->
+
+	<!-- This row has been relabelled twice in one day and the history is the
+	     point, because both wrong labels were REAL STRINGS from unrelated
+	     settings, which is why neither ever looked broken to a reader.
+	       until 2026-07-31   $LOCALIZE[31053]  "Arial based", a FONT setting
+	       then briefly       $LOCALIZE[166]    "Skin", correct but ambiguous:
+	                          the same word sat on three rows opening two
+	                          different folders, one of icons and one of
+	                          backgrounds
+	       now                $LOCALIZE[31724]  "Icons", this skin's own string
+	     31724 is OURS, in the skin's own strings.po, and that is deliberate.
+	     Kodi core has exactly two strings that read "Icons" and BOTH are wrong
+	     here: 536 is the icon VIEW MODE, sitting between 535 "List" and 537
+	     "Big list" under 534 "View: {0:s}", and 14302 is the PVR icons
+	     SETTINGS GROUP label, whose group contains pvrmenu.iconpath. Taking
+	     14302 because it happens to read "Icons" today would be the same
+	     defect class as the two labels above, just harder to spot. -->
+	<!-- The icon= attribute is what dresses these two rows. Without it the
+	     picker draws Kodi's bare "+" placeholder against both, which is what
+	     the owner was looking at until 2026-07-31. The add-on only calls
+	     setArt when the attribute is non-empty (dialog/items.py:419-420), so
+	     an absent attribute is a placeholder, not a default. Both textures are
+	     in this skin's own media/Textures.xbt, verified by decoding the
+	     bundle: defaultfolder.png 512x512 and defaultaddonssearch.png 256x256,
+	     both real white glyphs with alpha, not empty frames. A name that is
+	     NOT in the bundle draws nothing at all, which is worse than the "+",
+	     so check the bundle before substituting either one.
+	     The same pair is used on the three background sources in
+	     backgrounds.xml, deliberately, so all three pickers read alike. -->
+	<icons>
+		<source label="$LOCALIZE[31724]" icon="DefaultFolder.png">special://skin/extras/icons/</source>
+		<source label="$LOCALIZE[1024]" icon="DefaultAddonsSearch.png">browse</source>
+	</icons>
+
+	<!-- OFF deliberately. v3's context menu is a hard-coded five-item list
+	     (dialog/items.py:440-446) and its "Edit Submenu" entry has no
+	     visibility gate. Control 405 in script-skinshortcuts.xml DOES gate it:
+	     MOD V2 excludes Pictures, Games, Favourites and Weather from having a
+	     category submenu. The context menu route bypassed that, created a
+	     submenu on an excluded item, and left hasSubmenu stale so control 401
+	     stayed visible and the next shortcut pick wiped it again.
+	     Nothing is lost: Edit Label, Edit Action, Change Icon and Delete all
+	     have their own controls in the pane (305, 307, 306, and the IconButton
+	     block at :112 which carries 301 add, 302 delete, 303 up, 304 down,
+	     313 toggle disabled), and Edit Submenu is control 405. -->
+	<contextmenu>false</contextmenu>
+
+	<menu name="mainmenu" container="9000">
+
+		<item name="movies" widget="MoviesWidget" background="special://skin/extras/home-images/movies.jpg" submenu="movies">
+			<label>$LOCALIZE[342]</label>
+			<icon>icons/sidemenu/movies.png</icon>
+			<thumb>icons/sidemenu/movies.png</thumb>
+			<action condition="Library.HasContent(movies) + !Skin.HasSetting(hide_moviescategory)">ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+			<action condition="Library.HasContent(movies) + Skin.HasSetting(hide_moviescategory)">ActivateWindow(Videos,videodb://movies/,return)</action>
+			<action condition="!Library.HasContent(movies)">ActivateWindow(Videos,sources://video/,return)</action>
+		</item>
+
+		<item name="tvshows" widget="TVShowsWidget" background="special://skin/extras/home-images/tvshows.jpg" submenu="tvshows">
+			<label>$LOCALIZE[20343]</label>
+			<icon>icons/sidemenu/tv.png</icon>
+			<thumb>icons/sidemenu/tv.png</thumb>
+			<action condition="Library.HasContent(tvshows) + !Skin.HasSetting(hide_tvshowscategory)">ActivateWindow(Videos,videodb://tvshows/titles/,return)</action>
+			<action condition="Library.HasContent(tvshows) + Skin.HasSetting(hide_tvshowscategory)">ActivateWindow(Videos,videodb://tvshows/,return)</action>
+			<action condition="!Library.HasContent(tvshows)">ActivateWindow(Videos,sources://video/,return)</action>
+		</item>
+
+		<item name="music" widget="MusicWidget" background="special://skin/extras/home-images/music.jpg" submenu="music">
+			<label>$LOCALIZE[2]</label>
+			<icon>icons/sidemenu/music.png</icon>
+			<thumb>icons/sidemenu/music.png</thumb>
+			<action condition="Library.HasContent(music) + !Skin.HasSetting(hide_musiccategory)">ActivateWindow(Music,musicdb://artists/,return)</action>
+			<action condition="Library.HasContent(music) + Skin.HasSetting(hide_musiccategory)">ActivateWindow(Music,root,return)</action>
+			<action condition="!Library.HasContent(music)">ActivateWindow(Music,Files,return)</action>
+		</item>
+
+		<item name="musicvideos" widget="MusicVideosWidget" background="special://skin/extras/home-images/musicvideos.jpg" submenu="musicvideos">
+			<label>$LOCALIZE[20389]</label>
+			<icon>icons/sidemenu/musicvideos.png</icon>
+			<thumb>icons/sidemenu/musicvideos.png</thumb>
+			<action condition="Library.HasContent(musicvideos) + !Skin.HasSetting(hide_musicvideocategory)">ActivateWindow(Videos,videodb://musicvideos/titles/,return)</action>
+			<action condition="Library.HasContent(musicvideos) + Skin.HasSetting(hide_musicvideocategory)">ActivateWindow(Videos,musicvideos,return)</action>
+			<action condition="!Library.HasContent(musicvideos)">ActivateWindow(videos,files,return)</action>
+		</item>
+
+		<item name="livetv" widget="LiveTVWidget" background="special://skin/extras/home-images/livetv.jpg" submenu="livetv">
+			<label>$LOCALIZE[19020]</label>
+			<icon>icons/sidemenu/livetv.png</icon>
+			<thumb>icons/sidemenu/livetv.png</thumb>
+			<action>ActivateWindow(TVGuide)</action>
+		</item>
+
+		<item name="radio" widget="RadioWidget" background="special://skin/extras/home-images/radio.jpg" submenu="radio">
+			<label>$LOCALIZE[19021]</label>
+			<icon>icons/sidemenu/radio.png</icon>
+			<thumb>icons/sidemenu/radio.png</thumb>
+			<action>ActivateWindow(RadioChannels)</action>
+		</item>
+
+		<item name="games" widget="GamesWidget" background="special://skin/extras/home-images/games.jpg">
+			<label>$LOCALIZE[15016]</label>
+			<icon>icons/sidemenu/games.png</icon>
+			<thumb>icons/sidemenu/games.png</thumb>
+			<action>ActivateWindow(Games)</action>
+			<visible>System.GetBool(gamesgeneral.enable)</visible>
+		</item>
+
+		<item name="addons" widget="AddonsWidget" background="special://skin/extras/home-images/addons.jpg" submenu="addons">
+			<label>$LOCALIZE[24001]</label>
+			<icon>icons/sidemenu/addons.png</icon>
+			<thumb>icons/sidemenu/addons.png</thumb>
+			<action>ActivateWindow(1100)</action>
+		</item>
+
+		<item name="pictures" widget="PicturesWidget" background="special://skin/extras/home-images/pictures.jpg">
+			<label>$LOCALIZE[1]</label>
+			<icon>icons/sidemenu/pictures.png</icon>
+			<thumb>icons/sidemenu/pictures.png</thumb>
+			<action>ActivateWindow(Pictures)</action>
+		</item>
+
+		<item name="video" widget="VideoWidget" background="special://skin/extras/home-images/video.jpg" submenu="video">
+			<label>$LOCALIZE[3]</label>
+			<icon>icons/sidemenu/videos.png</icon>
+			<thumb>icons/sidemenu/videos.png</thumb>
+			<action>ActivateWindow(Videos,root)</action>
+		</item>
+
+		<item name="favorites" widget="FavoritesWidget" background="special://skin/extras/home-images/favorites.jpg">
+			<label>$LOCALIZE[10134]</label>
+			<icon>icons/sidemenu/favourites.png</icon>
+			<thumb>icons/sidemenu/favourites.png</thumb>
+			<action>ActivateWindow(favouritesbrowser)</action>
+		</item>
+
+		<item name="weather" widget="WeatherWidget" background="special://skin/extras/home-images/weather.jpg">
+			<label>$LOCALIZE[8]</label>
+			<icon>icons/sidemenu/weather.png</icon>
+			<thumb>icons/sidemenu/weather.png</thumb>
+			<action condition="!String.IsEmpty(Weather.Plugin)">ActivateWindow(Weather)</action>
+			<action condition="String.IsEmpty(Weather.Plugin)">ReplaceWindow(servicesettings,weather)</action>
+		</item>
+
+	</menu>
+
+	<!--
+		Submenu seeds, one per *.DATA.xml. standalone="false" keeps the includes
+		builder from also emitting a bare skinshortcuts-<name> per template
+		(builders/includes.py:106); the only submenu include this skin asks for
+		is the flat skinshortcuts-submenu, and templates.xml builds that one.
+	-->
+	<submenu name="movies" standalone="false">
+		<!-- These three come first, in this order: Library, Lists, Files. Order
+		     here IS render order: builders/includes.py walks the defaults in file
+		     order and the override layer keys its own entries by `name`, so
+		     moving an <item> reorders the strip without disturbing a box's saved
+		     customisation. Never renumber a `name` for tidiness.
+
+		     EVERYTHING AFTER THE THIRD SHIPS DISABLED. Owner decision
+		     2026-08-01: a fresh install draws exactly these three tiles here,
+		     not 15. Before that the whole strip shipped on and only movies-1
+		     was off, which is what the previous version of this comment
+		     described and it is no longer true.
+
+		     The 15 switched-off items stay PRESENT on purpose. <disabled> is
+		     not deletion: builders/includes.py:163 skips a disabled item when
+		     it emits the include, and dialog/items.py toggles the same flag, so
+		     every one of them is still listed in the menu editor and can be
+		     switched back on there. Delete an <item> instead and it leaves the
+		     editor entirely and a box that had it on is left holding an
+		     override for a name that no longer exists.
+
+		     A box that has already customised this strip is unaffected. The
+		     override layer keys by `name` and userdata.py:378 prefers the
+		     stored value whenever there is one, so a saved on/off decision
+		     still wins over the default underneath it. No `name` changed here,
+		     so nothing is orphaned. What does change for an existing box is
+		     "Reset Item", which restores the default, and the default is now
+		     off for everything below the third.
+
+		     Do not read a bench render as evidence of what ships, in either
+		     direction. The include builder applies the override layer before it
+		     emits anything, so a bench strip is that box's saved state, not
+		     this file. Read this file, or read the emitted include. -->
+		<!-- movies-14 and movies-15 additionally carry a <visible> gate on
+		     script.embuary.info. That gate is evaluated by Kodi at render time
+		     and <disabled> is evaluated by the include builder, so the two are
+		     independent: both items are omitted from the include while they are
+		     disabled, and if a user switches either back on, the add-on gate
+		     still decides whether it draws. It is kept for that case. -->
+		<item name="movies-13">
+			<label>$LOCALIZE[20314]</label>
+			<icon>LibrarySettings.png</icon>
+			<thumb>LibrarySettings.png</thumb>
+			<action>ActivateWindow(videos,library://video/movies/,return)</action>
+		</item>
+		<item name="movies-18">
+			<label>$LOCALIZE[31726]</label>
+			<icon>DefaultAddonsInstalled.png</icon>
+			<thumb>DefaultAddonsInstalled.png</thumb>
+			<action>ActivateWindow(Videos,special://videoplaylists/,return)</action>
+		</item>
+		<item name="movies-16">
+			<label>$LOCALIZE[744]</label>
+			<icon>DefaultFolder.png</icon>
+			<thumb>DefaultFolder.png</thumb>
+			<action>ActivateWindow(Videos,sources://videos/,return)</action>
+		</item>
+		<item name="movies-1">
+			<label>$LOCALIZE[20386]</label>
+			<icon>DefaultRecentlyAddedMovies.png</icon>
+			<thumb>DefaultRecentlyAddedMovies.png</thumb>
+			<action>ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-2">
+			<label>$LOCALIZE[31634]</label>
+			<icon>icons/lastseen.png</icon>
+			<thumb>icons/lastseen.png</thumb>
+			<action>ActivateWindow(Videos,special://skin/playlists/last_seen.xsp,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-3">
+			<label>$LOCALIZE[10024]</label>
+			<icon>DefaultMovieTitle.png</icon>
+			<thumb>DefaultMovieTitle.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-4">
+			<label>$LOCALIZE[20434]</label>
+			<icon>DefaultSets.png</icon>
+			<thumb>DefaultSets.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/sets/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-5">
+			<label>$LOCALIZE[40000]</label>
+			<icon>DefaultVersions.png</icon>
+			<thumb>DefaultVersions.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/videoversions/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-6">
+			<label>$LOCALIZE[652]</label>
+			<icon>DefaultYear.png</icon>
+			<thumb>DefaultYear.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/years/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-7">
+			<label>$LOCALIZE[135]</label>
+			<icon>DefaultGenre.png</icon>
+			<thumb>DefaultGenre.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/genres/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-8">
+			<label>$LOCALIZE[344]</label>
+			<icon>DefaultActor.png</icon>
+			<thumb>DefaultActor.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/actors/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-9">
+			<label>$LOCALIZE[20348]</label>
+			<icon>DefaultDirector.png</icon>
+			<thumb>DefaultDirector.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/directors/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-10">
+			<label>$LOCALIZE[20388]</label>
+			<icon>DefaultStudios.png</icon>
+			<thumb>DefaultStudios.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/studios/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-11">
+			<label>$LOCALIZE[20451]</label>
+			<icon>DefaultCountry.png</icon>
+			<thumb>DefaultCountry.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/countries/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-12">
+			<label>$LOCALIZE[20459]</label>
+			<icon>DefaultTags.png</icon>
+			<thumb>DefaultTags.png</thumb>
+			<action>ActivateWindow(Videos,videodb://movies/tags/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-14">
+			<label>$LOCALIZE[31677]</label>
+			<icon>DefaultCinema.png</icon>
+			<thumb>DefaultCinema.png</thumb>
+			<action>ActivateWindow(videos,plugin://script.embuary.info/movie/now_playing,return)</action>
+			<visible>System.AddonIsEnabled(script.embuary.info)</visible>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-15">
+			<label>$LOCALIZE[31678]</label>
+			<icon>DefaultNextUp.png</icon>
+			<thumb>DefaultNextUp.png</thumb>
+			<action>ActivateWindow(videos,plugin://script.embuary.info/movie/upcoming,return)</action>
+			<visible>System.AddonIsEnabled(script.embuary.info)</visible>
+			<disabled>true</disabled>
+		</item>
+		<item name="movies-17">
+			<label>$VAR[VideoLibraryScanLabel]</label>
+			<icon>$VAR[VideoLibraryScanIcon]</icon>
+			<thumb>$VAR[VideoLibraryScanIcon]</thumb>
+			<action>UpdateLibrary(video)</action>
+			<disabled>true</disabled>
+		</item>
+	</submenu>
+
+	<submenu name="tvshows" standalone="false">
+		<!-- Same three first as movies, and the same rule after them: everything
+		     below the third ships disabled. See the note in the movies submenu
+		     for the reasoning, the compatibility argument and why the items are
+		     kept rather than deleted.
+
+		     Only the counts differ. This submenu holds 11 items, so 8 of them
+		     ship off where movies ships 15 off. A fresh install draws exactly
+		     three tiles here, not 10. The first three are named tvshows-8,
+		     tvshows-11 and tvshows-9: the labels match movies but the names do
+		     not, so never copy a name across from there. -->
+
+		<item name="tvshows-8">
+			<label>$LOCALIZE[20314]</label>
+			<icon>LibrarySettings.png</icon>
+			<thumb>LibrarySettings.png</thumb>
+			<action>ActivateWindow(videos,library://video/tvshows/,return)</action>
+		</item>
+		<item name="tvshows-11">
+			<label>$LOCALIZE[31726]</label>
+			<icon>DefaultAddonsInstalled.png</icon>
+			<thumb>DefaultAddonsInstalled.png</thumb>
+			<action>ActivateWindow(Videos,special://videoplaylists/,return)</action>
+		</item>
+		<item name="tvshows-9">
+			<label>$LOCALIZE[744]</label>
+			<icon>DefaultFolder.png</icon>
+			<thumb>DefaultFolder.png</thumb>
+			<action>ActivateWindow(Videos,sources://videos/,return)</action>
+		</item>
+		<item name="tvshows-1">
+			<label>$LOCALIZE[20387]</label>
+			<icon>DefaultRecentlyAddedEpisodes.png</icon>
+			<thumb>DefaultRecentlyAddedEpisodes.png</thumb>
+			<action>ActivateWindow(Videos,videodb://recentlyaddedepisodes/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="tvshows-2">
+			<label>$LOCALIZE[10024]</label>
+			<icon>DefaultTVShowTitle.png</icon>
+			<thumb>DefaultTVShowTitle.png</thumb>
+			<action>ActivateWindow(Videos,videodb://tvshows/titles/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="tvshows-3">
+			<label>$LOCALIZE[652]</label>
+			<icon>DefaultYear.png</icon>
+			<thumb>DefaultYear.png</thumb>
+			<action>ActivateWindow(Videos,videodb://tvshows/years/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="tvshows-4">
+			<label>$LOCALIZE[135]</label>
+			<icon>DefaultGenre.png</icon>
+			<thumb>DefaultGenre.png</thumb>
+			<action>ActivateWindow(Videos,videodb://tvshows/genres/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="tvshows-5">
+			<label>$LOCALIZE[344]</label>
+			<icon>DefaultActor.png</icon>
+			<thumb>DefaultActor.png</thumb>
+			<action>ActivateWindow(Videos,videodb://tvshows/actors/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="tvshows-6">
+			<label>$LOCALIZE[20388]</label>
+			<icon>DefaultStudios.png</icon>
+			<thumb>DefaultStudios.png</thumb>
+			<action>ActivateWindow(Videos,videodb://tvshows/studios/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="tvshows-7">
+			<label>$LOCALIZE[20459]</label>
+			<icon>DefaultTags.png</icon>
+			<thumb>DefaultTags.png</thumb>
+			<action>ActivateWindow(Videos,videodb://tvshows/tags/,return)</action>
+			<disabled>true</disabled>
+		</item>
+		<item name="tvshows-10">
+			<label>$VAR[VideoLibraryScanLabel]</label>
+			<icon>$VAR[VideoLibraryScanIcon]</icon>
+			<thumb>$VAR[VideoLibraryScanIcon]</thumb>
+			<action>UpdateLibrary(video)</action>
+			<disabled>true</disabled>
+		</item>
+	</submenu>
+
+	<submenu name="music" standalone="false">
+		<item name="music-1">
+			<label>$LOCALIZE[359]</label>
+			<icon>DefaultMusicRecentlyAdded.png</icon>
+			<thumb>DefaultMusicRecentlyAdded.png</thumb>
+			<action>ActivateWindow(Music,musicdb://recentlyaddedalbums/,return)</action>
+		</item>
+		<item name="music-2">
+			<label>$LOCALIZE[133]</label>
+			<icon>DefaultMusicArtists.png</icon>
+			<thumb>DefaultMusicArtists.png</thumb>
+			<action>ActivateWindow(Music,musicdb://artists/,return)</action>
+		</item>
+		<item name="music-3">
+			<label>$LOCALIZE[132]</label>
+			<icon>DefaultMusicAlbums.png</icon>
+			<thumb>DefaultMusicAlbums.png</thumb>
+			<action>ActivateWindow(Music,musicdb://albums/,return)</action>
+		</item>
+		<item name="music-4">
+			<label>$LOCALIZE[134]</label>
+			<icon>DefaultMusicSongs.png</icon>
+			<thumb>DefaultMusicSongs.png</thumb>
+			<action>ActivateWindow(Music,musicdb://songs/,return)</action>
+		</item>
+		<item name="music-5">
+			<label>$LOCALIZE[521]</label>
+			<icon>DefaultMusicCompilations.png</icon>
+			<thumb>DefaultMusicCompilations.png</thumb>
+			<action>ActivateWindow(Music,musicdb://compilations/,return)</action>
+		</item>
+		<item name="music-6">
+			<label>$LOCALIZE[271]</label>
+			<icon>DefaultMusicTop100.png</icon>
+			<thumb>DefaultMusicTop100.png</thumb>
+			<action>ActivateWindow(Music,musicdb://top100/,return)</action>
+		</item>
+		<item name="music-7">
+			<label>$LOCALIZE[135]</label>
+			<icon>DefaultMusicGenres.png</icon>
+			<thumb>DefaultMusicGenres.png</thumb>
+			<action>ActivateWindow(Music,musicdb://genres/,return)</action>
+		</item>
+		<item name="music-8">
+			<label>$LOCALIZE[29994]</label>
+			<icon>DefaultMusicRoles.png</icon>
+			<thumb>DefaultMusicRoles.png</thumb>
+			<action>ActivateWindow(Music,musicdb://roles/,return)</action>
+		</item>
+		<item name="music-9">
+			<label>$LOCALIZE[744]</label>
+			<icon>DefaultFolder.png</icon>
+			<thumb>DefaultFolder.png</thumb>
+			<action>ActivateWindow(Music,sources://music/,return)</action>
+		</item>
+		<item name="music-10">
+			<label>$LOCALIZE[136]</label>
+			<icon>DefaultMusicPlaylists.png</icon>
+			<thumb>DefaultMusicPlaylists.png</thumb>
+			<action>ActivateWindow(Music,special://musicplaylists/,return)</action>
+		</item>
+		<item name="music-11">
+			<label>$LOCALIZE[10516]</label>
+			<icon>LibrarySettings.png</icon>
+			<thumb>LibrarySettings.png</thumb>
+			<action>ActivateWindow(Music,musicdb://,return)</action>
+		</item>
+		<item name="music-12">
+			<label>$VAR[MusicLibraryScanLabel]</label>
+			<icon>$VAR[MusicLibraryScanIcon]</icon>
+			<thumb>$VAR[MusicLibraryScanIcon]</thumb>
+			<action>UpdateLibrary(music)</action>
+		</item>
+	</submenu>
+
+	<submenu name="musicvideos" standalone="false">
+		<item name="musicvideos-1">
+			<label>$LOCALIZE[20390]</label>
+			<icon>DefaultRecentlyAddedMusicVideos.png</icon>
+			<thumb>DefaultRecentlyAddedMusicVideos.png</thumb>
+			<action>ActivateWindow(Videos,videodb://recentlyaddedmusicvideos/,return)</action>
+		</item>
+		<item name="musicvideos-2">
+			<label>$LOCALIZE[10024]</label>
+			<icon>DefaultMusicVideoTitle.png</icon>
+			<thumb>DefaultMusicVideoTitle.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/titles/,return)</action>
+		</item>
+		<item name="musicvideos-3">
+			<label>$LOCALIZE[133]</label>
+			<icon>DefaultMusicArtists.png</icon>
+			<thumb>DefaultMusicArtists.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/artists/,return)</action>
+		</item>
+		<item name="musicvideos-4">
+			<label>$LOCALIZE[132]</label>
+			<icon>DefaultMusicAlbums.png</icon>
+			<thumb>DefaultMusicAlbums.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/albums/,return)</action>
+		</item>
+		<item name="musicvideos-5">
+			<label>$LOCALIZE[652]</label>
+			<icon>DefaultYear.png</icon>
+			<thumb>DefaultYear.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/years/,return)</action>
+		</item>
+		<item name="musicvideos-6">
+			<label>$LOCALIZE[135]</label>
+			<icon>DefaultGenre.png</icon>
+			<thumb>DefaultGenre.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/genres/,return)</action>
+		</item>
+		<item name="musicvideos-7">
+			<label>$LOCALIZE[20348]</label>
+			<icon>DefaultDirector.png</icon>
+			<thumb>DefaultDirector.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/directors/,return)</action>
+		</item>
+		<item name="musicvideos-8">
+			<label>$LOCALIZE[20388]</label>
+			<icon>DefaultStudios.png</icon>
+			<thumb>DefaultStudios.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/studios/,return)</action>
+		</item>
+		<item name="musicvideos-9">
+			<label>$LOCALIZE[20459]</label>
+			<icon>DefaultTags.png</icon>
+			<thumb>DefaultTags.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/tags/,return)</action>
+		</item>
+		<item name="musicvideos-10">
+			<label>$LOCALIZE[744]</label>
+			<icon>DefaultFolder.png</icon>
+			<thumb>DefaultFolder.png</thumb>
+			<action>ActivateWindow(Videos,sources://video/,return)</action>
+		</item>
+		<item name="musicvideos-11">
+			<label>$LOCALIZE[136]</label>
+			<icon>DefaultVideoPlaylists.png</icon>
+			<thumb>DefaultVideoPlaylists.png</thumb>
+			<action>ActivateWindow(Videos,special://videoplaylists/,return)</action>
+		</item>
+		<!--
+			The label was a LOCALIZE of core string id 40145 until 2026-07-31, and
+			no such string exists in Kodi 22: core runs 40000-40041 and then jumps
+			to 40202, so this row rendered blank on every box. Inherited from the
+			Piers donor, like the two Live TV rows noted further down. The dead id
+			is spelled out here rather than quoted in its markup form on purpose,
+			so that a grep for unresolvable labels does not flag this explanation
+			as another instance of the bug it is describing.
+
+			20314 "Videos - Library" is what the row was meant to say, and this is
+			read off its own siblings rather than guessed. This is the "library
+			root" row of each submenu: the same LibrarySettings.png artwork and the
+			same ActivateWindow-to-a-library-root shape appear five times in this
+			file, and the other four are already labelled. movies-13, tvshows-8 and
+			video-7 all use 20314; music-11 uses the music equivalent, 10516
+			"Music - Library". This row is a Videos row, so it takes 20314.
+
+			The row itself is sound and is kept: its action, videodb://musicvideos/,
+			is the music videos library root and works. Only the label was broken.
+			Deleting it would also drop the submenu from 13 rows to 12, and it does
+			not need deleting.
+		-->
+		<item name="musicvideos-12">
+			<label>$LOCALIZE[20314]</label>
+			<icon>LibrarySettings.png</icon>
+			<thumb>LibrarySettings.png</thumb>
+			<action>ActivateWindow(Videos,videodb://musicvideos/,return)</action>
+		</item>
+		<item name="musicvideos-13">
+			<label>$VAR[VideoLibraryScanLabel]</label>
+			<icon>$VAR[VideoLibraryScanIcon]</icon>
+			<thumb>$VAR[VideoLibraryScanIcon]</thumb>
+			<action>UpdateLibrary(video)</action>
+		</item>
+	</submenu>
+
+	<!--
+		livetv-1 and livetv-2 were deleted 2026-07-31. They were the only two
+		menu items in this file whose <label> was $ADDON[<id> <string>] for an
+		add-on this skin does not declare, does not ship and will never ship, so
+		the label resolved to an empty string and each rendered as a blank,
+		inert row. Inherited from the Piers donor.
+
+		Read that claim narrowly: it is about $ADDON labels, and it is still true
+		of them. It was NOT true that these were the only two rows in this file
+		rendering blank. musicvideos-12 was doing the same thing by a different
+		route, $LOCALIZE of a core string id that does not exist, and it survived
+		the sweep that removed these two because that sweep looked for $ADDON.
+		It was found and fixed 2026-07-31; see the comment on that item above.
+		A sweep for blank rows has to cover $LOCALIZE and $ADDON together.
+
+		They already carried a <visible> gate on that add-on, and the gate was
+		dead on arrival: the rows are rendered from the "submenu" items template
+		in templates.xml, whose <item> hardcoded a single <visible> holding only
+		the parent-name test, so the item's own condition was discarded for
+		every item that template emits.
+
+		FIXED 2026-08-01. That template now ANDs the item's own condition with
+		the parent-name test via a <var>, so re-gating in this file works. The
+		sentence that used to end this paragraph, "removal is the only fix that
+		holds", was wrong: it described the bug as though it were a constraint.
+		Deleting a row is not the remedy for a discarded condition. If a row
+		needs gating, give it a <visible> and it will now be honoured.
+
+		The remaining items keep their original names. Item names are opaque
+		keys in the user's saved overrides (userdata.py looks them up by name and
+		nothing parses the numeric suffix), so renumbering livetv-3..livetv-8
+		down to livetv-1..livetv-6 would silently re-point or orphan any
+		customisation a box already has. The gap is deliberate: do not close it.
+	-->
+	<submenu name="livetv" standalone="false">
+		<item name="livetv-3">
+			<label>$LOCALIZE[19019]</label>
+			<icon>DefaultAddonPeripheral.png</icon>
+			<thumb>DefaultAddonPeripheral.png</thumb>
+			<action>ActivateWindow(TVChannels)</action>
+		</item>
+		<item name="livetv-4">
+			<label>$LOCALIZE[19069]</label>
+			<icon>icons/pvr/epg.png</icon>
+			<thumb>icons/pvr/epg.png</thumb>
+			<action>ActivateWindow(TVGuide)</action>
+		</item>
+		<item name="livetv-5">
+			<label>$LOCALIZE[19017]</label>
+			<icon>icons/pvr/recording.png</icon>
+			<thumb>icons/pvr/recording.png</thumb>
+			<action>ActivateWindow(TVRecordings)</action>
+		</item>
+		<item name="livetv-6">
+			<label>$LOCALIZE[19040]</label>
+			<icon>icons/pvr/timer.png</icon>
+			<thumb>icons/pvr/timer.png</thumb>
+			<action>ActivateWindow(TVTimers)</action>
+		</item>
+		<item name="livetv-7">
+			<label>$LOCALIZE[19138]</label>
+			<icon>icons/pvr/timer-rule.png</icon>
+			<thumb>icons/pvr/timer-rule.png</thumb>
+			<action>ActivateWindow(TVTimerRules)</action>
+		</item>
+		<item name="livetv-8">
+			<label>$LOCALIZE[137]</label>
+			<icon>DefaultAddonsSearch.png</icon>
+			<thumb>DefaultAddonsSearch.png</thumb>
+			<action>ActivateWindow(TVSearch)</action>
+		</item>
+	</submenu>
+
+	<submenu name="radio" standalone="false">
+		<item name="radio-1">
+			<label>$LOCALIZE[19024]</label>
+			<icon>DefaultRadioGuide.png</icon>
+			<thumb>DefaultRadioGuide.png</thumb>
+			<action>ActivateWindow(RadioChannels)</action>
+		</item>
+		<item name="radio-2">
+			<label>$LOCALIZE[19069]</label>
+			<icon>icons/pvr/epg.png</icon>
+			<thumb>icons/pvr/epg.png</thumb>
+			<action>ActivateWindow(RadioGuide)</action>
+		</item>
+		<item name="radio-3">
+			<label>$LOCALIZE[19017]</label>
+			<icon>icons/pvr/recording.png</icon>
+			<thumb>icons/pvr/recording.png</thumb>
+			<action>ActivateWindow(RadioRecordings)</action>
+		</item>
+		<item name="radio-4">
+			<label>$LOCALIZE[19040]</label>
+			<icon>icons/pvr/timer.png</icon>
+			<thumb>icons/pvr/timer.png</thumb>
+			<action>ActivateWindow(RadioTimers)</action>
+		</item>
+		<item name="radio-5">
+			<label>$LOCALIZE[19138]</label>
+			<icon>icons/pvr/timer-rule.png</icon>
+			<thumb>icons/pvr/timer-rule.png</thumb>
+			<action>ActivateWindow(RadioTimerRules)</action>
+		</item>
+		<item name="radio-6">
+			<label>$LOCALIZE[137]</label>
+			<icon>DefaultAddonsSearch.png</icon>
+			<thumb>DefaultAddonsSearch.png</thumb>
+			<action>ActivateWindow(RadioSearch)</action>
+		</item>
+	</submenu>
+
+	<submenu name="addons" standalone="false">
+		<item name="addons-1">
+			<label>$LOCALIZE[24998]</label>
+			<icon>DefaultAddonsInstalled.png</icon>
+			<thumb>DefaultAddonsInstalled.png</thumb>
+			<action>ActivateWindow(addonbrowser,addons://user/,return)</action>
+		</item>
+		<item name="addons-2">
+			<label>$LOCALIZE[24004]</label>
+			<icon>DefaultAddonsRecentlyUpdated.png</icon>
+			<thumb>DefaultAddonsRecentlyUpdated.png</thumb>
+			<action>ActivateWindow(addonbrowser,addons://recently_updated/,return)</action>
+		</item>
+		<item name="addons-3">
+			<label>$LOCALIZE[24033]</label>
+			<icon>DefaultAddonsRepo.png</icon>
+			<thumb>DefaultAddonsRepo.png</thumb>
+			<action>ActivateWindow(addonbrowser,addons://repos/,return)</action>
+		</item>
+		<item name="addons-4">
+			<label>$LOCALIZE[24041]</label>
+			<icon>DefaultAddonsZip.png</icon>
+			<thumb>DefaultAddonsZip.png</thumb>
+			<action>ActivateWindow(addonbrowser,addons://install/,return)</action>
+		</item>
+		<item name="addons-5">
+			<label>$LOCALIZE[31145]</label>
+			<icon>DefaultAddonsSearch.png</icon>
+			<thumb>DefaultAddonsSearch.png</thumb>
+			<action>ActivateWindow(addonbrowser,addons://search/,return)</action>
+		</item>
+		<item name="addons-6">
+			<label>$LOCALIZE[31131]</label>
+			<icon>Settings.png</icon>
+			<thumb>Settings.png</thumb>
+			<action>ActivateWindow(systemsettings,addons)</action>
+		</item>
+	</submenu>
+
+	<submenu name="video" standalone="false">
+		<item name="video-1">
+			<label>$LOCALIZE[342]</label>
+			<icon>DefaultMovies.png</icon>
+			<thumb>DefaultMovies.png</thumb>
+			<action>ActivateWindow(videos,library://video/movies/,return)</action>
+		</item>
+		<item name="video-2">
+			<label>$LOCALIZE[20343]</label>
+			<icon>DefaultTVShows.png</icon>
+			<thumb>DefaultTVShows.png</thumb>
+			<action>ActivateWindow(videos,library://video/tvshows/,return)</action>
+		</item>
+		<item name="video-3">
+			<label>$LOCALIZE[20389]</label>
+			<icon>DefaultMusicVideos.png</icon>
+			<thumb>DefaultMusicVideos.png</thumb>
+			<action>ActivateWindow(videos,library://video/musicvideos/,return)</action>
+		</item>
+		<item name="video-4">
+			<label>$LOCALIZE[744]</label>
+			<icon>DefaultFolder.png</icon>
+			<thumb>DefaultFolder.png</thumb>
+			<action>ActivateWindow(Videos,Files,return)</action>
+		</item>
+		<item name="video-5">
+			<label>$LOCALIZE[136]</label>
+			<icon>DefaultVideoPlaylists.png</icon>
+			<thumb>DefaultVideoPlaylists.png</thumb>
+			<action>ActivateWindow(Videos,special://videoplaylists/,return)</action>
+		</item>
+		<item name="video-6">
+			<label>$LOCALIZE[1037]</label>
+			<icon>DefaultAddonVideo.png</icon>
+			<thumb>DefaultAddonVideo.png</thumb>
+			<action>ActivateWindow(Videos,addons://sources/video/,return)</action>
+		</item>
+		<item name="video-7">
+			<label>$LOCALIZE[20314]</label>
+			<icon>LibrarySettings.png</icon>
+			<thumb>LibrarySettings.png</thumb>
+			<action>ActivateWindow(Videos,root,return)</action>
+		</item>
+	</submenu>
+
+	<!-- Add-an-item picker. <content source=""> values are the nine dispatched
+	     at providers/content.py; anything else silently yields nothing. -->
+	<groupings>
+
+		<!-- THE SUBMENU-PRESERVING GROUP. Do not rename these shortcuts.
+
+		     Every `name` below is deliberately identical to a <submenu name="">
+		     template above, and that identity is the ONLY thing in Skin
+		     Shortcuts 3.0.1 that stops the shortcut picker from deleting a main
+		     menu item's submenu.
+
+		     pickers.py:200-208 is the whole mechanism:
+
+		         if shortcut.name:
+		             template = config.get_default_menu(shortcut.name)
+		             if template and template.is_submenu:
+		                 new_submenu = shortcut.name
+		         if new_submenu != previous_submenu:
+		             set_submenu(...); drop_per_item_submenu(...)
+
+		     get_default_menu (config.py:242) searches default_menus, which is
+		     every <menu> AND <submenu> parsed out of this file. So a picked
+		     shortcut named "movies" resolves to the <submenu name="movies">
+		     seventeen-item template, new_submenu becomes "movies", it equals the
+		     item's own submenu="movies", and the destructive branch is never
+		     entered. Rename the shortcut and get_default_menu returns None,
+		     new_submenu is None, and manager.py:143-151 runs
+		     `del self.working["mainmenu/movies"]` on the way past.
+
+		     Measured before this group existed: 8 of the 12 main menu items
+		     carry a submenu, the picker could reach 18 leaves, and 144 of 144
+		     item/leaf combinations wiped the submenu. Zero preserved it, because
+		     the only static leaves were browse-mode ones and pickers.py:707-719
+		     replaces a browse-mode pick with a fresh Shortcut named
+		     browse-{hash}. A browse-mode or <content> leaf can therefore NEVER
+		     preserve a submenu; only an action-mode shortcut named after a
+		     template can, which is what these twelve are.
+
+		     One action each, on purpose. <action> inside a groupings shortcut
+		     has no condition attribute (loaders/menu.py:696-702 reads text
+		     only), so copying an item's two or three conditional actions here
+		     would emit them as unconditional siblings and Kodi would run all of
+		     them on one click. Each entry therefore carries the item's primary
+		     action alone.
+
+		     games, pictures, favorites and weather have no submenu template by
+		     design (see control 405's gate in script-skinshortcuts.xml), so for
+		     those four new_submenu is None either way and there is nothing to
+		     preserve. They are here so the list is the whole home menu. -->
+		<group name="sections" label="$LOCALIZE[31200]" icon="DefaultFolder.png">
+			<shortcut name="movies" label="$LOCALIZE[342]" icon="icons/sidemenu/movies.png">
+				<action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+			</shortcut>
+			<shortcut name="tvshows" label="$LOCALIZE[20343]" icon="icons/sidemenu/tv.png">
+				<action>ActivateWindow(Videos,videodb://tvshows/titles/,return)</action>
+			</shortcut>
+			<shortcut name="music" label="$LOCALIZE[2]" icon="icons/sidemenu/music.png">
+				<action>ActivateWindow(Music,musicdb://artists/,return)</action>
+			</shortcut>
+			<shortcut name="musicvideos" label="$LOCALIZE[20389]" icon="icons/sidemenu/musicvideos.png">
+				<action>ActivateWindow(Videos,videodb://musicvideos/titles/,return)</action>
+			</shortcut>
+			<shortcut name="livetv" label="$LOCALIZE[19020]" icon="icons/sidemenu/livetv.png">
+				<action>ActivateWindow(TVChannels)</action>
+			</shortcut>
+			<shortcut name="radio" label="$LOCALIZE[19021]" icon="icons/sidemenu/radio.png">
+				<action>ActivateWindow(RadioChannels)</action>
+			</shortcut>
+			<shortcut name="addons" label="$LOCALIZE[24001]" icon="icons/sidemenu/addons.png">
+				<action>ActivateWindow(1100)</action>
+			</shortcut>
+			<shortcut name="video" label="$LOCALIZE[3]" icon="icons/sidemenu/videos.png">
+				<action>ActivateWindow(Videos,root)</action>
+			</shortcut>
+			<shortcut name="games" label="$LOCALIZE[15016]" icon="icons/sidemenu/games.png"
+			          visible="System.GetBool(gamesgeneral.enable)">
+				<action>ActivateWindow(Games)</action>
+				<visible>System.GetBool(gamesgeneral.enable)</visible>
+			</shortcut>
+			<shortcut name="pictures" label="$LOCALIZE[1]" icon="icons/sidemenu/pictures.png">
+				<action>ActivateWindow(Pictures)</action>
+			</shortcut>
+			<shortcut name="favorites" label="$LOCALIZE[10134]" icon="icons/sidemenu/favourites.png">
+				<action>ActivateWindow(favouritesbrowser)</action>
+			</shortcut>
+			<shortcut name="weather" label="$LOCALIZE[8]" icon="icons/sidemenu/weather.png">
+				<action>ActivateWindow(Weather)</action>
+			</shortcut>
+		</group>
+
+		<!-- Labels here must be DISTINCT from each other, because v3 renders every
+		     group in this block as a flat sibling list and the user has nothing
+		     but the label to tell them apart. "library" and "sources" both
+		     carried $LOCALIZE[744] "Files", so the picker showed two identical
+		     "Files >" rows at positions 1 and 6 with completely different
+		     contents: back out of one, take its twin, and you are in a circle.
+		     14022 "Library" and 20094 "Media sources" are both stock Kodi
+		     strings and both describe what the group actually holds. -->
+		<group name="library" label="$LOCALIZE[14022]" icon="DefaultFolder.png">
+			<shortcut name="movies-titles" label="$LOCALIZE[342]" icon="DefaultMovies.png" browse="videos">
+				<path>videodb://movies/titles/</path>
+			</shortcut>
+			<shortcut name="tvshows-titles" label="$LOCALIZE[20343]" icon="DefaultTVShows.png" browse="videos">
+				<path>videodb://tvshows/titles/</path>
+			</shortcut>
+			<shortcut name="music-artists" label="$LOCALIZE[133]" icon="DefaultMusicArtists.png" browse="music">
+				<path>musicdb://artists/</path>
+			</shortcut>
+			<!-- target="library" IS correct and IS resolved. Checked against the
+			     dispatch itself, not against the widget picker's map: content.py's
+			     _resolve_nodes tests target for "library" / "all" / empty by name
+			     and returns two browsable rows, Videos (library://video/) and
+			     Music (library://music/). constants.py's TARGET_MAP does not carry
+			     a "library" key, but that map governs _map_target_to_window, which
+			     is the WIDGET picker turning a content target into a window name.
+			     It is not consulted here. Reading it as the authority for
+			     <content target> produces a false "does not resolve" verdict; that
+			     was raised on 2026-07-31 and disproved the same day.
+
+			     The folder= attribute is gone, and that was a real defect: it
+			     carried $LOCALIZE[20330], which is "Use folder names for lookups",
+			     a video-scraper setting, used as the name of a folder in the menu
+			     picker. Without it the two rows sit flat beside Movies, TV shows
+			     and Artists, which is exactly what they are: more of this group's
+			     library entry points. Nothing needs a folder here, so nothing gets
+			     a second guessed label. -->
+			<content source="nodes" target="library"/>
+		</group>
+
+		<group name="videoaddons" label="$LOCALIZE[1037]" icon="DefaultAddonVideo.png">
+			<content source="addons" target="video"/>
+		</group>
+		<group name="musicaddons" label="$LOCALIZE[1038]" icon="DefaultAddonMusic.png">
+			<content source="addons" target="audio"/>
+		</group>
+		<group name="programaddons" label="$LOCALIZE[10001]" icon="DefaultAddonProgram.png">
+			<content source="addons" target="executable"/>
+		</group>
+		<group name="playlists" label="$LOCALIZE[136]" icon="DefaultPlaylist.png">
+			<content source="playlists" target="video" folder="$LOCALIZE[3]"/>
+			<content source="playlists" target="music" folder="$LOCALIZE[2]"/>
+		</group>
+		<group name="sources" label="$LOCALIZE[20094]" icon="DefaultFolder.png">
+			<content source="sources" target="video" folder="$LOCALIZE[3]"/>
+			<content source="sources" target="music" folder="$LOCALIZE[2]"/>
+			<content source="sources" target="pictures" folder="$LOCALIZE[1]"/>
+		</group>
+		<group name="favourites" label="$LOCALIZE[10134]" icon="DefaultFavourites.png">
+			<content source="favourites"/>
+		</group>
+		<!-- The TV category. Before 2026-08-04 this held only two <content
+		     source="pvr"> folders, and content.py's _resolve_pvr emits per-CHANNEL
+		     PlayPvrChannel actions ONLY, never the PVR navigation windows. So the
+		     picker's "TV >" could reach individual channels but NOT the Guide,
+		     Recordings, Timers or Search: the standard destinations a "TV" menu
+		     item is normally pointed at. The Guide being unreachable was the
+		     reported defect.
+
+		     The six <shortcut> rows below mirror the Home livetv submenu
+		     (livetv-3..livetv-8 above) one-for-one: same $LOCALIZE ids, same
+		     ActivateWindow targets, same icons. That submenu is the authority for
+		     these, so the picker and the Home row stay in lockstep. The loader
+		     appends <shortcut> and <content> children in document order
+		     (loaders/menu.py:642-658), which the "library" group already relies
+		     on, so mixing them here is supported, not a hack.
+
+		     Each TV shortcut carries visible="Pvr.HasTVChannels" so it is hidden
+		     from the picker when no TV tuner is present (_filter_picker_items ->
+		     _check_visible, pickers.py:1217), matching what _resolve_pvr already
+		     did for the channel list. The group-level gate stays as it was.
+
+		     The per-channel TV folder (<content source="pvr" target="tv">) is
+		     removed: its "Channels" folder label ($LOCALIZE[19019]) collided with
+		     the new Channels window row, and the Home submenu it mirrors offers no
+		     per-channel binding. Radio is left exactly as it was (per-channel
+		     folder), untouched. -->
+		<group name="livetv" label="$LOCALIZE[19020]" icon="DefaultTVShows.png"
+		       visible="Pvr.HasTVChannels | Pvr.HasRadioChannels">
+			<shortcut name="livetv-channels" label="$LOCALIZE[19019]" icon="DefaultAddonPeripheral.png" visible="Pvr.HasTVChannels">
+				<action>ActivateWindow(TVChannels)</action>
+			</shortcut>
+			<shortcut name="livetv-guide" label="$LOCALIZE[19069]" icon="icons/pvr/epg.png" visible="Pvr.HasTVChannels">
+				<action>ActivateWindow(TVGuide)</action>
+			</shortcut>
+			<shortcut name="livetv-recordings" label="$LOCALIZE[19017]" icon="icons/pvr/recording.png" visible="Pvr.HasTVChannels">
+				<action>ActivateWindow(TVRecordings)</action>
+			</shortcut>
+			<shortcut name="livetv-timers" label="$LOCALIZE[19040]" icon="icons/pvr/timer.png" visible="Pvr.HasTVChannels">
+				<action>ActivateWindow(TVTimers)</action>
+			</shortcut>
+			<shortcut name="livetv-timerrules" label="$LOCALIZE[19138]" icon="icons/pvr/timer-rule.png" visible="Pvr.HasTVChannels">
+				<action>ActivateWindow(TVTimerRules)</action>
+			</shortcut>
+			<shortcut name="livetv-search" label="$LOCALIZE[137]" icon="DefaultAddonsSearch.png" visible="Pvr.HasTVChannels">
+				<action>ActivateWindow(TVSearch)</action>
+			</shortcut>
+			<content source="pvr" target="radio" folder="$LOCALIZE[19021]"/>
+		</group>
+		<group name="settings" label="$LOCALIZE[10004]" icon="DefaultAddonService.png">
+			<content source="settings"/>
+		</group>
+		<!-- 31072 is this skin's own "Power Options", which is what the seven
+		     rows behind this group are: content.py's _resolve_commands returns
+		     Quit, Reboot, Power off, Suspend, Hibernate, Restart and Reload
+		     skin, and this skin already files all seven under extras/icons/Power
+		     menu/. The label was $LOCALIZE[13012] "Exit" until 2026-07-31, which
+		     is the label of ONE of the seven, so the picker drew a group called
+		     "Exit >" whose first child was also called "Exit". -->
+		<group name="commands" label="$LOCALIZE[31072]" icon="DefaultProgram.png">
+			<content source="commands"/>
+		</group>
+
+		<!-- Raw action entry is the "Custom action..." row the add-on pins to the
+		     TOP of the "Change action" picker (pickers.py _prompt_custom_action),
+		     with a clear label and the item's current action pre-filled. A second
+		     <input for="action"> used to sit here as the LAST grouping, but
+		     $LOCALIZE[1024] is empty in Kodi 22, so it rendered as a blank,
+		     unlabelled row that no one could recognise as "type an action" - the
+		     exact reason the picker read as unable to reach an arbitrary window.
+		     Removed 2026-08-03; do not re-add it. The keyboard path is the top row
+		     now, not a mystery row at the bottom. -->
+
+	</groupings>
+
+</menus>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+	<defaultcontrol></defaultcontrol>
+	<onload>ClearProperty(ThumbSplit1,Home)</onload>
+	<onload>ClearProperty(ThumbSplit2,Home)</onload>
+	<onload condition="!String.IsEqual(Skin.String(show_videoresolution),31578) + !String.IsEmpty(Skin.String(show_videoresolution)) + !String.IsEmpty(Player.Process(amlogic.eoft_gamut)) + !String.StartsWith(Player.Process(amlogic.eoft_gamut),SDR)">ActivateWindow(1111)</onload>
+	<onload condition="String.Contains(Player.Art(thumb),ytimg)">AlarmClock(setfo,SetFocus(9606),00:01,silent)</onload>
+	<controls>
+		<control type="button" id="9606">
+			<width>1</width>
+			<height>1</height>
+			<left>-1000</left>
+        </control>
+		<control type="group" id="0">
+			<control type="label" id="10">
+				<left>45</left>
+				<top>15</top>
+				<width>1770</width>
+				<height>100</height>
+				<label/>
+				<font>font12</font>
+				<shadowcolor>black</shadowcolor>
+			</control>
+			<control type="label" id="11">
+				<left>45</left>
+				<top>45</top>
+				<width>1770</width>
+				<height>100</height>
+				<label/>
+				<font>font12</font>
+				<shadowcolor>black</shadowcolor>
+			</control>
+			<control type="label" id="12">
+				<left>45</left>
+				<top>75</top>
+				<width>1770</width>
+				<height>100</height>
+				<label/>
+				<font>font12</font>
+				<shadowcolor>black</shadowcolor>
+			</control>
+		</control>
+		<control type="group" id="1">
+			<depth>DepthOSD+</depth>
+			<visible>[Player.Caching + Integer.IsGreater(Player.CacheLevel,0)] + ![$EXP[isSeeking] | [Player.Paused + !Skin.HasSetting(Hide_OSDInfo)] | Player.ShowInfo | Window.IsActive(fullscreeninfo) | Window.IsActive(videoosd) | Window.IsActive(musicosd) | Window.IsActive(playerprocessinfo) | !String.IsEmpty(Player.SeekNumeric) | !String.IsEmpty(PVR.ChannelNumberInput)]</visible>
+			<animation effect="fade" delay="300" time="200">Visible</animation>
+			<animation effect="fade" delay="200" time="150">Hidden</animation>
+			<centerleft>50%</centerleft>
+			<centertop>50%</centertop>
+			<width>350</width>
+			<height>70</height>
+			<control type="image" id="1">
+				<centerleft>50%</centerleft>
+				<centertop>50%</centertop>
+				<width>350</width>
+				<height>70</height>
+				<texture>dialogs/back.png</texture>
+			</control>
+ 			<control type="progress" id="1">
+				<centerleft>50%</centerleft>
+				<top>39</top>
+				<width>320</width>
+				<height>16</height>
+				<info>Player.CacheLevel</info>
+			</control>
+			<control type="label" id="1">
+ 				<label>$INFO[Player.CacheLevel]%</label>
+ 				<centerleft>50%</centerleft>
+ 				<top>13</top>
+ 				<width>320</width>
+ 				<height>20</height>
+ 				<aligny>center</aligny>
+ 				<align>right</align>
+ 				<font>font10</font>
+ 			</control>        
+ 			<control type="label" id="2">
+ 				<label>$LOCALIZE[15107]</label>
+ 				<centerleft>50%</centerleft>
+ 				<top>13</top>
+ 				<width>320</width>
+  				<height>20</height>
+  				<aligny>center</aligny>
+  				<align>left</align>
+  				<font>font10</font>
+  			</control>
+		</control>
+		<!--
+			The scrim under the playback ticker. Measured on a Piers bench
+			2026-08-08: over near-white video the bare ticker reads 1.53:1, which
+			is illegible, and its shadowcolor does not rescue it. This is the same
+			from-the-bottom fade BottomBar already draws (Includes.xml, flipy on
+			from-the-bottom osdfade), but with a FIXED dark diffuse rather than
+			$VAR[Bars_Opacity], because that variable can be set to 00FFFFFF by
+			the Opacity of bars setting and would leave the ticker unreadable.
+			Gated identically to the ticker so it can never draw on its own.
+		-->
+		<control type="image" id="9909">
+			<depth>DepthOSD</depth>
+			<left>0</left>
+			<bottom>0</bottom>
+			<width>100%</width>
+			<height>90</height>
+			<texture flipy="true" colordiffuse="CC000000">frame/osdfade.png</texture>
+			<visible>$EXP[rss_ticker_visible] + !$EXP[player_osd_active]</visible>
+			<animation effect="fade" time="300">VisibleChange</animation>
+		</control>
+		<!--
+			Always show RSS feed: the ticker over playback.
+
+			This one window covers movies, TV shows, videos AND live TV, because
+			Kodi uses WINDOW_FULLSCREEN_VIDEO for all four.
+
+			The explicit control id is LOAD BEARING, not tidiness. CRssManager
+			caches one CRssReader per (control id, window id) pair and, on a cache
+			hit, only re-points the observer: CRssReader::Create, which starts the
+			fetch, is reached solely on the miss branch of CGUIRSSControl::Process.
+			A reader that came up empty for a key therefore stays empty for the
+			life of the process, through any number of skin reloads. Measured on a
+			Piers bench 2026-08-08: with no id (so control id 0) this ticker never
+			drew, while plain image and label controls at the same coordinates in
+			the same window drew fine, and an identical rss control in VideoOSD
+			drew fine. A fresh id fixed it outright. Do not remove the id.
+		-->
+		<control type="rss" id="9907">
+			<depth>DepthOSD</depth>
+			<left>20</left>
+			<right>20</right>
+			<bottom>5</bottom>
+			<height>35</height>
+			<font>font12</font>
+			<urlset>1</urlset>
+			<hitrect x="-100" y="0" w="1" h="1" />
+			<textcolor>$VAR[SkinColorVar]</textcolor>
+			<titlecolor>$VAR[SkinColorVar]</titlecolor>
+			<shadowcolor>$VAR[ShadowColorVar]</shadowcolor>
+			<headlinecolor>FFC0C0C0</headlinecolor>
+			<visible>$EXP[rss_ticker_visible] + !$EXP[player_osd_active]</visible>
+			<animation effect="fade" time="300">VisibleChange</animation>
+		</control>
+	</controls>
+</window>

@@ -1,0 +1,23 @@
+# Estuary 8 upstream pin.
+#
+# Estuary 8 is a SOURCE fork: the tree beside this file is ours to edit. This
+# pin records exactly what it was forked from, so upstream can be re-fetched and
+# diffed at any time to pick up their fixes.
+#
+#   curl -sL -o piers.tar.gz \
+#     https://codeload.github.com/b-jesch/skin.estuary.modv2/tar.gz/$commit
+#   shasum -a 256 piers.tar.gz   # must equal tarball_sha256 below
+
+repo            = https://github.com/b-jesch/skin.estuary.modv2
+branch          = Piers
+commit          = 551f77b00be724d69720279d80d4103a06bf9a86
+commit_date     = 2026-07-18T18:42:18Z
+commit_subject  = Code cleaning pt.3
+addon_version   = 22.0+piers
+tarball_sha256  = 7f242c1d6e20dbba52645a91cf4969ebc347332688de967c026dfeec69beba37
+forked_on       = 2026-07-28
+
+# Upstream's Piers branch has Skin Shortcuts DISABLED: addon.xml carries
+# <!--<import addon="script.skinshortcuts" version="1.1.3"/>--> and shortcuts/
+# still holds only the v2 format. Estuary 8 is the v3 port upstream never did,
+# so a future merge from upstream must not reintroduce that comment.

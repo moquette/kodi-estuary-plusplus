@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+
+	<!--
+		The 9-slot property vocabulary: widgetPath.N, widgetLabel.N,
+		widgetTarget.N, widgetAspect.N, widgetSortBy.N and
+		widgetSortDirection.N.
+
+		widgetLabel.N is the row TITLE and there is only one of it. The picker
+		writes it with the chosen widget's own label, rename="true" below lets
+		the user retype it in the same breath, the Home heading renders it
+		(templates.xml rowHeaderN) and the "Select widget N" row reads it back
+		(Variables.xml Widget<N>Label2Var). One key, four roles.
+
+		widgetAspect.N stores the include TOKEN (ListPoster, PanelSquare, ...)
+		rather than the localized label v2 stored, so templates.xml can write
+		Widget$PROPERTY[widgetAspect.N] straight into the include name.
+
+		Button ids are MOD V2's own script-skinshortcuts.xml ids, read off
+		overrides.xml's <propertySettings>, so the 27 per-slot selectors keep
+		working without editing that window.
+	-->
+
+	<includes>
+
+		<include name="aspect_list">
+			<option value="ListPoster" label="$LOCALIZE[31338]"/>
+			<option value="NextAiringEpisodes" label="$LOCALIZE[31339]"/>
+			<option value="NextAiringEpisodesBanner" label="$LOCALIZE[31321]"/>
+			<option value="ListSquare" label="$LOCALIZE[31340]"/>
+			<option value="ListCategoriesPersonal" label="$LOCALIZE[31410]"/>
+			<option value="ListGenres" label="$LOCALIZE[135]"/>
+		</include>
+
+		<include name="aspect_panel">
+			<option value="PanelPoster" label="$LOCALIZE[31403]"/>
+			<option value="PanelEpisodes" label="$LOCALIZE[31406]"/>
+			<option value="PanelEpisodesBanners" label="$LOCALIZE[31407]"/>
+			<option value="PanelSquare" label="$LOCALIZE[31408]"/>
+			<option value="PanelBanners" label="$LOCALIZE[31409]"/>
+			<option value="PanelCategoriesPersonal" label="$LOCALIZE[31411]"/>
+			<option value="PanelGenres" label="$LOCALIZE[31466]"/>
+		</include>
+
+		<!-- No empty option here. The nine widgetSortBy.N buttons carry
+		     showNone="true", and dialog/properties.py:748-751 prepends its own
+		     Kodi string 231 "None" whose branch at :783 clears the property.
+		     An <option value=""> as well put a second, identical "None" on the
+		     picker. MOD V2's overrides.xml declared showNone="True" plus these
+		     ten real options and no empty one, so this matches it. -->
+		<include name="sortby">
+			<option value="sorttitle" label="$LOCALIZE[551]"/>
+			<option value="year" label="$LOCALIZE[562]"/>
+			<option value="rating" label="$LOCALIZE[563]"/>
+			<option value="time" label="$LOCALIZE[180]"/>
+			<option value="dateadded" label="$LOCALIZE[570]"/>
+			<option value="playcount" label="$LOCALIZE[567]"/>
+			<option value="lastplayed" label="$LOCALIZE[568]"/>
+			<option value="lastused" label="$LOCALIZE[12012]"/>
+			<option value="genre" label="$LOCALIZE[135]"/>
+			<option value="random" label="$LOCALIZE[590]"/>
+		</include>
+
+		<include name="sortdir">
+			<option value="ascending" label="$LOCALIZE[584]"/>
+			<option value="descending" label="$LOCALIZE[585]"/>
+		</include>
+
+	</includes>
+
+	<property name="widget" type="widget"/>
+	<property name="background" type="background"/>
+	<property name="HideSubMenu" type="toggle" value="True"/>
+
+	<property name="widgetAspect.1"><options><include content="aspect_list"/></options></property>
+	<property name="widgetSortBy.1"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.1"><options><include content="sortdir"/></options></property>
+	<property name="widgetAspect.2"><options><include content="aspect_list"/></options></property>
+	<property name="widgetSortBy.2"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.2"><options><include content="sortdir"/></options></property>
+	<property name="widgetAspect.3"><options><include content="aspect_list"/></options></property>
+	<property name="widgetSortBy.3"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.3"><options><include content="sortdir"/></options></property>
+	<property name="widgetAspect.4"><options><include content="aspect_list"/></options></property>
+	<property name="widgetSortBy.4"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.4"><options><include content="sortdir"/></options></property>
+	<property name="widgetAspect.5"><options><include content="aspect_list"/></options></property>
+	<property name="widgetSortBy.5"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.5"><options><include content="sortdir"/></options></property>
+	<property name="widgetAspect.6"><options><include content="aspect_list"/></options></property>
+	<property name="widgetSortBy.6"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.6"><options><include content="sortdir"/></options></property>
+	<property name="widgetAspect.7"><options><include content="aspect_list"/></options></property>
+	<property name="widgetSortBy.7"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.7"><options><include content="sortdir"/></options></property>
+	<property name="widgetAspect.8"><options><include content="aspect_list"/></options></property>
+	<property name="widgetSortBy.8"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.8"><options><include content="sortdir"/></options></property>
+	<property name="widgetAspect.9"><options><include content="aspect_panel"/></options></property>
+	<property name="widgetSortBy.9"><options><include content="sortby"/></options></property>
+	<property name="widgetSortDirection.9"><options><include content="sortdir"/></options></property>
+
+	<!-- EXACTLY ONE <buttons> element: loaders/property.py:69 is root.find, and
+	     a second block is dropped with no warning. -->
+	<buttons suffix="false">
+
+		<button id="310"  property="background" type="background"
+		        title="$LOCALIZE[31352]" showNone="true" showIcons="true"/>
+		<button id="3129" property="HideSubMenu" type="toggle" title="$LOCALIZE[31132]"/>
+
+		<!-- The nine widget slots. MOD V2's own buttons proxied through
+		     SendClick(312), because on the legacy Skin Shortcuts line 312 was the
+		     widget picker. In 3.0.1 that id is CONTROL_RESET_ITEM, so the proxy
+		     wiped the item instead. The SendClick lines are gone from
+		     script-skinshortcuts.xml and each button is mapped to its slot here
+		     instead. (Do not restore the legacy version number to this sentence:
+		     estuary8/tools/check_skinshortcuts_floor.py rejects it and the build
+		     refuses. MEASURED 2026-07-30 by running that guard against the 0.1.16
+		     tree: it failed on exactly two lines, this one and the comment above
+		     control 401 in xml/script-skinshortcuts.xml, in the same run.)
+
+		     The dotted names are deliberate: _set_widget_properties splits the
+		     prefix on the last dot, so "widget.1" writes widgetLabel.1,
+		     widgetPath.1, widgetType.1, widgetTarget.1 and widgetSource.1, which
+		     is exactly what the dialog's visibility conditions already read. -->
+		<button id="10005" property="widget"   type="widget" title="$LOCALIZE[31336]"/>
+		<button id="1475"  property="widget.1" type="widget" title="$ADDON[script.estuary8.shortcuts 32044] 1" rename="true"/>
+		<button id="1476"  property="widget.2" type="widget" title="$ADDON[script.estuary8.shortcuts 32044] 2" rename="true"/>
+		<button id="1477"  property="widget.3" type="widget" title="$ADDON[script.estuary8.shortcuts 32044] 3" rename="true"/>
+		<button id="1478"  property="widget.4" type="widget" title="$ADDON[script.estuary8.shortcuts 32044] 4" rename="true"/>
+		<button id="1479"  property="widget.5" type="widget" title="$ADDON[script.estuary8.shortcuts 32044] 5" rename="true"/>
+		<button id="1480"  property="widget.6" type="widget" title="$ADDON[script.estuary8.shortcuts 32044] 6" rename="true"/>
+		<button id="1481"  property="widget.7" type="widget" title="$ADDON[script.estuary8.shortcuts 32044] 7" rename="true"/>
+		<button id="1482"  property="widget.8" type="widget" title="$ADDON[script.estuary8.shortcuts 32044] 8" rename="true"/>
+		<button id="1483"  property="widget.9" type="widget" title="$ADDON[script.estuary8.shortcuts 32044]" rename="true"/>
+
+		<button id="14751" property="widgetAspect.1" type="select" title="$LOCALIZE[31337] 1" showNone="false"/>
+		<button id="14752" property="widgetSortBy.1" type="select" title="$LOCALIZE[31367] 1" showNone="true"/>
+		<button id="14753" property="widgetSortDirection.1" type="select" title="$LOCALIZE[31368] 1" showNone="true"/>
+		<button id="14761" property="widgetAspect.2" type="select" title="$LOCALIZE[31337] 2" showNone="false"/>
+		<button id="14762" property="widgetSortBy.2" type="select" title="$LOCALIZE[31367] 2" showNone="true"/>
+		<button id="14763" property="widgetSortDirection.2" type="select" title="$LOCALIZE[31368] 2" showNone="true"/>
+		<button id="14771" property="widgetAspect.3" type="select" title="$LOCALIZE[31337] 3" showNone="false"/>
+		<button id="14772" property="widgetSortBy.3" type="select" title="$LOCALIZE[31367] 3" showNone="true"/>
+		<button id="14773" property="widgetSortDirection.3" type="select" title="$LOCALIZE[31368] 3" showNone="true"/>
+		<button id="14781" property="widgetAspect.4" type="select" title="$LOCALIZE[31337] 4" showNone="false"/>
+		<button id="14782" property="widgetSortBy.4" type="select" title="$LOCALIZE[31367] 4" showNone="true"/>
+		<button id="14783" property="widgetSortDirection.4" type="select" title="$LOCALIZE[31368] 4" showNone="true"/>
+		<button id="14791" property="widgetAspect.5" type="select" title="$LOCALIZE[31337] 5" showNone="false"/>
+		<button id="14792" property="widgetSortBy.5" type="select" title="$LOCALIZE[31367] 5" showNone="true"/>
+		<button id="14793" property="widgetSortDirection.5" type="select" title="$LOCALIZE[31368] 5" showNone="true"/>
+		<button id="14801" property="widgetAspect.6" type="select" title="$LOCALIZE[31337] 6" showNone="false"/>
+		<button id="14802" property="widgetSortBy.6" type="select" title="$LOCALIZE[31367] 6" showNone="true"/>
+		<button id="14803" property="widgetSortDirection.6" type="select" title="$LOCALIZE[31368] 6" showNone="true"/>
+		<button id="14811" property="widgetAspect.7" type="select" title="$LOCALIZE[31337] 7" showNone="false"/>
+		<button id="14812" property="widgetSortBy.7" type="select" title="$LOCALIZE[31367] 7" showNone="true"/>
+		<button id="14813" property="widgetSortDirection.7" type="select" title="$LOCALIZE[31368] 7" showNone="true"/>
+		<button id="14821" property="widgetAspect.8" type="select" title="$LOCALIZE[31337] 8" showNone="false"/>
+		<button id="14822" property="widgetSortBy.8" type="select" title="$LOCALIZE[31367] 8" showNone="true"/>
+		<button id="14823" property="widgetSortDirection.8" type="select" title="$LOCALIZE[31368] 8" showNone="true"/>
+		<button id="14831" property="widgetAspect.9" type="select" title="$LOCALIZE[31337]" showNone="false"/>
+		<button id="14832" property="widgetSortBy.9" type="select" title="$LOCALIZE[31367]" showNone="true"/>
+		<button id="14833" property="widgetSortDirection.9" type="select" title="$LOCALIZE[31368]" showNone="true"/>
+
+	</buttons>
+
+</properties>
