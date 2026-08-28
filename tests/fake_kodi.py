@@ -20,6 +20,9 @@ class Recorder:
         self.builtins = []
         self.logs = []
         self.conditions = []
+        self.translated = []
+        self.waits = []
+        self.aborting = False
 
 
 def install(platform, profile_dir):
@@ -40,15 +43,26 @@ def install(platform, profile_dir):
     def log(message, level=LOGINFO):
         rec.logs.append((level, message))
 
+    class Monitor:
+        """Kodi's abort monitor. Records the wait; answers with rec.aborting."""
+
+        def waitForAbort(self, seconds):
+            rec.waits.append(seconds)
+            return rec.aborting
+
     xbmc.getCondVisibility = getCondVisibility
     xbmc.executebuiltin = executebuiltin
     xbmc.log = log
+    xbmc.Monitor = Monitor
 
     xbmcvfs = types.ModuleType("xbmcvfs")
 
     def translatePath(path):
+        rec.translated.append(path)
         if path == "special://profile/keymaps/":
             return rec.profile_dir + "/keymaps/"
+        if path.startswith("special://home/"):
+            return rec.profile_dir + "/home/" + path[len("special://home/") :]
         raise AssertionError("unexpected special path: %s" % path)
 
     xbmcvfs.translatePath = translatePath

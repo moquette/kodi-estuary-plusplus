@@ -1,3 +1,16 @@
+[B]1.2.2[/B]
+• Apple TV only: writes a stand-in for the _scproxy module Kodi 22's tvOS build
+  does not ship. Without it urllib.request cannot be imported, so every add-on
+  whose dependencies include script.module.requests dies at startup. Measured on
+  atv1: POV, Multi Weather, script.openweathermap.maps and EZ Maintenance++ all
+  declare it. The shim goes in that dependency's own lib directory, which Kodi
+  already puts on the path of everything that declares it, and is rewritten on
+  any start where its contents differ.
+• Apple TV only: Siri remote keymap. Back leaves fullscreen video with playback
+  continuing, double play/pause returns to it, back at Home no longer opens the
+  Favourites browser, and select opens the OSD on live TV.
+• No change on Fire TV, Android or desktop: both writes are gated on tvOS.
+
 [B]0.8.5[/B]
 • Updated language files from Transifex
 
