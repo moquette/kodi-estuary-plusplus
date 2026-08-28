@@ -1,1 +1,0 @@
-"""Skin Shortcuts library."""
