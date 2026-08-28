@@ -296,16 +296,6 @@
 					<bordersize>20</bordersize>
 					<visible>$PARAM[focused]</visible>
 				</control>
-				<control type="image">
-					<left>9</left>
-					<top>-16</top>
-					<width>302</width>
-					<height>412</height>
-					<texture colordiffuse="$VAR[GradientColorVar]" diffuse="masks/poster-focus.png">colors/gradient.png</texture>
-					<bordersize>20</bordersize>
-					<visible>$PARAM[focused]</visible>
-					<visible>Skin.HasSetting(EnableGradientColor)</visible>
-				</control>
 				<control type="textbox">
 					<left>40</left>
 					<top>244</top>
@@ -388,12 +378,6 @@
 						<texture colordiffuse="$VAR[SkinColorVar]" diffuse="masks/poster-focus.png">colors/grey.png</texture>
 						<bordersize>20</bordersize>
 						<visible>$PARAM[focused]</visible>
-					</control>
-					<control type="image">
-						<texture colordiffuse="$VAR[GradientColorVar]" diffuse="masks/poster-focus.png">colors/gradient.png</texture>
-						<bordersize>20</bordersize>
-						<visible>$PARAM[focused]</visible>
-						<visible>Skin.HasSetting(EnableGradientColor)</visible>
 					</control>
 				</control>
 				<control type="group">
@@ -561,16 +545,6 @@
 					<texture background="true" colordiffuse="$VAR[SkinColorVar]">overlays/circle-172.png</texture>
 					<aspectratio>keep</aspectratio>
 					<visible>[!Skin.HasSetting(enable_LibraryDiscArtOverlay) + !Window.IsVisible(Home)] | [!Skin.HasSetting(enable_HomeDiscArtOverlay) + Window.IsVisible(Home)]</visible>
-				</control>
-				<control type="image">
-					<right>-6</right>
-					<top>0</top>
-					<width>172</width>
-					<height>172</height>
-					<texture background="true" colordiffuse="$VAR[GradientColorVar]">overlays/circle-172-gradient.png</texture>
-					<aspectratio>keep</aspectratio>
-					<visible>[!Skin.HasSetting(enable_LibraryDiscArtOverlay) + !Window.IsVisible(Home)] | [!Skin.HasSetting(enable_HomeDiscArtOverlay) + Window.IsVisible(Home)]</visible>
-					<visible>Skin.HasSetting(EnableGradientColor)</visible>
 				</control>
 				<control type="image">
 					<right>-5</right>

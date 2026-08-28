@@ -491,8 +491,8 @@
 		<value condition="ListItem.IsCollection">overlays/set.png</value>
 		<value condition="ListItem.HasVideoVersions + !$EXP[videoasset_true]">overlays/versions.png</value>
 		<value condition="ListItem.IsPlaying">overlays/watched/OverlayPlaying-List.png</value>
-		<value condition="ListItem.IsResumable + Integer.IsGreater(ListItem.Playcount,0)">overlays/watched/resume.png</value>
-		<value condition="ListItem.IsResumable">overlays/watched/resume.png</value>
+		<value condition="ListItem.IsResumable + Integer.IsGreater(ListItem.Playcount,0)">overlays/watched/OverlayWatchedResume.png</value>
+		<value condition="ListItem.IsResumable">overlays/watched/OverlayResume.png</value>
 		<value condition="ListItem.HasVideoExtras + !$EXP[videoasset_true]">overlays/extras.png</value>
 		<value condition="ListItem.IsFolder + String.IsEmpty(Listitem.dbtype) + !String.IsEqual(ListItem.Overlay,OverlayWatched.png) + !ListItem.IsParentFolder">overlays/folder.png</value>
 		<value condition="!String.IsEmpty(ListItem.Overlay)">$INFO[ListItem.Overlay]</value>
@@ -505,8 +505,8 @@
 		<value condition="ListItem.HasReminder">icons/pvr/timers/bell.png</value>
 		<value condition="ListItem.HasTimer">icons/pvr/timers/recording.png</value>
 		<value condition="ListItem.IsPlaying">overlays/watched/OverlayPlaying-List.png</value>
-		<value condition="ListItem.IsResumable + Integer.IsGreater(ListItem.Playcount,0)">overlays/watched/resume.png</value>
-		<value condition="ListItem.IsResumable">overlays/watched/resume.png</value>
+		<value condition="ListItem.IsResumable + Integer.IsGreater(ListItem.Playcount,0)">overlays/watched/OverlayWatchedResume.png</value>
+		<value condition="ListItem.IsResumable">overlays/watched/OverlayResume.png</value>
 		<value condition="ListItem.HasArchive">windows/pvr/archive.png</value>
 		<value condition="Integer.IsGreater(ListItem.Playcount,0)">$INFO[ListItem.Overlay]</value>
 	</variable>
@@ -517,8 +517,8 @@
 	</variable>
 	<variable name="ListPVRRecordingsIconVar">
 		<value condition="ListItem.IsRecording">windows/pvr/record.png</value>
-		<value condition="ListItem.IsResumable + Integer.IsGreater(ListItem.Playcount,0)">overlays/watched/resume.png</value>
-		<value condition="ListItem.IsResumable">overlays/watched/resume.png</value>
+		<value condition="ListItem.IsResumable + Integer.IsGreater(ListItem.Playcount,0)">overlays/watched/OverlayWatchedResume.png</value>
+		<value condition="ListItem.IsResumable">overlays/watched/OverlayResume.png</value>
 		<value condition="!String.IsEmpty(ListItem.Overlay)">$INFO[ListItem.Overlay]</value>
 		<value condition="!ListItem.IsParentFolder">OverlayUnwatched.png</value>
 	</variable>
@@ -2480,15 +2480,6 @@
 			<value condition="!String.IsEmpty(Skin.String(BorderColor))">$INFO[Skin.String(BorderColor)]</value>
 			<value>d8181818</value>
 		</variable>
-	<variable name="GradientColorVar">
-			<value condition="$EXP[ChristmasTime]">ffe30022</value>
-			<value condition="$EXP[HalloweenTime]">fff38844</value>
-			<value condition="$EXP[PreEasterTime]">ff58670f</value>
-			<value condition="$EXP[EasterTime]">ffe9d66b</value>
-			<value condition="$EXP[ValentineTime]">ffe8334a</value>
-			<value condition="!String.IsEmpty(Skin.String(GradientColor))">$INFO[Skin.String(GradientColor)]</value>
-			<value>gradient_focus</value>
-		</variable>
 	<variable name="IconWallPosterVar">
 			<value condition="!String.IsEmpty(ListItem.Art(animatedposter)) + Skin.HasSetting(Skin_EnableAnimatedPosters)">$INFO[ListItem.Art(animatedposter)]</value>
 			<value condition="!String.IsEmpty(ListItem.Art(poster)) + [Container.Content(episodes) | Container.Content(seasons)]">$INFO[ListItem.Art(poster)]</value>
@@ -2527,7 +2518,7 @@
 			<value condition="ListItem.IsCollection + !Container.Content(sets) + !Window.Isvisible(Home)">overlays/set.png</value>
 			<value condition="ListItem.HasVideoVersions + !Control.HasFocus(6)">overlays/versions.png</value>
 			<value condition="ListItem.IsPlaying">overlays/watched/OverlayPlaying-List.png</value>
-			<value condition="ListItem.IsResumable + !String.IsEqual(ListItem.DBType,tvshow)">overlays/watched/resume.png</value>
+			<value condition="ListItem.IsResumable + !String.IsEqual(ListItem.DBType,tvshow)">overlays/watched/OverlayResume.png</value>
 			<value condition="Integer.IsGreater(ListItem.Playcount,0) + [Window.IsVisible(script-globalsearch-main.xml) | Window.IsVisible(script-globalsearch.xml)]">OverlayWatched.png</value>
 			<value condition="Integer.IsGreater(ListItem.Playcount,0) + [String.IsEqual(Container(9000).ListItem.Property(widget),PersonalWidgetList) | String.IsEqual(Container(9000).ListItem.Property(widget),PersonalWidgetPanel)]">overlaywatched.png</value>
 			<value condition="Integer.IsGreater(ListItem.Playcount,0)">overlaywatched.png</value>
@@ -2550,5 +2541,9 @@
 	<variable name="PlotSpoilerVar">
 			<value condition="[Skin.HasSetting(hide_plotforspoiler) + String.IsEqual(ListItem.DBType,episode)] + Integer.IsLess(ListItem.Playcount,1) + !String.StartsWith(Container.FolderPath,plugin://)">[COLOR white]$LOCALIZE[31230][/COLOR]</value>
 			<value>$INFO[ListItem.Tagline,,[CR]]$INFO[ListItem.Plot,[COLOR white],[/COLOR]]</value>
+		</variable>
+	<variable name="MediaFlagsColorVar">
+			<value condition="!String.IsEmpty(Skin.String(MediaFlagsColor))">$INFO[Skin.String(MediaFlagsColor)]</value>
+			<value>FFFFFFFF</value>
 		</variable>
 </includes>
