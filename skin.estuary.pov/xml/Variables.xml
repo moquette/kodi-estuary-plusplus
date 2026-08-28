@@ -202,6 +202,35 @@
 		<value condition="String.IsEqual(ListItem.Path,addons://all/)">$INFO[ListItem.AddonOrigin,, - ]$INFO[ListItem.AddonVersion]</value>
 		<value>$INFO[ListItem.AddonCreator,, - ]$INFO[ListItem.AddonVersion]</value>
 	</variable>
+	<!-- The one place the home widget row size is read. Feeds limit= on every
+	     WidgetList content tag and label2 on the settings row (control 709 in
+	     SkinSettings.xml), so the number the user sees and the number the rows
+	     obey can never disagree.
+	     The last <value> is UNCONDITIONAL on purpose. limit= is parsed by
+	     CDirectoryProvider as a CGUIInfoLabel and read with GetIntValue
+	     (DirectoryProvider.cpp:384-386, 758-767), so an empty string would mean
+	     limit 0, which means UNLIMITED, not 15. The fallback also covers the
+	     value being literally 15, so 15 needs no condition of its own.
+	     Why this is a Skin.String and not an add-on setting: a skin's settings
+	     are deliberately NOT normal add-on settings. CSkinInfo::HasSettings and
+	     HasUserSettings return false unconditionally (Skin.h:216-217), so no
+	     settings dialog will ever open for a skin, and CSkinInfo::SettingsFromXML
+	     keeps only string and bool entries and logs "ignoring setting of unknown
+	     type" for anything else (Skin.cpp:868-905). A resources/settings.xml in a
+	     skin is never read. Do not try that route again.
+	     $INFO cannot carry a two argument infolabel either: CGUIInfoLabel::Parse
+	     splits the inside of $INFO[...] on EVERY comma with a plain
+	     StringUtils::Split, no bracket awareness and no escape, so
+	     Addon.SettingInt(id,setting) is torn in half and logs "unmatched
+	     parentheses". Skin.String takes one argument, so it reads back directly.
+	     Measured on office 2026-08-28. -->
+	<variable name="HomeItemLimitVar">
+		<value condition="String.IsEqual(Skin.String(home_items),5)">5</value>
+		<value condition="String.IsEqual(Skin.String(home_items),10)">10</value>
+		<value condition="String.IsEqual(Skin.String(home_items),20)">20</value>
+		<value condition="String.IsEqual(Skin.String(home_items),25)">25</value>
+		<value>15</value>
+	</variable>
 	<variable name="RatingSettingLabel2Var">
 		<value condition="Skin.HasSetting(circle_rating)">$LOCALIZE[563]</value>
 		<value condition="Skin.HasSetting(circle_userrating)">$LOCALIZE[38018]</value>

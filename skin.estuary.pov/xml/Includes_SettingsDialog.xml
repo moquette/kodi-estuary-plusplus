@@ -36,6 +36,7 @@
 						<include condition="String.IsEqual(window(home).Property(settingsdialog_content),games)">SettingsDialogGameContent</include>
 						<include condition="String.IsEqual(window(home).Property(settingsdialog_content),musicsettings)">SettingsDialogMusicSettingsContent</include>
 						<include condition="String.IsEqual(window(home).Property(settingsdialog_content),moviewidgets)">SettingsDialogMovieWidgetsContent</include>
+						<include condition="String.IsEqual(window(home).Property(settingsdialog_content),addonwidgets)">SettingsDialogAddonWidgetsContent</include>
 						<include condition="String.IsEqual(window(home).Property(settingsdialog_content),tvshowwidgets)">SettingsDialogTVShowWidgetsContent</include>
 						<include condition="String.IsEqual(window(home).Property(settingsdialog_content),musicwidgets)">SettingsDialogMusicWidgetsContent</include>
 						<include condition="String.IsEqual(window(home).Property(settingsdialog_content),musicvideowidgets)">SettingsDialogMusicVideoWidgetsContent</include>
@@ -300,6 +301,59 @@
 			<label>Watched</label>
 			<onclick>Skin.ToggleSetting(home_movies_pov_watched)</onclick>
 			<selected>Skin.HasSetting(home_movies_pov_watched)</selected>
+		</control>
+	</include>
+	<!-- Add-ons page sections. Every row here is ON by default, so each key is a
+	     "no" flag and <selected> is negated, the same inversion the POV rows above
+	     use: a skin setting cannot tell false from unset, so a default-on toggle
+	     can only be expressed as a key whose PRESENCE hides the row. Do not switch
+	     any of these to the bare home_addons_* form, which would silently default
+	     that section to hidden. Labels reuse the same $LOCALIZE ids as the widget
+	     headers in Home.xml so the dialog and the page never drift apart. -->
+	<include name="SettingsDialogAddonWidgetsContent">
+		<control type="radiobutton" id="22101">
+			<include>DialogSettingButton</include>
+			<label>$LOCALIZE[31148]</label>
+			<onclick>Skin.ToggleSetting(home_no_addons_categories_widget)</onclick>
+			<selected>!Skin.HasSetting(home_no_addons_categories_widget)</selected>
+		</control>
+		<control type="radiobutton" id="22102">
+			<include>DialogSettingButton</include>
+			<label>$LOCALIZE[1037]</label>
+			<onclick>Skin.ToggleSetting(home_no_addons_video_widget)</onclick>
+			<selected>!Skin.HasSetting(home_no_addons_video_widget)</selected>
+		</control>
+		<control type="radiobutton" id="22103">
+			<include>DialogSettingButton</include>
+			<label>$LOCALIZE[1038]</label>
+			<onclick>Skin.ToggleSetting(home_no_addons_music_widget)</onclick>
+			<selected>!Skin.HasSetting(home_no_addons_music_widget)</selected>
+		</control>
+		<control type="radiobutton" id="22104">
+			<include>DialogSettingButton</include>
+			<label>$LOCALIZE[35049]</label>
+			<onclick>Skin.ToggleSetting(home_no_addons_game_widget)</onclick>
+			<selected>!Skin.HasSetting(home_no_addons_game_widget)</selected>
+			<visible>System.GetBool(gamesgeneral.enable)</visible>
+		</control>
+		<control type="radiobutton" id="22105">
+			<include>DialogSettingButton</include>
+			<label>$LOCALIZE[1043]</label>
+			<onclick>Skin.ToggleSetting(home_no_addons_executable_widget)</onclick>
+			<selected>!Skin.HasSetting(home_no_addons_executable_widget)</selected>
+		</control>
+		<control type="radiobutton" id="22106">
+			<include>DialogSettingButton</include>
+			<label>$LOCALIZE[20244]</label>
+			<onclick>Skin.ToggleSetting(home_no_addons_android_widget)</onclick>
+			<selected>!Skin.HasSetting(home_no_addons_android_widget)</selected>
+			<visible>System.Platform.Android</visible>
+		</control>
+		<control type="radiobutton" id="22107">
+			<include>DialogSettingButton</include>
+			<label>$LOCALIZE[1039]</label>
+			<onclick>Skin.ToggleSetting(home_no_addons_image_widget)</onclick>
+			<selected>!Skin.HasSetting(home_no_addons_image_widget)</selected>
 		</control>
 	</include>
 	<include name="SettingsDialogTVShowWidgetsContent">

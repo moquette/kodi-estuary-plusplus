@@ -3,6 +3,12 @@
 	<defaultcontrol>9000</defaultcontrol>
 	<backgroundcolor>background</backgroundcolor>
 	<onload condition="String.IsEmpty(Skin.String(background_overlay))">Skin.SetString(background_overlay,1)</onload>
+	<!-- Normalises the home row size before control 709 can be reached. This tests
+	     for "not one of the five" rather than "empty", so it repairs a hand edited
+	     or stale value as well as an unset one. Without that, a value outside the
+	     set would match none of 709's conditions and the row would be a dead
+	     button. -->
+	<onload condition="!String.IsEqual(Skin.String(home_items),5) + !String.IsEqual(Skin.String(home_items),10) + !String.IsEqual(Skin.String(home_items),15) + !String.IsEqual(Skin.String(home_items),20) + !String.IsEqual(Skin.String(home_items),25)">Skin.SetString(home_items,15)</onload>
 	<controls>
 		<include>DefaultBackground</include>
 		<control type="multiimage">
@@ -66,6 +72,61 @@
 					<include>DefaultSettingButton</include>
 					<onclick>Skin.SelectBool(31024, 38018|circle_userrating, 563|circle_rating, 16018|circle_none)</onclick>
 					<label2>$VAR[RatingSettingLabel2Var]</label2>
+				</control>
+				<!-- Home widget row size, was hardcoded at 15 in nine places. It is a
+				     stepper on a plain button, with no dialog anywhere: LEFT steps
+				     down and stops at 5, RIGHT steps up and stops at 25, and OK
+				     cycles forward and wraps 25 back to 5. Left and right are
+				     directional, so a wrap on them would swing the whole range on one
+				     press with no cue; OK is not directional and there is only one of
+				     it, so it has to wrap or the row goes dead at 25.
+				     Every other route Kodi offers is closed, all measured against the
+				     Kodi 22 source, so do not "improve" this back into one of them:
+				       - Addon.OpenSettings on a skin is refused. CSkinInfo::HasSettings
+				         and HasUserSettings return false unconditionally (Skin.h:216-217,
+				         "Don't handle skin settings like normal addon settings"), which
+				         is why Kodi answers "This add-on can't be configured".
+				       - There is no slider or spinner builtin. SkinBuiltins.cpp:725-746
+				         is the complete list, and Skin.SetNumeric always opens a keypad
+				         and never clamps.
+				       - spincontrolex in a skin's own window is a costume.
+				         GUIControlFactory.cpp:1693-1706 builds it with no items and
+				         parses no tag that would add any, and SetClickActions is not
+				         called for it, so its <onclick> is discarded in silence.
+				       - Sliders bind to a hardcoded whitelist of seek, pvr.seek and
+				         volume (GUISliderControl.cpp:26-29).
+				     Builtins in a navigation slot are legitimate and already shipped in
+				     this skin at MusicOSD.xml:281-282. CGUIWindow::OnMove runs
+				     ExecuteActions before GetNavigation (GUIWindow.cpp:970-971), and
+				     ExecuteActions skips integers while GetNavigation skips
+				     non-integers (GUIAction.cpp:66-67, 90), so the two never collide.
+				     ExecuteActions is also two pass, snapshotting every condition
+				     before running any of them (GUIAction.cpp:60-69), which is what
+				     makes the OK wrap safe: no step can cascade into the next.
+				     THE ONE COST: this control defines its own left and right, and a
+				     vertical grouplist only applies its own left and right to a child
+				     with replace=false (GUIControlGroupList.cpp:351-352, and
+				     GUIControl.cpp:528-533 where replace=false means "only if unset"),
+				     so left no longer walks back to the category list 9000 from THIS
+				     row. Up and down still move normally, and both neighbours keep
+				     left, so the row is escapable. -->
+				<control type="button" id="709">
+					<label>$LOCALIZE[31616]</label>
+					<include>DefaultSettingButton</include>
+					<label2>$VAR[HomeItemLimitVar]</label2>
+					<onclick condition="String.IsEqual(Skin.String(home_items),25)">Skin.SetString(home_items,5)</onclick>
+					<onclick condition="String.IsEqual(Skin.String(home_items),20)">Skin.SetString(home_items,25)</onclick>
+					<onclick condition="String.IsEqual(Skin.String(home_items),15)">Skin.SetString(home_items,20)</onclick>
+					<onclick condition="String.IsEqual(Skin.String(home_items),10)">Skin.SetString(home_items,15)</onclick>
+					<onclick condition="String.IsEqual(Skin.String(home_items),5)">Skin.SetString(home_items,10)</onclick>
+					<onright condition="String.IsEqual(Skin.String(home_items),20)">Skin.SetString(home_items,25)</onright>
+					<onright condition="String.IsEqual(Skin.String(home_items),15)">Skin.SetString(home_items,20)</onright>
+					<onright condition="String.IsEqual(Skin.String(home_items),10)">Skin.SetString(home_items,15)</onright>
+					<onright condition="String.IsEqual(Skin.String(home_items),5)">Skin.SetString(home_items,10)</onright>
+					<onleft condition="String.IsEqual(Skin.String(home_items),25)">Skin.SetString(home_items,20)</onleft>
+					<onleft condition="String.IsEqual(Skin.String(home_items),20)">Skin.SetString(home_items,15)</onleft>
+					<onleft condition="String.IsEqual(Skin.String(home_items),15)">Skin.SetString(home_items,10)</onleft>
+					<onleft condition="String.IsEqual(Skin.String(home_items),10)">Skin.SetString(home_items,5)</onleft>
 				</control>
 				<control type="button" id="707">
 					<label>$LOCALIZE[31164]</label>
@@ -272,11 +333,17 @@
 					<selected>!Skin.HasSetting(HomeMenuNoProgramsButton)</selected>
 					<onclick>Skin.ToggleSetting(HomeMenuNoProgramsButton)</onclick>
 				</control>
-				<control type="radiobutton" id="6140">
-					<label>- $LOCALIZE[31008]</label>
+				<!-- Opens the same dialog Movies and TV shows use, listing every
+				     section of the Add-ons page. Replaced the single inline
+				     Categories radiobutton that used to sit here; that toggle now
+				     lives inside the dialog and keeps its original setting key, so
+				     boxes that already had it set are unaffected. -->
+				<control type="button" id="6141">
+					<label>- $LOCALIZE[31040]</label>
 					<include>DefaultSettingButton</include>
-					<selected>!Skin.HasSetting(home_no_addons_categories_widget)</selected>
-					<onclick>Skin.ToggleSetting(home_no_addons_categories_widget)</onclick>
+					<onclick>SetProperty(settingsdialog_header,$LOCALIZE[31040] - $LOCALIZE[24001],home)</onclick>
+					<onclick>SetProperty(settingsdialog_content,addonwidgets,home)</onclick>
+					<onclick>ActivateWindow(1101)</onclick>
 					<enable>!Skin.HasSetting(HomeMenuNoProgramsButton)</enable>
 				</control>
 				<control type="radiobutton" id="615">

@@ -1004,3 +1004,12 @@ msgstr ""
 msgctxt "#31615"
 msgid "Subtitle language"
 msgstr ""
+
+#: /xml/SkinSettings.xml
+#. Label for the setting that limits how many entries each home screen widget row
+#. shows. The value beside it is a bare numeral rendered by HomeItemLimitVar, so it
+#. needs no string ids of its own; 31617 to 31621 held those numerals for an
+#. abandoned Skin.SelectBool design and were removed with it.
+msgctxt "#31616"
+msgid "Number of items to show in home screen lists"
+msgstr ""
