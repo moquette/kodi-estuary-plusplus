@@ -2,3 +2,9 @@
 ._*
 __MACOSX/
 *.zip
+
+# Build output. tools/build_skin.py writes dist/<id>-<version>.zip, which is
+# reproducible from any commit, so it is never tracked. The *.zip line above
+# already covered today's contents; this covers anything non-zip a future build
+# step drops in there.
+/dist/
