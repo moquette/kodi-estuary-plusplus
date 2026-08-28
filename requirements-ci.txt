@@ -1,0 +1,11 @@
+# Pinned CI tooling. SINGLE SOURCE OF TRUTH for .github/workflows/tests.yml.
+#
+# Pinned for the same reason as every other repo in this tree: on 2026-07-23
+# ruff 0.16.0 moved rules into its stable set and failed a sibling repo's
+# scheduled deploy two nights running, on code nobody had touched. The rule set
+# lives in ruff.toml so a ruff release cannot change what "clean" means here.
+#
+# Bump the pin here ONLY, in a commit that also clears whatever the new version
+# flags. Never bump it to make a red build go green.
+pytest==9.1.1
+ruff==0.15.22

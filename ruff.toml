@@ -1,0 +1,15 @@
+# Version AND rule set are both declared, matching requirements-ci.txt.
+#
+# The floating input was never ruff's version, it was ruff's DEFAULT rule set,
+# which a release is free to change. Declaring the set is what makes two ruff
+# versions agree. These four are ruff's pre-0.16 defaults, written down rather
+# than inherited: E4 imports, E7 statements, E9 syntax/IO errors, F pyflakes.
+#
+# required-version also disarms the global auto-format hook, which runs
+# `ruff format` then `ruff check --fix` with whatever ruff is on PATH after
+# every Python edit. scripts/services.py ships inside a byte-reproducible zip,
+# so a silent wholesale rewrite is exactly what must not happen to it.
+required-version = "==0.15.22"
+
+[lint]
+select = ["E4", "E7", "E9", "F"]

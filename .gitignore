@@ -8,3 +8,7 @@ __MACOSX/
 # already covered today's contents; this covers anything non-zip a future build
 # step drops in there.
 /dist/
+
+# Python bytecode from the test run and the boot service.
+__pycache__/
+*.pyc

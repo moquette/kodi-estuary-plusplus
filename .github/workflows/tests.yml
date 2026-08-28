@@ -1,0 +1,24 @@
+name: tests
+
+# The boot service is tvOS-only and MUST stay a no-op on Fire OS. That is
+# asserted by tests/test_services_keymap.py, and this workflow is what makes the
+# assertion binding rather than intended.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-ci.txt
+      - run: python -m pytest tests/ -q
+      - run: ruff check skin.estuary.pov/scripts/ tools/ tests/
+      - name: the zip must be byte-reproducible
+        run: python tools/build_skin.py skin.estuary.pov --check
