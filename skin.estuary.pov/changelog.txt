@@ -1,3 +1,19 @@
+[B]1.2.3[/B]
+• "Number of items to show in home screen lists" now applies to every home row.
+  The Movies and TV shows poster rows already followed it. The Music, Music
+  videos, Add-ons, Games, TV and Radio rows were fixed at 15, and no value of
+  the setting could move them.
+• The live TV and radio rows that carried no limit at all were rendering their
+  whole directory rather than a row. Measured on a Fire TV with the setting at
+  5: the TV channel groups row held all 12 groups while the poster rows held 5.
+• The random music video artists row was pinned to 10 and now follows the
+  setting like the rest.
+• The Categories rows stay at 20 on purpose. They are navigation rather than
+  content, so shrinking them would remove entries such as Playlists and Add-ons.
+• The setting takes effect without restarting Kodi, a few seconds after the row
+  is next on screen. The button itself is unchanged: one press cycles 5, 10, 15,
+  20, 25, and left and right step and stop at the ends.
+
 [B]1.2.2[/B]
 • Apple TV only: writes a stand-in for the _scproxy module Kodi 22's tvOS build
   does not ship. Without it urllib.request cannot be imported, so every add-on

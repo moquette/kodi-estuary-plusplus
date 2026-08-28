@@ -422,7 +422,6 @@
 							<param name="sortorder" value="descending"/>
 							<param name="widget_header" value="$LOCALIZE[31016]"/>
 							<param name="widget_target" value="tvchannels"/>
-							<param name="item_limit" value="$VAR[HomeItemLimitVar]"/>
 							<param name="list_id" value="12200"/>
 							<param name="info_update" value="5000"/>
 						</include>
@@ -432,7 +431,6 @@
 							<param name="sortorder" value="descending"/>
 							<param name="widget_header" value="$LOCALIZE[31015]"/>
 							<param name="widget_target" value="tvrecordings"/>
-							<param name="item_limit" value="$VAR[HomeItemLimitVar]"/>
 							<param name="list_id" value="12300"/>
 							<param name="label" value="$INFO[ListItem.Title]$INFO[ListItem.Date, (,)]"/>
 							<param name="label2" value="$VAR[SeasonEpisodeAndNameLabel]"/>
@@ -443,7 +441,6 @@
 							<param name="sortby" value="date"/>
 							<param name="widget_header" value="$LOCALIZE[19040]"/>
 							<param name="widget_target" value="tvtimers"/>
-							<param name="item_limit" value="$VAR[HomeItemLimitVar]"/>
 							<param name="list_id" value="12400"/>
 							<param name="label" value="$INFO[ListItem.Title]$INFO[ListItem.Date, (,)]"/>
 							<param name="label2" value="$VAR[SeasonEpisodeAndNameLabel]"/>
@@ -469,7 +466,6 @@
 							<param name="sortorder" value="descending"/>
 							<param name="widget_header" value="$LOCALIZE[855]"/>
 							<param name="widget_target" value="tvchannels"/>
-							<param name="item_limit" value="$VAR[HomeItemLimitVar]"/>
 							<param name="list_id" value="12700"/>
 							<param name="info_update" value="5000"/>
 							<param name="label2" value="$INFO[ListItem.DateAdded]"/>
@@ -505,7 +501,6 @@
 							<param name="sortorder" value="descending"/>
 							<param name="widget_header" value="$LOCALIZE[31018]"/>
 							<param name="widget_target" value="radiochannels"/>
-							<param name="item_limit" value="$VAR[HomeItemLimitVar]"/>
 							<param name="list_id" value="13200"/>
 							<param name="info_update" value="5000"/>
 						</include>
@@ -515,7 +510,6 @@
 							<param name="sortorder" value="descending"/>
 							<param name="widget_header" value="$LOCALIZE[31015]"/>
 							<param name="widget_target" value="radiorecordings"/>
-							<param name="item_limit" value="$VAR[HomeItemLimitVar]"/>
 							<param name="list_id" value="13300"/>
 							<param name="label" value="$INFO[ListItem.Title]$INFO[ListItem.Date, (,)]"/>
 							<param name="label2" value="$VAR[SeasonEpisodeAndNameLabel]"/>
@@ -526,7 +520,6 @@
 							<param name="sortby" value="date"/>
 							<param name="widget_header" value="$LOCALIZE[19040]"/>
 							<param name="widget_target" value="radiotimers"/>
-							<param name="item_limit" value="$VAR[HomeItemLimitVar]"/>
 							<param name="list_id" value="13400"/>
 							<param name="label" value="$INFO[ListItem.Title]$INFO[ListItem.Date, (,)]"/>
 							<param name="label2" value="$VAR[SeasonEpisodeAndNameLabel]"/>
@@ -552,7 +545,6 @@
 							<param name="sortorder" value="descending"/>
 							<param name="widget_header" value="$LOCALIZE[855]"/>
 							<param name="widget_target" value="radiochannels"/>
-							<param name="item_limit" value="$VAR[HomeItemLimitVar]"/>
 							<param name="list_id" value="13700"/>
 							<param name="info_update" value="5000"/>
 							<param name="label2" value="$INFO[ListItem.DateAdded]"/>
@@ -804,7 +796,6 @@
 							<param name="widget_target" value="music"/>
 							<param name="browse_mode" value="never"/>
 							<param name="list_id" value="16200"/>
-							<param name="widget_limit" value="10"/>
 						</include>
 						<include content="WidgetListEpisodes" condition="Library.HasContent(musicvideos) + !Skin.HasSetting(show_musicvideoposter) + !Skin.HasSetting(home_no_musicvideos_random_widget)">
 							<param name="content_path" value="special://skin/playlists/random_musicvideos.xsp"/>

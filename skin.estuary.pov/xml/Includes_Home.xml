@@ -154,7 +154,11 @@
 		<param name="sortby"></param>
 		<param name="visible">True</param>
 		<param name="sortorder">ascending</param>
-		<param name="widget_limit">15</param>
+		<!-- Reads the user's home row size (control 709 in SkinSettings.xml).
+		     This was a hard 15, and a hard 15 is exactly the row length the owner
+		     kept counting while the setting said 10 or 20: the poster rows obeyed
+		     him and these did not. Keep it a $VAR and never a literal. -->
+		<param name="widget_limit">$VAR[HomeItemLimitVar]</param>
 		<param name="browse_mode">auto</param>
 		<definition>
 			<include content="CategoryLabel">
@@ -215,7 +219,9 @@
 		<param name="sortby"></param>
 		<param name="visible">True</param>
 		<param name="sortorder">ascending</param>
-		<param name="widget_limit">15</param>
+		<!-- Same as WidgetListEpisodes above: was a hard 15 that no setting could
+		     move. -->
+		<param name="widget_limit">$VAR[HomeItemLimitVar]</param>
 		<param name="fallback_icon">DefaultAudio.png</param>
 		<param name="onclick_condition">false</param>
 		<param name="browse_mode">auto</param>
@@ -275,6 +281,14 @@
 		</definition>
 	</include>
 	<include name="WidgetListCategories">
+		<!-- DELIBERATELY a literal, and the only widget include here that is not
+		     wired to HomeItemLimitVar. These rows are navigation, not content:
+		     their content_path is a root like library://video/, addons://,
+		     sources://video/, special://videoplaylists/ or pvr://tv/, plus the
+		     static MovieSubmenuItems / TVShowSubmenuItems entries. Setting the
+		     home row size to 5 should shorten the Trending row, not delete
+		     Playlists and Add-ons from the user's navigation. 20 is a ceiling
+		     these roots do not reach. -->
 		<param name="item_limit">20</param>
 		<param name="icon">$INFO[ListItem.Icon]</param>
 		<param name="icon_height">120</param>
@@ -416,6 +430,15 @@
 		<param name="label">$INFO[ListItem.Label]</param>
 		<param name="label2">$INFO[ListItem.Title]</param>
 		<param name="info_update">0</param>
+		<!-- This default was MISSING, and its absence was not visible as a fault.
+		     A missing $PARAM resolves to an empty string, and CDirectoryProvider
+		     treats an empty limit as UNLIMITED rather than as none, so the four
+		     call sites that pass no item_limit rendered their whole directory and
+		     simply looked like long rows. MEASURED on the office Fire TV with
+		     home_items=5: the TV channel groups row (list 12500) held all 12
+		     groups while the poster rows held 5. Do not delete this line as an
+		     unused default. -->
+		<param name="item_limit">$VAR[HomeItemLimitVar]</param>
 		<param name="browse_mode">auto</param>
 		<definition>
 			<include content="CategoryLabel">
