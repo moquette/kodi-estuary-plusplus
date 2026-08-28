@@ -237,101 +237,131 @@
 	<include name="SettingsDialogMovieWidgetsContent">
 		<control type="radiobutton" id="22101">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[31148]</label>
-			<onclick>Skin.ToggleSetting(home_no_movies_categories_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_movies_categories_widget)</selected>
-		</control>
-		<control type="button" id="22108">
-			<label>- $LOCALIZE[31157]</label>
-			<include>DialogSettingButton</include>
-			<onclick condition="System.AddonIsEnabled(plugin.library.node.editor)">Dialog.Close(1101)</onclick>
-			<onclick condition="System.AddonIsEnabled(plugin.library.node.editor)">ActivateWindow(programs,plugin://plugin.library.node.editor/?ltype=video,return)</onclick>
-			<onclick condition="System.HasAddon(plugin.library.node.editor) + !System.AddonIsEnabled(plugin.library.node.editor)">EnableAddon(plugin.library.node.editor)</onclick>
-			<onclick condition="!System.HasAddon(plugin.library.node.editor)">InstallAddon(plugin.library.node.editor)</onclick>
-			<enable>!Skin.HasSetting(home_no_movies_categories_widget)</enable>
+			<label>In Progress</label>
+			<onclick>Skin.ToggleSetting(home_no_movies_pov_inprogress)</onclick>
+			<selected>!Skin.HasSetting(home_no_movies_pov_inprogress)</selected>
 		</control>
 		<control type="radiobutton" id="22102">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[31010]</label>
-			<onclick>Skin.ToggleSetting(home_no_movies_inprogress_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_movies_inprogress_widget)</selected>
+			<label>Trending</label>
+			<onclick>Skin.ToggleSetting(home_no_movies_pov_trending)</onclick>
+			<selected>!Skin.HasSetting(home_no_movies_pov_trending)</selected>
 		</control>
 		<control type="radiobutton" id="22103">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[20386]</label>
-			<onclick>Skin.ToggleSetting(home_no_movies_recentlyadded_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_movies_recentlyadded_widget)</selected>
+			<label>Popular</label>
+			<onclick>Skin.ToggleSetting(home_no_movies_pov_popular)</onclick>
+			<selected>!Skin.HasSetting(home_no_movies_pov_popular)</selected>
 		</control>
 		<control type="radiobutton" id="22104">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[31007]</label>
-			<onclick>Skin.ToggleSetting(home_no_movies_unwatched_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_movies_unwatched_widget)</selected>
+			<label>Trending Recent</label>
+			<onclick>Skin.ToggleSetting(home_movies_pov_trendingrecent)</onclick>
+			<selected>Skin.HasSetting(home_movies_pov_trendingrecent)</selected>
 		</control>
 		<control type="radiobutton" id="22105">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[31006]</label>
-			<onclick>Skin.ToggleSetting(home_no_movies_random_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_movies_random_widget)</selected>
+			<label>Most Watched This Week</label>
+			<onclick>Skin.ToggleSetting(home_movies_pov_mostwatched)</onclick>
+			<selected>Skin.HasSetting(home_movies_pov_mostwatched)</selected>
 		</control>
 		<control type="radiobutton" id="22106">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[135]</label>
-			<onclick>Skin.ToggleSetting(home_no_movies_genres_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_movies_genres_widget)</selected>
+			<label>Premieres</label>
+			<onclick>Skin.ToggleSetting(home_movies_pov_premieres)</onclick>
+			<selected>Skin.HasSetting(home_movies_pov_premieres)</selected>
 		</control>
 		<control type="radiobutton" id="22107">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[31075]</label>
-			<onclick>Skin.ToggleSetting(home_no_movies_sets_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_movies_sets_widget)</selected>
+			<label>Latest Releases</label>
+			<onclick>Skin.ToggleSetting(home_movies_pov_latestreleases)</onclick>
+			<selected>Skin.HasSetting(home_movies_pov_latestreleases)</selected>
+		</control>
+		<control type="radiobutton" id="22108">
+			<include>DialogSettingButton</include>
+			<label>Up Coming</label>
+			<onclick>Skin.ToggleSetting(home_movies_pov_upcoming)</onclick>
+			<selected>Skin.HasSetting(home_movies_pov_upcoming)</selected>
+		</control>
+		<control type="radiobutton" id="22109">
+			<include>DialogSettingButton</include>
+			<label>Blockbusters</label>
+			<onclick>Skin.ToggleSetting(home_movies_pov_blockbusters)</onclick>
+			<selected>Skin.HasSetting(home_movies_pov_blockbusters)</selected>
+		</control>
+		<control type="radiobutton" id="22110">
+			<include>DialogSettingButton</include>
+			<label>Oscar Winners</label>
+			<onclick>Skin.ToggleSetting(home_movies_pov_oscarwinners)</onclick>
+			<selected>Skin.HasSetting(home_movies_pov_oscarwinners)</selected>
+		</control>
+		<control type="radiobutton" id="22111">
+			<include>DialogSettingButton</include>
+			<label>Watched</label>
+			<onclick>Skin.ToggleSetting(home_movies_pov_watched)</onclick>
+			<selected>Skin.HasSetting(home_movies_pov_watched)</selected>
 		</control>
 	</include>
 	<include name="SettingsDialogTVShowWidgetsContent">
 		<control type="radiobutton" id="22101">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[31148]</label>
-			<onclick>Skin.ToggleSetting(home_no_tvshows_categories_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_tvshows_categories_widget)</selected>
-		</control>
-		<control type="button" id="22108">
-			<label>- $LOCALIZE[31157]</label>
-			<include>DialogSettingButton</include>
-			<onclick condition="System.AddonIsEnabled(plugin.library.node.editor)">Dialog.Close(1101)</onclick>
-			<onclick condition="System.AddonIsEnabled(plugin.library.node.editor)">ActivateWindow(programs,plugin://plugin.library.node.editor/?ltype=video,return)</onclick>
-			<onclick condition="System.HasAddon(plugin.library.node.editor) + !System.AddonIsEnabled(plugin.library.node.editor)">EnableAddon(plugin.library.node.editor)</onclick>
-			<onclick condition="!System.HasAddon(plugin.library.node.editor)">InstallAddon(plugin.library.node.editor)</onclick>
-			<enable>!Skin.HasSetting(home_no_tvshows_categories_widget)</enable>
+			<label>In Progress Episodes</label>
+			<onclick>Skin.ToggleSetting(home_no_tvshows_pov_inprogressep)</onclick>
+			<selected>!Skin.HasSetting(home_no_tvshows_pov_inprogressep)</selected>
 		</control>
 		<control type="radiobutton" id="22102">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[626]</label>
-			<onclick>Skin.ToggleSetting(home_no_tvshows_inprogress_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_tvshows_inprogress_widget)</selected>
+			<label>Next Episodes</label>
+			<onclick>Skin.ToggleSetting(home_no_tvshows_pov_nextep)</onclick>
+			<selected>!Skin.HasSetting(home_no_tvshows_pov_nextep)</selected>
 		</control>
 		<control type="radiobutton" id="22103">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[20387]</label>
-			<onclick>Skin.ToggleSetting(home_no_tvshows_recentlyaddedepisodes_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_tvshows_recentlyaddedepisodes_widget)</selected>
+			<label>In Progress TV Shows</label>
+			<onclick>Skin.ToggleSetting(home_no_tvshows_pov_inprogresstv)</onclick>
+			<selected>!Skin.HasSetting(home_no_tvshows_pov_inprogresstv)</selected>
 		</control>
 		<control type="radiobutton" id="22104">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[31122]</label>
-			<onclick>Skin.ToggleSetting(home_no_tvshows_unwatched_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_tvshows_unwatched_widget)</selected>
+			<label>Trending</label>
+			<onclick>Skin.ToggleSetting(home_no_tvshows_pov_trending)</onclick>
+			<selected>!Skin.HasSetting(home_no_tvshows_pov_trending)</selected>
 		</control>
 		<control type="radiobutton" id="22105">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[135]</label>
-			<onclick>Skin.ToggleSetting(home_no_tvshows_genres_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_tvshows_genres_widget)</selected>
+			<label>Popular</label>
+			<onclick>Skin.ToggleSetting(home_no_tvshows_pov_popular)</onclick>
+			<selected>!Skin.HasSetting(home_no_tvshows_pov_popular)</selected>
 		</control>
 		<control type="radiobutton" id="22106">
 			<include>DialogSettingButton</include>
-			<label>$LOCALIZE[20388]</label>
-			<onclick>Skin.ToggleSetting(home_no_tvshows_studios_widget)</onclick>
-			<selected>!Skin.HasSetting(home_no_tvshows_studios_widget)</selected>
+			<label>Trending Recent</label>
+			<onclick>Skin.ToggleSetting(home_tvshows_pov_trendingrecent)</onclick>
+			<selected>Skin.HasSetting(home_tvshows_pov_trendingrecent)</selected>
+		</control>
+		<control type="radiobutton" id="22107">
+			<include>DialogSettingButton</include>
+			<label>Most Watched This Week</label>
+			<onclick>Skin.ToggleSetting(home_tvshows_pov_mostwatched)</onclick>
+			<selected>Skin.HasSetting(home_tvshows_pov_mostwatched)</selected>
+		</control>
+		<control type="radiobutton" id="22108">
+			<include>DialogSettingButton</include>
+			<label>Premieres</label>
+			<onclick>Skin.ToggleSetting(home_tvshows_pov_premieres)</onclick>
+			<selected>Skin.HasSetting(home_tvshows_pov_premieres)</selected>
+		</control>
+		<control type="radiobutton" id="22109">
+			<include>DialogSettingButton</include>
+			<label>Up Coming</label>
+			<onclick>Skin.ToggleSetting(home_tvshows_pov_upcoming)</onclick>
+			<selected>Skin.HasSetting(home_tvshows_pov_upcoming)</selected>
+		</control>
+		<control type="radiobutton" id="22110">
+			<include>DialogSettingButton</include>
+			<label>Watched</label>
+			<onclick>Skin.ToggleSetting(home_tvshows_pov_watched)</onclick>
+			<selected>Skin.HasSetting(home_tvshows_pov_watched)</selected>
 		</control>
 	</include>
 	<include name="SettingsDialogMusicWidgetsContent">

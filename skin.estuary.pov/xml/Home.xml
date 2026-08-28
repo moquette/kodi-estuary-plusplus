@@ -50,24 +50,75 @@
 					</include>
 					<control type="grouplist" id="5001">
 						<include>WidgetGroupListCommon</include>
-						<pagecontrol>5010</pagecontrol>
-						<include content="WidgetListPoster">
+						<!-- POV rows. Toggled from Skin settings > Main menu items > Movies >
+						     Edit widgets. The three shipped on are gated with !HasSetting so an
+						     unset skin shows them; the rest are gated with HasSetting so they
+						     stay off until asked for. -->
+						<include content="WidgetListPoster" condition="!Skin.HasSetting(home_no_movies_pov_inprogress)">
 							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=in_progress_movies"/>
 							<param name="widget_header" value="In Progress"/>
 							<param name="widget_target" value="videos"/>
-							<param name="list_id" value="5100"/>
+							<param name="list_id" value="5101"/>
 						</include>
-						<include content="WidgetListPoster">
+						<include content="WidgetListPoster" condition="!Skin.HasSetting(home_no_movies_pov_trending)">
 							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=trakt_movies_trending"/>
 							<param name="widget_header" value="Trending"/>
 							<param name="widget_target" value="videos"/>
-							<param name="list_id" value="5200"/>
+							<param name="list_id" value="5102"/>
 						</include>
-						<include content="WidgetListPoster">
+						<include content="WidgetListPoster" condition="!Skin.HasSetting(home_no_movies_pov_popular)">
 							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=tmdb_movies_popular"/>
 							<param name="widget_header" value="Popular"/>
 							<param name="widget_target" value="videos"/>
-							<param name="list_id" value="5300"/>
+							<param name="list_id" value="5103"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_movies_pov_trendingrecent)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=trakt_movies_trending_recent"/>
+							<param name="widget_header" value="Trending Recent"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="5104"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_movies_pov_mostwatched)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=trakt_movies_most_watched"/>
+							<param name="widget_header" value="Most Watched This Week"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="5105"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_movies_pov_premieres)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=tmdb_movies_premieres"/>
+							<param name="widget_header" value="Premieres"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="5106"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_movies_pov_latestreleases)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=tmdb_movies_latest_releases"/>
+							<param name="widget_header" value="Latest Releases"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="5107"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_movies_pov_upcoming)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=tmdb_movies_upcoming"/>
+							<param name="widget_header" value="Up Coming"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="5108"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_movies_pov_blockbusters)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=tmdb_movies_blockbusters"/>
+							<param name="widget_header" value="Blockbusters"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="5109"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_movies_pov_oscarwinners)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=tmdb_oscar_winners"/>
+							<param name="widget_header" value="Oscar Winners"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="5110"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_movies_pov_watched)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_movie_list&amp;action=watched_movies"/>
+							<param name="widget_header" value="Watched"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="5111"/>
 						</include>
 					</control>
 					<include content="WidgetScrollbar" condition="Skin.HasSetting(touchmode)">
@@ -82,35 +133,66 @@
 					<control type="grouplist" id="6001">
 						<include>WidgetGroupListCommon</include>
 						<pagecontrol>6010</pagecontrol>
-						<include content="WidgetListPoster">
+						<!-- POV rows. Same two-polarity scheme as the Movies tab above. -->
+						<include content="WidgetListPoster" condition="!Skin.HasSetting(home_no_tvshows_pov_inprogressep)">
 							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_in_progress_episode"/>
 							<param name="widget_header" value="In Progress Episodes"/>
 							<param name="widget_target" value="videos"/>
-							<param name="list_id" value="6100"/>
+							<param name="list_id" value="6101"/>
 						</include>
-						<include content="WidgetListPoster">
+						<include content="WidgetListPoster" condition="!Skin.HasSetting(home_no_tvshows_pov_nextep)">
 							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_next_episode"/>
 							<param name="widget_header" value="Next Episodes"/>
 							<param name="widget_target" value="videos"/>
-							<param name="list_id" value="6200"/>
+							<param name="list_id" value="6102"/>
 						</include>
-						<include content="WidgetListPoster">
+						<include content="WidgetListPoster" condition="!Skin.HasSetting(home_no_tvshows_pov_inprogresstv)">
 							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_tvshow_list&amp;action=in_progress_tvshows"/>
 							<param name="widget_header" value="In Progress TV Shows"/>
 							<param name="widget_target" value="videos"/>
-							<param name="list_id" value="6300"/>
+							<param name="list_id" value="6103"/>
 						</include>
-						<include content="WidgetListPoster">
+						<include content="WidgetListPoster" condition="!Skin.HasSetting(home_no_tvshows_pov_trending)">
 							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_tvshow_list&amp;action=trakt_tv_trending"/>
 							<param name="widget_header" value="Trending"/>
 							<param name="widget_target" value="videos"/>
-							<param name="list_id" value="6400"/>
+							<param name="list_id" value="6104"/>
 						</include>
-						<include content="WidgetListPoster">
+						<include content="WidgetListPoster" condition="!Skin.HasSetting(home_no_tvshows_pov_popular)">
 							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_tvshow_list&amp;action=tmdb_tv_popular"/>
 							<param name="widget_header" value="Popular"/>
 							<param name="widget_target" value="videos"/>
-							<param name="list_id" value="6500"/>
+							<param name="list_id" value="6105"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_tvshows_pov_trendingrecent)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_tvshow_list&amp;action=trakt_tv_trending_recent"/>
+							<param name="widget_header" value="Trending Recent"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="6106"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_tvshows_pov_mostwatched)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_tvshow_list&amp;action=trakt_tv_most_watched"/>
+							<param name="widget_header" value="Most Watched This Week"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="6107"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_tvshows_pov_premieres)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_tvshow_list&amp;action=tmdb_tv_premieres"/>
+							<param name="widget_header" value="Premieres"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="6108"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_tvshows_pov_upcoming)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_tvshow_list&amp;action=tmdb_tv_upcoming"/>
+							<param name="widget_header" value="Up Coming"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="6109"/>
+						</include>
+						<include content="WidgetListPoster" condition="Skin.HasSetting(home_tvshows_pov_watched)">
+							<param name="content_path" value="plugin://plugin.video.pov/?mode=build_tvshow_list&amp;action=watched_tvshows"/>
+							<param name="widget_header" value="Watched"/>
+							<param name="widget_target" value="videos"/>
+							<param name="list_id" value="6110"/>
 						</include>
 					</control>
 					<include content="WidgetScrollbar" condition="Skin.HasSetting(touchmode)">
