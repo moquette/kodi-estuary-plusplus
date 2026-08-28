@@ -232,27 +232,79 @@
 	</include>
 	<include name="InfoWallMovieLayout">
 		<param name="focused">false</param>
+		<param name="infolabels">false</param>
 		<definition>
 			<control type="group">
-				<visible>String.IsEmpty(ListItem.Art(poster))</visible>
+				<!-- Poster-less card. Normally driven by empty poster art; in the
+				     Videos search results window (10025) a POV result that TMDb has
+				     no poster for arrives with its poster art set to POV's own white
+				     film-strip placeholder (box_office.png), and a POV "Next Page"
+				     item arrives with the folder/arrow placeholder (item_next.png),
+				     so the poster is not empty and this branch would be skipped,
+				     leaving the bare placeholder on screen. Treating either POV
+				     placeholder as "no real poster" here routes it to the skin's
+				     native titled card with a DefaultMovies fallback, exactly as a
+				     truly poster-less library movie renders. Scoped to the Videos
+				     window so Home and other views are untouched. -->
+				<visible>[String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(season.poster)) + String.IsEmpty(ListItem.Art(animatedposter))] | [Window.IsVisible(10025) + [String.Contains(ListItem.Art(poster),box_office.png) | String.Contains(ListItem.Art(poster),item_next.png)]]</visible>
 				<control type="image">
-					<left>15</left>
-					<top>-10</top>
-					<width>290</width>
-					<height>415</height>
-					<texture>dialogs/dialog-bg-nobo.png</texture>
-					<bordertexture border="21" infill="false">overlays/shadow.png</bordertexture>
+					<left>13</left>
+					<top>-12</top>
+					<width>294</width>
+					<height>404</height>
+					<texture colordiffuse="$VAR[BorderColorVar]" diffuse="masks/poster-border.png">colors/white.png</texture>
+					<aspectratio>stretch</aspectratio>
+					<bordertexture border="21">overlays/shadow.png</bordertexture>
 					<bordersize>20</bordersize>
+					<visible>Skin.HasSetting(show_borders) + !String.IsEqual(listitem.dbtype,genre)</visible>
 				</control>
 				<control type="image">
 					<left>15</left>
 					<top>-10</top>
 					<width>290</width>
-					<height>415</height>
-					<texture colordiffuse="button_focus">colors/grey.png</texture>
+					<height>400</height>
+					<texture diffuse="masks/poster.png">dialogs/dialog-bg-nobo.png</texture>
+					<bordersize>20</bordersize>
+					<visible>Skin.HasSetting(show_borders) + !String.IsEqual(listitem.dbtype,genre)</visible>
+				</control>
+				<control type="image">
+					<left>15</left>
+					<top>-10</top>
+					<width>290</width>
+					<height>400</height>
+					<texture diffuse="masks/poster.png">dialogs/dialog-bg-nobo.png</texture>
+					<bordertexture border="21">overlays/shadow.png</bordertexture>
+					<bordersize>20</bordersize>
+					<visible>Skin.HasSetting(show_borders) + String.IsEqual(listitem.dbtype,genre)</visible>
+				</control>
+				<control type="image">
+					<left>15</left>
+					<top>-10</top>
+					<width>290</width>
+					<height>400</height>
+					<texture diffuse="masks/poster.png">dialogs/dialog-bg-nobo.png</texture>
+					<bordertexture border="21">overlays/shadow.png</bordertexture>
+					<bordersize>20</bordersize>
+					<visible>!Skin.HasSetting(show_borders)</visible>
+				</control>
+				<control type="image">
+					<left>9</left>
+					<top>-16</top>
+					<width>302</width>
+					<height>412</height>
+					<texture colordiffuse="$VAR[SkinColorVar]" diffuse="masks/poster-focus.png">colors/grey.png</texture>
 					<bordersize>20</bordersize>
 					<visible>$PARAM[focused]</visible>
-					<include condition="$PARAM[focused]">Animation_FocusTextureFade</include>
+				</control>
+				<control type="image">
+					<left>9</left>
+					<top>-16</top>
+					<width>302</width>
+					<height>412</height>
+					<texture colordiffuse="$VAR[GradientColorVar]" diffuse="masks/poster-focus.png">colors/gradient.png</texture>
+					<bordersize>20</bordersize>
+					<visible>$PARAM[focused]</visible>
+					<visible>Skin.HasSetting(EnableGradientColor)</visible>
 				</control>
 				<control type="textbox">
 					<left>40</left>
@@ -262,9 +314,10 @@
 					<font>font27</font>
 					<align>center</align>
 					<aligny>center</aligny>
-					<label>$INFO[ListItem.Label]</label>
+					<label>$VAR[ListLabelVar]</label>
 					<autoscroll time="2000" delay="3000" repeat="5000">$PARAM[focused]</autoscroll>
 					<visible>!ListItem.IsParentFolder</visible>
+					<visible>![!Skin.HasSetting(HideWidgetLabels) + Window.IsVisible(Home)  + String.IsEqual(listitem.dbtype,genre)]</visible>
 				</control>
 				<control type="image">
 					<left>24</left>
@@ -274,93 +327,259 @@
 					<texture fallback="DefaultMovies.png" background="true">$INFO[ListItem.Icon]</texture>
 					<aspectratio>scale</aspectratio>
 					<bordersize>20</bordersize>
-				</control>
-			</control>
-			<control type="group">
-				<visible>!String.IsEmpty(ListItem.Art(poster))</visible>
-				<control type="image">
-					<left>11</left>
-					<top>-14</top>
-					<width>298</width>
-					<height>423</height>
-					<texture colordiffuse="button_focus">colors/grey.png</texture>
-					<bordertexture border="21" infill="false">overlays/shadow.png</bordertexture>
-					<bordersize>20</bordersize>
-					<visible>$PARAM[focused]</visible>
-					<include condition="$PARAM[focused]">Animation_FocusTextureFade</include>
+					<visible>Skin.HasSetting(HideWidgetLabels) + ![String.IsEqual(listitem.dbtype,genre) | String.IsEqual(listitem.dbtype,studio)]</visible>
+					<visible>![Window.IsVisible(10025) + [String.Contains(ListItem.Art(poster),box_office.png) | String.Contains(ListItem.Art(poster),item_next.png)]]</visible>
 				</control>
 				<control type="image">
 					<left>15</left>
 					<top>-10</top>
 					<width>290</width>
-					<height>415</height>
-					<texture background="true">$INFO[ListItem.Art(poster)]</texture>
+					<height>400</height>
+					<texture fallback="DefaultMovies.png" background="true" diffuse="masks/poster.png">$INFO[ListItem.Icon]</texture>
 					<aspectratio>scale</aspectratio>
-					<bordertexture border="21" infill="false">overlays/shadow.png</bordertexture>
 					<bordersize>20</bordersize>
+					<visible>!String.IsEqual(listitem.dbtype,genre) + !String.IsEqual(listitem.dbtype,studio)</visible>
+					<visible>![Window.IsVisible(10025) + [String.Contains(ListItem.Art(poster),box_office.png) | String.Contains(ListItem.Art(poster),item_next.png)]]</visible>
+				</control>
+				<!-- Native DefaultMovies fallback for a POV placeholder poster in the
+				     Videos results window: the placeholder ListItem.Icon above is
+				     suppressed for this case and this draws the same DefaultMovies.png
+				     that Home.xml uses for a poster-less movie, inside the rounded
+				     poster frame. -->
+				<control type="image">
+					<left>15</left>
+					<top>-10</top>
+					<width>290</width>
+					<height>400</height>
+					<texture background="true" diffuse="masks/poster.png">DefaultMovies.png</texture>
+					<aspectratio>keep</aspectratio>
+					<bordersize>20</bordersize>
+					<visible>Window.IsVisible(10025) + [String.Contains(ListItem.Art(poster),box_office.png) | String.Contains(ListItem.Art(poster),item_next.png)] + !String.IsEqual(listitem.dbtype,genre) + !String.IsEqual(listitem.dbtype,studio)</visible>
+				</control>
+				<control type="image">
+					<left>54</left>
+					<top>40</top>
+					<width>212</width>
+					<height>212</height>
+					<texture fallback="DefaultGenre.png">$VAR[WidgetGenreIconVar]</texture>
+					<aspectratio align="center" aligny="center">keep</aspectratio>
+					<visible>String.IsEqual(listitem.dbtype,genre)</visible>
+					<animation effect="slide" end="0,44" time="0" condition="Window.IsVisible(Home)">Conditional</animation>
+				</control>
+				<control type="image">
+					<left>54</left>
+					<top>40</top>
+					<width>212</width>
+					<height>212</height>
+					<texture fallback="DefaultStudios.png">$VAR[WidgetStudioIconVar]</texture>
+					<aspectratio align="center" aligny="center">keep</aspectratio>
+					<visible>String.IsEqual(listitem.dbtype,studio)</visible>
+					<animation effect="slide" end="0,44" time="0" condition="Window.IsVisible(Home)">Conditional</animation>
 				</control>
 			</control>
 			<control type="group">
-				<visible>String.IsEqual(ListItem.DBtype,tvshow) | String.IsEqual(ListItem.DBType,season) | ListItem.IsRecording | ListItem.HasReminder | ListItem.HasTimer | ListItem.IsCollection | ListItem.HasVideoVersions | ListItem.IsPlaying | ListItem.IsResumable | ListItem.HasVideoExtras | ListItem.HasArchive | Integer.IsGreater(ListItem.Playcount,0)</visible>
+				<visible>![String.IsEmpty(ListItem.Art(poster)) + String.IsEmpty(ListItem.Art(tvshow.poster)) + String.IsEmpty(ListItem.Art(season.poster)) + String.IsEmpty(ListItem.Art(animatedposter))] + ![Window.IsVisible(10025) + [String.Contains(ListItem.Art(poster),box_office.png) | String.Contains(ListItem.Art(poster),item_next.png)]]</visible>
+				<control type="group">
+					<left>9</left>
+					<top>-16</top>
+					<width>302</width>
+					<height>412</height>
+					<control type="image">
+						<texture colordiffuse="$VAR[SkinColorVar]" diffuse="masks/poster-focus.png">colors/grey.png</texture>
+						<bordersize>20</bordersize>
+						<visible>$PARAM[focused]</visible>
+					</control>
+					<control type="image">
+						<texture colordiffuse="$VAR[GradientColorVar]" diffuse="masks/poster-focus.png">colors/gradient.png</texture>
+						<bordersize>20</bordersize>
+						<visible>$PARAM[focused]</visible>
+						<visible>Skin.HasSetting(EnableGradientColor)</visible>
+					</control>
+				</control>
+				<control type="group">
+					<left>15</left>
+					<top>-10</top>
+					<width>290</width>
+					<height>400</height>
+					<control type="image">
+						<texture background="true" diffuse="masks/poster.png">dialogs/dialog-bg-nobo.png</texture>
+						<aspectratio>stretch</aspectratio>
+						<bordersize>20</bordersize>
+					</control>
+					<control type="image">
+						<texture background="true">DefaultMovies.png</texture>
+						<aspectratio>keep</aspectratio>
+						<bordersize>20</bordersize>
+					</control>
+					<control type="image">
+						<texture background="true" diffuse="masks/poster.png">$VAR[IconWallPosterVar]</texture>
+						<aspectratio>stretch</aspectratio>
+						<bordersize>20</bordersize>
+					</control>
+				</control>
+				<control type="image">
+					<left>13</left>
+					<top>-12</top>
+					<width>294</width>
+					<height>404</height>
+					<texture colordiffuse="$VAR[BorderColorVar]" diffuse="masks/poster-border.png">colors/white.png</texture>
+					<aspectratio>stretch</aspectratio>
+					<bordertexture border="21">overlays/shadow.png</bordertexture>
+					<bordersize>20</bordersize>
+					<visible>!$PARAM[focused]</visible>
+					<visible>Skin.HasSetting(show_borders)</visible>
+				</control>
+			</control>
+			<control type="group">
+				<visible>String.IsEqual(ListItem.DBtype,tvshow) + !String.IsEmpty(Skin.String(EpisodesDisplay)) + !String.IsEqual(Skin.String(EpisodesDisplay),31578) + !String.IsEmpty(ListItem.Property(TotalEpisodes))</visible>
+				<top>320</top>
 				<control type="image">
 					<left>35</left>
-					<top>335</top>
+					<top>0</top>
 					<width>250</width>
 					<height>50</height>
-					<texture colordiffuse="CCFFFFFF">overlays/overlayfade.png</texture>
-					<visible>!String.IsEmpty(ListItem.Art(poster))</visible>
-				</control>
-				<control type="image">
-					<left>40</left>
-					<top>358</top>
-					<width>24</width>
-					<height>24</height>
-					<align>left</align>
-					<aligny>center</aligny>
-					<texture>$VAR[ItemTypeIconVar]</texture>
-				</control>
-				<control type="image">
-					<left>70</left>
-					<top>358</top>
-					<width>24</width>
-					<height>24</height>
-					<align>left</align>
-					<aligny>center</aligny>
-					<texture>overlays/extras.png</texture>
-					<visible>ListItem.HasVideoVersions + ListItem.HasVideoExtras + !$EXP[videoasset_true]</visible>
+					<texture colordiffuse="CCFFFFFF" diffuse="masks/poster-band.png">overlays/overlayfade.png</texture>
 				</control>
 				<control type="label">
-					<left>105</left>
-					<top>355</top>
-					<width>145</width>
-					<label>$VAR[WatchedStatusVar]</label>
+					<left>0</left>
+					<top>20</top>
+					<width>244</width>
+					<label>$INFO[ListItem.Property(WatchedEpisodes),, / ]$INFO[ListItem.Property(TotalEpisodes)]</label>
 					<font>font20_title</font>
-					<shadowcolor>text_shadow</shadowcolor>
+					<shadowcolor>$VAR[ShadowColorVar]</shadowcolor>
 					<align>right</align>
-					<visible>String.IsEqual(ListItem.DBtype,tvshow) | String.IsEqual(ListItem.DBtype,set) | String.IsEqual(ListItem.DBType,season)</visible>
+					<visible>String.IsEqual(Skin.String(EpisodesDisplay),31680)</visible>
 				</control>
-				<control type="image">
+				<control type="label">
+					<left>0</left>
+					<top>20</top>
+					<width>244</width>
+					<label>$INFO[ListItem.Property(UnwatchedEpisodes),, / ]$INFO[ListItem.Property(TotalEpisodes)]</label>
+					<font>font20_title</font>
+					<shadowcolor>$VAR[ShadowColorVar]</shadowcolor>
+					<align>right</align>
+					<visible>String.IsEqual(Skin.String(EpisodesDisplay),31681)</visible>
+				</control>
+				<control type="group">
 					<left>254</left>
-					<top>358</top>
+					<top>23</top>
 					<width>24</width>
 					<height>24</height>
-					<texture>$VAR[ItemStatusIconVar]</texture>
+					<control type="image">
+						<texture>lists/played-total.png</texture>
+						<visible>!String.IsEmpty(ListItem.Property(WatchedEpisodes)) + String.IsEqual(Skin.String(EpisodesDisplay),31680)</visible>
+					</control>
+					<control type="image">
+						<texture>lists/played-unwatched.png</texture>
+						<visible>!String.IsEmpty(ListItem.Property(UnwatchedEpisodes)) + String.IsEqual(Skin.String(EpisodesDisplay),31681)</visible>
+					</control>
+						<control type="image">
+						<texture>lists/items-total.png</texture>
+						<visible>String.IsEmpty(ListItem.Property(WatchedEpisodes)) + String.IsEmpty(ListItem.Property(UnwatchedEpisodes)) + !String.IsEmpty(Skin.String(EpisodesDisplay)) + !String.IsEqual(Skin.String(EpisodesDisplay),31578)</visible>
+					</control>
 				</control>
 			</control>
 			<control type="group">
-				<left>135</left>
-				<top>-8</top>
-				<include condition="Skin.HasSetting(circle_rating) | Skin.HasSetting(circle_userrating)">RatingCircle</include>
-			</control>
-			<control type="progress">
 				<left>35</left>
-				<top>365</top>
+				<top>290</top>
+				<visible>![String.IsEqual(listitem.dbtype,genre) | String.IsEqual(listitem.dbtype,studio)]</visible>
+				<control type="image">
+					<top>-20</top>
+					<width>100</width>
+					<height>100</height>
+					<texture>overlays/overlay-bg-round.png</texture>
+				</control>
+				<control type="image">
+					<left>10</left>
+					<top>38</top>
+					<width>32</width>
+					<height>32</height>
+					<texture>$VAR[WallWatchedIconVar]</texture>
+				</control>
+			</control>
+			<control type="image">
+				<left>35</left>
+				<top>10</top>
 				<width>250</width>
-				<height>1</height>
-				<texturebg></texturebg>
-				<midtexture colordiffuse="button_focus" border="3">progress/texturebg_alt_white.png</midtexture>
-				<info>ListItem.PercentPlayed</info>
-				<visible>!Integer.IsEqual(ListItem.PercentPlayed,0)</visible>
+				<height>360</height>
+				<texture background="true" colordiffuse="BFFFFFFF" diffuse="masks/poster.png">colors/black.png</texture>
+				<aspectratio>stretch</aspectratio>
+				<visible>!$PARAM[focused]</visible>
+				<visible>Skin.HasSetting(greyedout_watched) + Integer.IsGreater(ListItem.Playcount,0) + !Window.IsVisible(Home) + !Skin.HasSetting(show_borders) + !String.IsEqual(listitem.dbtype,genre)</visible>
+			</control>
+			<control type="image">
+				<left>33</left>
+				<top>8</top>
+				<width>254</width>
+				<height>364</height>
+				<texture background="true" colordiffuse="BFFFFFFF" diffuse="masks/poster.png">colors/black.png</texture>
+				<aspectratio>stretch</aspectratio>
+				<visible>!$PARAM[focused]</visible>
+				<visible>Skin.HasSetting(greyedout_watched) + Integer.IsGreater(ListItem.Playcount,0) + !Window.IsVisible(Home) + Skin.HasSetting(show_borders) + !String.IsEqual(listitem.dbtype,genre)</visible>
+			</control>
+			<control type="group">
+				<include content="RatingCorner" condition="Skin.HasSetting(circle_rating) | Skin.HasSetting(circle_userrating) | Skin.HasSetting(circle_bothrating)">
+					<param name="art-left" value="35" />
+					<param name="art-top" value="10" />
+					<param name="art-width" value="250" />
+					<param name="size" value="100" />
+					<param name="corner" value="overlays/overlay-bg-round.png" />
+				</include>
+			</control>
+			<control type="group">
+				<visible>!$PARAM[focused]</visible>
+				<visible>Skin.HasSetting(greyedout_watched) + Integer.IsGreater(ListItem.Playcount,0) + !Window.IsVisible(Home)</visible>
+				<include content="RatingCornerGreyed" condition="Skin.HasSetting(circle_rating) | Skin.HasSetting(circle_userrating) | Skin.HasSetting(circle_bothrating)">
+					<param name="art-left" value="35" />
+					<param name="art-top" value="10" />
+					<param name="art-width" value="250" />
+					<param name="size" value="100" />
+					<param name="corner" value="overlays/overlay-bg-round.png" />
+				</include>
+			</control>
+			<include>InfoWallProgressLayout</include>
+			<include content="WallViewLabels" condition="Skin.HasSetting(show_wallviewlabels) + !Window.IsVisible(Home) + $PARAM[infolabels]">
+				<param name="left">35</param>
+				<param name="width">250</param>
+			</include>
+			<control type="group">
+				<top>195</top>
+				<visible>[Skin.HasSetting(enable_LibraryDiscArt) + !Window.IsVisible(Home)] | [Skin.HasSetting(enable_HomeDiscArt) + Window.IsVisible(Home)]</visible>
+				<visible>$PARAM[focused]</visible>
+				<visible>!String.IsEmpty(ListItem.Art(discart)) + !ListItem.IsCollection</visible>
+				<visible>!Window.IsVisible(script-embuary-video.xml) + !Window.IsVisible(script-embuary-person.xml)</visible>
+				<animation effect="slide" start="0,50" end="0,0" time="300" tween="cubic" easing="out" reversible="false">Focus</animation>
+				<animation effect="fade" start="100" end="0" time="0">UnFocus</animation>
+				<animation effect="slide" end="56,0" time="0" condition="Window.IsVisible(Home)">Conditional</animation>
+				<animation effect="slide" end="11,0" time="0" condition="Control.IsVisible(54) | [String.IsEqual(Container.ViewMode,$LOCALIZE[31101]) + [Window.IsVisible(DialogSelect.xml) | Window.IsVisible(DialogContextMenu.xml) | Window.IsVisible(DialogBusy.xml) | Window.IsVisible(DialogKeyboard.xml) | Window.IsVisible(DialogConfirm.xml) | Window.IsVisible(DialogVideoInfo.xml)]]">Conditional</animation>
+				<animation effect="slide" end="8,0" time="0" condition="Window.IsVisible(script-globalsearch-main.xml) | Window.IsVisible(script-globalsearch.xml)">Conditional</animation>
+				<control type="image">
+					<right>-6</right>
+					<top>0</top>
+					<width>172</width>
+					<height>172</height>
+					<texture background="true" colordiffuse="$VAR[SkinColorVar]">overlays/circle-172.png</texture>
+					<aspectratio>keep</aspectratio>
+					<visible>[!Skin.HasSetting(enable_LibraryDiscArtOverlay) + !Window.IsVisible(Home)] | [!Skin.HasSetting(enable_HomeDiscArtOverlay) + Window.IsVisible(Home)]</visible>
+				</control>
+				<control type="image">
+					<right>-6</right>
+					<top>0</top>
+					<width>172</width>
+					<height>172</height>
+					<texture background="true" colordiffuse="$VAR[GradientColorVar]">overlays/circle-172-gradient.png</texture>
+					<aspectratio>keep</aspectratio>
+					<visible>[!Skin.HasSetting(enable_LibraryDiscArtOverlay) + !Window.IsVisible(Home)] | [!Skin.HasSetting(enable_HomeDiscArtOverlay) + Window.IsVisible(Home)]</visible>
+					<visible>Skin.HasSetting(EnableGradientColor)</visible>
+				</control>
+				<control type="image">
+					<right>-5</right>
+					<top>1</top>
+					<width>170</width>
+					<height>170</height>
+					<texture background="true">$INFO[ListItem.Art(discart)]</texture>
+					<aspectratio>keep</aspectratio>
+				</control>
 			</control>
 		</definition>
 	</include>

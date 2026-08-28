@@ -1754,4 +1754,334 @@
 			</focusedlayout>
 		</definition>
 	</include>
+
+	<expression name="ChristmasTime">System.Date(11-29,12-27) + !Skin.HasSetting(DisableThemes)</expression>
+	<expression name="EasterTime">System.Date(04-03,04-07) + !Skin.HasSetting(DisableThemes)</expression>
+	<expression name="EnableTheme">![VideoPlayer.IsFullscreen | Window.IsActive(fullscreeninfo) | Window.IsActive(slideshow) | Window.IsVisible(visualisation) | Window.IsVisible(1104)] + !Skin.HasSetting(DisableThemes)</expression>
+	<expression name="HalloweenTime">System.Date(10-31,11-01) + !Skin.HasSetting(DisableThemes)</expression>
+	<expression name="PreEasterTheme">$EXP[PreEasterTime] + $EXP[EnableTheme]</expression>
+	<expression name="PreEasterTime">System.Date(03-29,04-03) + !Skin.HasSetting(DisableThemes)</expression>
+	<expression name="ValentineTime">System.Date(02-14,02-15) + !Skin.HasSetting(DisableThemes)</expression>
+	<include name="InfoWallProgressLayout">
+			<param name="left">35</param>
+			<param name="top">352</param>
+			<param name="top_2">380</param>
+			<param name="width">250</param>
+			<definition>
+				<control type="image">
+					<left>$PARAM[left]</left>
+					<top>$PARAM[top_2]</top>
+					<width>$PARAM[width]</width>
+					<height>4</height>
+					<texture>dialogs/back.png</texture>
+					<visible>!Integer.IsEqual(ListItem.PercentPlayed,0) | !Integer.IsEqual(ListItem.Progress,0)</visible>
+				</control>
+				<control type="progress">
+					<left>$PARAM[left]</left>
+					<top>$PARAM[top]</top>
+					<width>$PARAM[width]</width>
+					<height>1</height>
+					<texturebg></texturebg>
+					<midtexture colordiffuse="$VAR[SkinColorVar]" border="3">progress/texturebg_alt_white.png</midtexture>
+					<info>ListItem.PercentPlayed</info>
+					<visible>!Integer.IsEqual(ListItem.PercentPlayed,0)</visible>
+				</control>
+				<!--<control type="image">
+					<left>$PARAM[left]</left>
+					<top>$PARAM[top_2]</top>
+					<width>$PARAM[width]</width>
+					<height>4</height>
+					<texture>dialogs/back.png</texture>
+					<visible>!Integer.IsEqual(ListItem.Progress,0)</visible>
+				</control>-->
+				<control type="progress">
+					<left>$PARAM[left]</left>
+					<top>$PARAM[top]</top>
+					<width>$PARAM[width]</width>
+					<height>1</height>
+					<texturebg></texturebg>
+					<midtexture colordiffuse="$VAR[SkinColorVar]" border="3">progress/texturebg_alt_white.png</midtexture>
+					<info>ListItem.Progress</info>
+					<visible>!Integer.IsEqual(ListItem.Progress,0)</visible>
+				</control>
+			</definition>
+		</include>
+	<include name="RatingCorner">
+			<param name="animation">False</param>
+			<param name="art-left">0</param>
+			<param name="art-top">0</param>
+			<param name="art-width">250</param>
+			<param name="size">100</param>
+			<param name="corner">overlays/overlay-bg.png</param>
+			<param name="label-inset">14</param>
+			<param name="label-top">8</param>
+			<definition>
+				<control type="group">
+					<left>$PARAM[art-left]</left>
+					<top>$PARAM[art-top]</top>
+					<width>$PARAM[art-width]</width>
+					<animation effect="fade" time="0" condition="$PARAM[animation]">VisibleChange</animation>
+					<include content="RatingCornerContent" condition="Skin.HasSetting(circle_userrating)">
+						<param name="infolabel" value="ListItem.UserRating" />
+						<param name="size" value="$PARAM[size]" />
+						<param name="corner" value="$PARAM[corner]" />
+						<param name="label-inset" value="$PARAM[label-inset]" />
+						<param name="label-top" value="$PARAM[label-top]" />
+					</include>
+					<include content="RatingCornerContent" condition="Skin.HasSetting(circle_rating)">
+						<param name="infolabel" value="ListItem.Rating" />
+						<param name="size" value="$PARAM[size]" />
+						<param name="corner" value="$PARAM[corner]" />
+						<param name="label-inset" value="$PARAM[label-inset]" />
+						<param name="label-top" value="$PARAM[label-top]" />
+					</include>
+					<!-- circle_bothrating is a misnomer inherited from upstream: it
+					     shows the USER rating and falls back to the scraped one, it
+					     never shows two. The two branches below reproduce exactly
+					     what the two inlined copies in RatingCircle did, including
+					     which colour variable each used. -->
+					<include content="RatingCornerContent" condition="Skin.HasSetting(circle_bothrating)">
+						<param name="infolabel" value="ListItem.UserRating" />
+						<param name="colour" value="$VAR[UserRatingColorVar]" />
+						<param name="size" value="$PARAM[size]" />
+						<param name="corner" value="$PARAM[corner]" />
+						<param name="label-inset" value="$PARAM[label-inset]" />
+						<param name="label-top" value="$PARAM[label-top]" />
+					</include>
+					<include content="RatingCornerContent" condition="Skin.HasSetting(circle_bothrating)">
+						<param name="infolabel" value="ListItem.Rating" />
+						<param name="also-visible" value="String.IsEmpty(ListItem.UserRating)" />
+						<param name="size" value="$PARAM[size]" />
+						<param name="corner" value="$PARAM[corner]" />
+						<param name="label-inset" value="$PARAM[label-inset]" />
+						<param name="label-top" value="$PARAM[label-top]" />
+					</include>
+				</control>
+			</definition>
+		</include>
+	<include name="RatingCornerContent">
+			<param name="size">100</param>
+			<param name="corner">overlays/overlay-bg.png</param>
+			<param name="label-inset">14</param>
+			<param name="label-top">8</param>
+			<param name="colour">$VAR[RatingColorVar]</param>
+			<param name="also-visible">true</param>
+			<definition>
+				<control type="group">
+					<visible>!String.IsEmpty($PARAM[infolabel])</visible>
+					<visible>$PARAM[also-visible]</visible>
+					<control type="image">
+						<right>0</right>
+						<top>0</top>
+						<width>$PARAM[size]</width>
+						<height>$PARAM[size]</height>
+						<texture flipx="true" flipy="true">$PARAM[corner]</texture>
+					</control>
+					<control type="label">
+						<right>$PARAM[label-inset]</right>
+						<top>$PARAM[label-top]</top>
+						<width>90</width>
+						<height>30</height>
+						<align>right</align>
+						<aligny>center</aligny>
+						<font>font20_title</font>
+						<textcolor>$PARAM[colour]</textcolor>
+						<shadowcolor>$VAR[ShadowColorVar]</shadowcolor>
+						<label>$INFO[$PARAM[infolabel]]</label>
+					</control>
+				</control>
+			</definition>
+		</include>
+	<include name="RatingCornerGreyed">
+			<param name="animation">False</param>
+			<param name="art-left">0</param>
+			<param name="art-top">0</param>
+			<param name="art-width">250</param>
+			<param name="size">100</param>
+			<param name="corner">overlays/overlay-bg.png</param>
+			<param name="label-inset">14</param>
+			<param name="label-top">8</param>
+			<definition>
+				<control type="group">
+					<left>$PARAM[art-left]</left>
+					<top>$PARAM[art-top]</top>
+					<width>$PARAM[art-width]</width>
+					<animation effect="fade" time="0" condition="$PARAM[animation]">VisibleChange</animation>
+					<control type="image">
+						<right>0</right>
+						<top>0</top>
+						<width>$PARAM[size]</width>
+						<height>$PARAM[size]</height>
+						<texture flipx="true" flipy="true">$PARAM[corner]</texture>
+					</control>
+					<control type="image">
+						<right>0</right>
+						<top>0</top>
+						<width>$PARAM[size]</width>
+						<height>$PARAM[size]</height>
+						<texture flipx="true" flipy="true">$PARAM[corner]</texture>
+					</control>
+				</control>
+			</definition>
+		</include>
+	<include name="WallViewLabels">
+			<param name="left">35</param>
+			<param name="top">382</param>
+			<param name="top_2">404</param>
+			<param name="width">250</param>
+			<definition>
+				<control type="label">
+					<left>$PARAM[left]</left>
+					<top>$PARAM[top]</top>
+					<width>$PARAM[width]</width>
+					<height>25</height>
+					<align>center</align>
+					<label>$VAR[ListLabelVar]</label>
+					<font>font20_title</font>
+					<scroll>$PARAM[focused]</scroll>
+				</control>
+				<control type="label">
+					<left>$PARAM[left]</left>
+					<top>$PARAM[top_2]</top>
+					<width>$PARAM[width]</width>
+					<height>22</height>
+					<align>center</align>
+					<label>$INFO[ListItem.Year]</label>
+					<visible>!Listitem.IsCollection</visible>
+					<font>font09</font>
+				</control>
+			</definition>
+		</include>
+
+	<include name="MediaFlagsAudioSubs">
+			<param name="infolabel_prefix"/>
+			<definition>
+				<control type="group">
+					<width>104</width>
+					<height>40</height>
+					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.2)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.3))</visible>
+					<include content="MediaFlag">
+						<param name="texture" value="flags/language.png" />
+						<param name="width" value="104" />
+						<param name="label_width" value="56" />
+						<param name="label_left" value="48" />
+						<param name="label" value="$INFO[$PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)]" />
+					</include>
+				</control>
+				<control type="group">
+					<width>164</width>
+					<height>40</height>
+					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.2)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.3))</visible>
+					<include content="MediaFlag">
+						<param name="texture" value="flags/language.2.png" />
+						<param name="width" value="164" />
+						<param name="label_width" value="56" />
+						<param name="label_left" value="48" />
+						<param name="label" value="$INFO[$PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)]" />
+					</include>
+					<control type="label">
+						<width>58</width>
+						<left>104</left>
+						<height>40</height>
+						<align>center</align>
+						<label>$INFO[$PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.2)]</label>
+						<font>Font-Flag-Small3</font>
+						<textcolor>$VAR[MediaFlagsColorVar]</textcolor>
+					</control>
+				</control>
+				<control type="group">
+					<width>224</width>
+					<height>40</height>
+					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.2)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.3))</visible>
+					<include content="MediaFlag">
+						<param name="texture" value="flags/language.3.png" />
+						<param name="width" value="224" />
+						<param name="label_width" value="56" />
+						<param name="label_left" value="48" />
+						<param name="label" value="$INFO[$PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)]" />
+					</include>
+					<control type="label">
+						<width>56</width>
+						<left>106</left>
+						<height>40</height>
+						<align>center</align>
+						<label>$INFO[$PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.2)]</label>
+						<font>Font-Flag-Small3</font>
+						<textcolor>$VAR[MediaFlagsColorVar]</textcolor>
+					</control>
+					<control type="label">
+						<width>56</width>
+						<left>164</left>
+						<height>40</height>
+						<align>center</align>
+						<label>$INFO[$PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.3)]</label>
+						<font>Font-Flag-Small3</font>
+						<textcolor>$VAR[MediaFlagsColorVar]</textcolor>
+					</control>
+				</control>
+				<control type="group">
+					<width>104</width>
+					<height>40</height>
+					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.2)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.3))</visible>
+					<include content="MediaFlag">
+						<param name="texture" value="flags/st_language.png" />
+						<param name="width" value="104" />
+						<param name="label_width" value="56" />
+						<param name="label_left" value="52" />
+						<param name="label" value="$INFO[$PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)]" />
+					</include>
+				</control>
+				<control type="group">
+					<width>164</width>
+					<height>40</height>
+					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.2)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.3))</visible>
+					<include content="MediaFlag">
+						<param name="texture" value="flags/st_language.2.png" />
+						<param name="width" value="164" />
+						<param name="label_width" value="56" />
+						<param name="label_left" value="52" />
+						<param name="label" value="$INFO[$PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)]" />
+					</include>
+					<control type="label">
+						<width>56</width>
+						<left>109</left>
+						<height>40</height>
+						<align>center</align>
+						<label>$INFO[$PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.2)]</label>
+						<font>Font-Flag-Small3</font>
+						<textcolor>$VAR[MediaFlagsColorVar]</textcolor>
+					</control>
+				</control>
+				<control type="group">
+					<width>224</width>
+					<height>40</height>
+					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.2)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.3))</visible>
+					<include content="MediaFlag">
+						<param name="texture" value="flags/st_language.3.png" />
+						<param name="width" value="224" />
+						<param name="label_width" value="56" />
+						<param name="label_left" value="48" />
+						<param name="label" value="$INFO[$PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)]" />
+					</include>
+					<control type="label">
+						<width>56</width>
+						<left>106</left>
+						<height>40</height>
+						<align>center</align>
+						<label>$INFO[$PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.2)]</label>
+						<font>Font-Flag-Small3</font>
+						<textcolor>$VAR[MediaFlagsColorVar]</textcolor>
+					</control>
+					<control type="label">
+						<width>56</width>
+						<left>167</left>
+						<height>40</height>
+						<align>center</align>
+						<label>$INFO[$PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.3)]</label>
+						<font>Font-Flag-Small3</font>
+						<textcolor>$VAR[MediaFlagsColorVar]</textcolor>
+					</control>
+				</control>
+			</definition>
+		</include>
 </includes>
