@@ -23,10 +23,12 @@ XML = ROOT / "skin.estuary.pov" / "xml"
 
 GUARD = "String.IsEmpty(Skin.String(pov_menu_defaults))"
 STAMP = "Skin.SetString(pov_menu_defaults,1)"
+ARM = "Skin.SetString(pov_reload,armed)"
 
 HOME = (XML / "Home.xml").read_text(encoding="utf-8")
 SKIN_SETTINGS = (XML / "SkinSettings.xml").read_text(encoding="utf-8")
 VARIABLES = (XML / "Variables.xml").read_text(encoding="utf-8")
+TIMERS = (XML / "Timers.xml").read_text(encoding="utf-8")
 
 # Only the <onload> tags, in document order, as (condition, action) pairs.
 ONLOADS = re.findall(
@@ -70,18 +72,92 @@ def test_every_seeded_default_is_behind_the_first_run_guard():
     )
 
 
-def test_the_stamp_is_written_last():
+def test_the_stamp_is_written_after_every_setting_it_guards():
     """Order is load bearing. Stamping first strands a half applied profile.
 
     If a load is cut short part way through the block, the guard is still empty
     and the whole set is reapplied on the next Home load. That retry only exists
-    while the stamp is the final action.
+    while the stamp comes after everything it protects.
+
+    Only the reload arming line may follow it, and it has to: arming before the
+    stamp would let a load that died in between reload a skin that then reseeds,
+    which is the loop this release exists to avoid.
     """
-    assert ACTIONS[-1] == STAMP, (
-        "Skin.SetString(pov_menu_defaults,1) must be the LAST onload, found "
-        + repr(ACTIONS[-1])
+    assert ACTIONS[-2:] == [STAMP, ARM], (
+        "the last two onloads must be the stamp then the reload arm, found "
+        + repr(ACTIONS[-2:])
     )
     assert ACTIONS.count(STAMP) == 1, "the stamp must be written exactly once"
+
+
+# --------------------------------------------------------------------------- #
+# The 1.3.2 one shot reload
+# --------------------------------------------------------------------------- #
+def test_the_first_run_block_arms_the_reload():
+    """Without this line the rating is missing on a genuinely fresh install.
+
+    circle_rating and hide_mediaflags are read by <include condition=...>, which
+    Kodi resolves once while parsing and never re-evaluates. On a profile that
+    has never run this skin every window is parsed before these onloads run, so
+    the rating control is never built. Re-parsing once is the repair.
+    """
+    assert ARM in ACTIONS
+
+
+def test_the_reload_is_armed_exactly_once_and_only_here():
+    assert ACTIONS.count(ARM) == 1
+    armers = [
+        path.name
+        for path in sorted(XML.glob("*.xml"))
+        if "Skin.SetString(pov_reload,armed)"
+        in _without_comments(path.read_text(encoding="utf-8"))
+    ]
+    assert armers == ["Home.xml"], (
+        "only the guarded first run block may arm the reload; anything else can "
+        "re-arm it after it has fired and loop the skin: " + repr(armers)
+    )
+
+
+def test_the_reload_timer_exists_and_waits_for_the_armed_value():
+    assert "<name>povfirstrunreload</name>" in TIMERS
+    assert "<start reset=\"true\">String.IsEqual(Skin.String(pov_reload),armed)</start>" in TIMERS, (
+        "the timer must start on the exact value Home.xml writes, or the reload "
+        "never fires and the fresh install bug is back"
+    )
+
+
+def test_the_reload_cannot_loop():
+    """The whole safety property of 1.3.2, asserted as an ordered list.
+
+    The timer disarms itself BEFORE it reloads. The reloaded skin therefore
+    reads pov_reload as 'done', the start condition tests for 'armed', and the
+    timer never starts again. Swapping these two lines, or dropping the first,
+    turns a cosmetic fix into a box that reloads its skin forever.
+    """
+    block = TIMERS.split("<name>povfirstrunreload</name>", 1)[1].split("</timer>", 1)[0]
+    onstops = re.findall(r"<onstop>([^<]*)</onstop>", block)
+    assert onstops == ["Skin.SetString(pov_reload,done)", "ReloadSkin()"], (
+        "the disarm must be written before the reload is called, found "
+        + repr(onstops)
+    )
+
+
+def _without_comments(text):
+    """Comments explain the reload at length; only real markup may invoke it."""
+    return re.sub(r"<!--.*?-->", "", text, flags=re.S)
+
+
+def test_the_reload_is_never_called_anywhere_else():
+    """A reload outside the timer has no disarm in front of it."""
+    callers = [
+        path.name
+        for path in sorted(XML.glob("*.xml"))
+        if "ReloadSkin" in _without_comments(path.read_text(encoding="utf-8"))
+    ]
+    assert callers == ["Timers.xml"], (
+        "ReloadSkin belongs to the one shot first run timer and nothing else; "
+        "found it in " + repr(callers)
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -220,6 +296,7 @@ def test_nothing_else_has_crept_into_the_first_run_block():
             "Skin.SetBool(no_fanart)",
             "Skin.SetString(home_items,10)",
             STAMP,
+            ARM,
         ]
     )
     assert ACTIONS == expected, (

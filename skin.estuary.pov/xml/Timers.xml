@@ -1,5 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <timers>
+    <!-- The one shot re-parse that makes the first run defaults visible on a
+         fresh install. Home.xml arms it by writing Skin.String(pov_reload) as
+         'armed', and only ever does that inside the guarded first run block, so
+         a box that is already stamped never sees this timer start.
+
+         WHY A RELOAD IS NEEDED AT ALL. Kodi resolves <include condition=...> once,
+         while it is parsing the XML, and never re-evaluates it; <visible> is the
+         tag that is checked continuously. Two of the seeded defaults are read
+         only by include conditions: circle_rating (Includes.xml:104 and :1831,
+         plus eight view files) and hide_mediaflags (Home.xml:1228,
+         DialogSeekBar.xml:54, MyVideoNav.xml:94, MyMusicNav.xml:36,
+         MyPlaylist.xml:37, MyPVRRecordings.xml:80). On a profile that has never
+         run this skin, every window is parsed BEFORE Home's onload writes those
+         two, so the rating control is never built and the media flags are built
+         when they should not be. Re-parsing once, immediately after the seed, is
+         what puts both right on the first screen the owner sees. Visiting skin
+         settings used to be the only thing that forced that re-parse.
+
+         WHY A TIMER AND NOT ReloadSkin() STRAIGHT FROM THE ONLOAD. Two separate
+         reasons, both measured in the Kodi 22 source:
+
+           Load actions are dispatched with SendMessage, not SendThreadMessage.
+           CGUIAction::ExecuteActions (guilib/GUIAction.cpp:72-81) only posts a
+           thread message when EnableSendThreadMessageMode has been called, and
+           the only callers are control onfocus/onunfocus
+           (GUIControlFactory.cpp:1042) and skin timers
+           (SkinTimerManager.cpp:97 and :114). GUIWindow.cpp never calls it for
+           m_loadActions, so an onload builtin runs synchronously inside
+           CGUIWindow::OnInitWindow. ReloadSkin there tears down the control tree
+           that the live stack frame is standing in, and the IsNested() deferral
+           in ApplicationSkinHandling.cpp:447 does not catch it because m_iNested
+           only counts nested RENDER loops (GUIWindowManager.cpp:1551).
+
+           It would also do nothing on the boot it is meant to fix. On a cold
+           start Home is loaded from inside CApplication::Initialize, so
+           m_bInitializing is still true and ReloadSkin returns at
+           ApplicationSkinHandling.cpp:441 without reloading. Skin timers are
+           evaluated from CApplication::Process instead, which cannot run until
+           Initialize has returned.
+
+         WHY IT CANNOT LOOP, which matters more than any of the above because a
+         reload loop is an unusable box. The onstop actions run in order, and the
+         first one rewrites pov_reload to 'done'. The start condition tests for
+         exactly 'armed', so the reloaded skin reads 'done' and the timer never
+         starts again. The write also reaches disk: UnloadSkin calls
+         SaveSettings before Unload (ApplicationSkinHandling.cpp:245), so the new
+         value survives the reload rather than waiting on the 500 ms debounce in
+         Skin.cpp. Nothing anywhere writes 'armed' except the guarded first run
+         block in Home.xml, which by then has already stamped itself. -->
+    <timer>
+        <name>povfirstrunreload</name>
+        <description>One shot skin reload that lets the first run defaults reach the parse time include conditions</description>
+        <start reset="true">String.IsEqual(Skin.String(pov_reload),armed)</start>
+        <stop>Integer.IsGreaterOrEqual(Skin.TimerElapsedSecs(povfirstrunreload),1)</stop>
+        <onstop>Skin.SetString(pov_reload,done)</onstop>
+        <onstop>ReloadSkin()</onstop>
+    </timer>
     <timer>
         <name>autoclosevideoosd</name>
         <description>Timer to auto close the video OSD (if enabled in the skin settings)</description>

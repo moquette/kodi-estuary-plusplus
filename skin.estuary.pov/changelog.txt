@@ -1,3 +1,18 @@
+[B]1.3.2[/B]
+• The settings this skin applies to a brand new install now take effect
+  immediately, on the very first screen you see, instead of only after a visit
+  to Skin Settings.
+• On a genuinely fresh install the rating was missing from posters and the
+  media flags were showing, even though both rows in Skin Settings already read
+  the way they should. Kodi had finished drawing the screen before the skin got
+  round to applying those settings, so it drew the old state and kept it.
+  Opening Skin Settings and backing out was what made it catch up.
+• The skin now refreshes itself once, on its own, the moment those first
+  install settings are written. It happens on that first start only and never
+  again.
+• Nothing changes on a box that already runs this skin, and nothing changes
+  on any platform.
+
 [B]1.3.1[/B]
 • The weather icons are now higher resolution outline icons built into the
   skin, so the forecast is drawn from the skin's own set rather than Kodi's
