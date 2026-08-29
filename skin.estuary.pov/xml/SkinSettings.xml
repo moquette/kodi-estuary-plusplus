@@ -177,6 +177,7 @@
 					<onclick condition="System.AddonIsEnabled(script.image.resource.select)">RunScript(script.image.resource.select,property=HomeFanart&amp;type=resource.images.skinbackgrounds)</onclick>
 					<onclick condition="System.HasAddon(script.image.resource.select) + !System.AddonIsEnabled(script.image.resource.select)">EnableAddon(script.image.resource.select)</onclick>
 					<onclick condition="!System.HasAddon(script.image.resource.select)">InstallAddon(script.image.resource.select)</onclick>
+					<visible>!Skin.HasSetting(no_fanart)</visible>
 					<enable>!Skin.HasSetting(no_fanart)</enable>
 				</control>
 				<control type="button" id="609">
@@ -186,8 +187,16 @@
 					<onclick condition="System.AddonIsEnabled(script.image.resource.select)">RunScript(script.image.resource.select,property=WeatherFanart&amp;type=resource.images.weatherfanart)</onclick>
 					<onclick condition="System.HasAddon(script.image.resource.select) + !System.AddonIsEnabled(script.image.resource.select)">EnableAddon(script.image.resource.select)</onclick>
 					<onclick condition="!System.HasAddon(script.image.resource.select)">InstallAddon(script.image.resource.select)</onclick>
+					<visible>!Skin.HasSetting(no_fanart)</visible>
 					<enable>!Skin.HasSetting(no_fanart)</enable>
 				</control>
+				<!-- Gated on no_fanart like 608 and 609 beside it. This one carried no
+				     gate at all and was live while doing nothing: it writes
+				     Skin.String(MovieGenreFanart), whose only consumer is
+				     MediaFanartVar in Variables.xml, and that variable's first value
+				     is an empty string under Skin.HasSetting(no_fanart), which
+				     short-circuits every value below it. 607 and 6068 stay ungated on
+				     purpose; their variables never consult no_fanart. -->
 				<control type="button" id="6066">
 					<label>$LOCALIZE[31149]</label>
 					<label2>$INFO[Skin.String(MovieGenreFanart.Name)]</label2>
@@ -195,6 +204,8 @@
 					<onclick condition="System.AddonIsEnabled(script.image.resource.select)">RunScript(script.image.resource.select,property=MovieGenreFanart&amp;type=resource.images.moviegenrefanart)</onclick>
 					<onclick condition="System.HasAddon(script.image.resource.select) + !System.AddonIsEnabled(script.image.resource.select)">EnableAddon(script.image.resource.select)</onclick>
 					<onclick condition="!System.HasAddon(script.image.resource.select)">InstallAddon(script.image.resource.select)</onclick>
+					<visible>!Skin.HasSetting(no_fanart)</visible>
+					<enable>!Skin.HasSetting(no_fanart)</enable>
 				</control>
 				<control type="button" id="6068">
 					<label>$LOCALIZE[31177]</label>
@@ -234,6 +245,7 @@
 					<onclick>SetProperty(settingsdialog_header,$LOCALIZE[31040] - $LOCALIZE[342],home)</onclick>
 					<onclick>SetProperty(settingsdialog_content,moviewidgets,home)</onclick>
 					<onclick>ActivateWindow(1101)</onclick>
+					<visible>!Skin.HasSetting(HomeMenuNoMovieButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoMovieButton)</enable>
 				</control>
 				<control type="button" id="627">
@@ -241,6 +253,7 @@
 					<include>DefaultSettingButton</include>
 					<onclick>Skin.SelectBool(31176, 37015|movieset_onclick_browse, 13362|movieset_onclick_continuewatching, 12021|movieset_onclick_playfrombeginning, 10008|movieset_onclick_playnext, 13347|movieset_onclick_queue)</onclick>
 					<label2>$VAR[MovieSetOnClickActionLabel2Var]</label2>
+					<visible>!Skin.HasSetting(HomeMenuNoMovieButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoMovieButton)</enable>
 				</control>
 				<control type="radiobutton" id="612">
@@ -255,6 +268,7 @@
 					<onclick>SetProperty(settingsdialog_header,$LOCALIZE[31040] - $LOCALIZE[20343],home)</onclick>
 					<onclick>SetProperty(settingsdialog_content,tvshowwidgets,home)</onclick>
 					<onclick>ActivateWindow(1101)</onclick>
+					<visible>!Skin.HasSetting(HomeMenuNoTVShowButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoTVShowButton)</enable>
 				</control>
 				<control type="button" id="626">
@@ -262,6 +276,7 @@
 					<include>DefaultSettingButton</include>
 					<onclick>Skin.SelectBool(31175, 37015|tvshow_onclick_browse, 13362|tvshow_onclick_continuewatching, 12021|tvshow_onclick_playfrombeginning, 10008|tvshow_onclick_playnext, 13347|tvshow_onclick_queue)</onclick>
 					<label2>$VAR[TVShowOnClickActionLabel2Var]</label2>
+					<visible>!Skin.HasSetting(HomeMenuNoTVShowButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoTVShowButton)</enable>
 				</control>
 				<control type="radiobutton" id="613">
@@ -276,6 +291,7 @@
 					<onclick>SetProperty(settingsdialog_header,$LOCALIZE[31040] - $LOCALIZE[2],home)</onclick>
 					<onclick>SetProperty(settingsdialog_content,musicwidgets,home)</onclick>
 					<onclick>ActivateWindow(1101)</onclick>
+					<visible>!Skin.HasSetting(HomeMenuNoMusicButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoMusicButton)</enable>
 				</control>
 				<control type="button" id="625">
@@ -283,6 +299,7 @@
 					<include>DefaultSettingButton</include>
 					<onclick>Skin.SelectBool(31174, 37015|album_onclick_browse, 208|album_onclick_play, 10008|album_onclick_playnext, 13347|album_onclick_queue)</onclick>
 					<label2>$VAR[AlbumOnClickActionLabel2Var]</label2>
+					<visible>!Skin.HasSetting(HomeMenuNoMusicButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoMusicButton)</enable>
 				</control>
 				<control type="radiobutton" id="6131">
@@ -297,6 +314,7 @@
 					<onclick>SetProperty(settingsdialog_header,$LOCALIZE[31040] - $LOCALIZE[20389],home)</onclick>
 					<onclick>SetProperty(settingsdialog_content,musicvideowidgets,home)</onclick>
 					<onclick>ActivateWindow(1101)</onclick>
+					<visible>!Skin.HasSetting(HomeMenuNoMusicVideoButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoMusicVideoButton)</enable>
 				</control>
 				<control type="radiobutton" id="618">
@@ -311,6 +329,7 @@
 					<onclick>SetProperty(settingsdialog_header,$LOCALIZE[31040] - $LOCALIZE[19020],home)</onclick>
 					<onclick>SetProperty(settingsdialog_content,tvwidgets,home)</onclick>
 					<onclick>ActivateWindow(1101)</onclick>
+					<visible>!Skin.HasSetting(HomeMenuNoTVButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoTVButton)</enable>
 				</control>
 				<control type="radiobutton" id="619">
@@ -325,6 +344,7 @@
 					<onclick>SetProperty(settingsdialog_header,$LOCALIZE[31040] - $LOCALIZE[19021],home)</onclick>
 					<onclick>SetProperty(settingsdialog_content,radiowidgets,home)</onclick>
 					<onclick>ActivateWindow(1101)</onclick>
+					<visible>!Skin.HasSetting(HomeMenuNoRadioButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoRadioButton)</enable>
 				</control>
 				<control type="radiobutton" id="614">
@@ -344,6 +364,7 @@
 					<onclick>SetProperty(settingsdialog_header,$LOCALIZE[31040] - $LOCALIZE[24001],home)</onclick>
 					<onclick>SetProperty(settingsdialog_content,addonwidgets,home)</onclick>
 					<onclick>ActivateWindow(1101)</onclick>
+					<visible>!Skin.HasSetting(HomeMenuNoProgramsButton)</visible>
 					<enable>!Skin.HasSetting(HomeMenuNoProgramsButton)</enable>
 				</control>
 				<control type="radiobutton" id="615">
@@ -400,6 +421,10 @@
 					<label2>$VAR[SkinSettingOSDAutoCloseTime]</label2>
 					<include>DefaultSettingButton</include>
 					<onclick>Skin.SetNumeric(OSDAutoCloseTime)</onclick>
+					<!-- NOT negated, unlike every other child gate in this window.
+					     Parent 623 marks itself selected on Skin.HasSetting(OSDAutoClose),
+					     so the setting being PRESENT means autoclose is on. -->
+					<visible>Skin.HasSetting(OSDAutoClose)</visible>
 					<enable>Skin.HasSetting(OSDAutoClose)</enable>
 				</control>
 			</control>
