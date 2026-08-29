@@ -27,7 +27,11 @@
 	     1.2.4 shipped the stamp on its own, so any box that has run 1.2.4 is
 	     already marked and keeps the menu its owner arranged. A box coming from
 	     1.2.3 or earlier straight to this release carries no stamp and does get
-	     the five item menu. That is stated plainly in the changelog. -->
+	     the five item menu. That is stated plainly in the changelog.
+
+	     1.2.7 added four more seeded defaults below the menu, under the SAME guard,
+	     so a box that is already stamped gets none of them and keeps every choice
+	     it has made. -->
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoMusicButton)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoMusicVideoButton)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoRadioButton)</onload>
@@ -35,6 +39,46 @@
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoVideosButton)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoGamesButton)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoFavButton)</onload>
+	<!-- Four more first run defaults, sharing the SAME marker as the menu above on
+	     purpose. A second marker would be a second thing to reason about and a
+	     second way for a box to end up half seeded, and the owner asked for one.
+
+	     TWO OF THESE FOUR ARE INVERTED KEYS and read backwards, so do not "correct"
+	     them to a Skin.Reset. In both cases SETTING the key is what switches the
+	     row OFF, because the control's <selected> tag negates it:
+
+	       hide_mediaflags  control 705, SkinSettings.xml:67-68, which reads
+	                        <selected>!Skin.HasSetting(hide_mediaflags)</selected>.
+	                        Setting it makes General > "Show media flags" read OFF.
+	       no_fanart        control 605, SkinSettings.xml:157-158, same shape.
+	                        Setting it makes Artwork > "Show media fanart as
+	                        background" read OFF, and the three fanart pack pickers
+	                        under it are gated on the same key
+	                        (SkinSettings.xml:180-208) so they start hidden with it
+	                        and reappear the moment it is switched back on.
+
+	     circle_rating is the ordinary way round and is one of three keys behind
+	     control 706's Skin.SelectBool (SkinSettings.xml:73). Setting it alone, and
+	     leaving circle_userrating and circle_bothrating unset, is exactly the state
+	     that dialog produces for "Rating", so RatingSettingLabel2Var
+	     (Variables.xml:234-238) resolves to $LOCALIZE[563] "Rating" instead of the
+	     fallback 16018 "None". Do not set the other two here: any of them set at
+	     the same time would make the row read something the user never chose.
+	     This governs the rating badge on library views and the info dialogs; POV's
+	     own Home rows carry no rating control at all, so nothing on Home changes.
+
+	     home_items is set HERE and not only at SkinSettings.xml:11 because that
+	     line is inside the settings window and therefore only runs when somebody
+	     opens skin settings. A new box that never opens them would keep an empty
+	     value, and an empty value matches none of control 709's conditions, so the
+	     row would be a dead button showing nothing. Home is the startup window, so
+	     seeding here reaches every install. The two do not fight: that repair line
+	     rewrites the value only when it is NOT one of 5/10/15/20/25, and 10 is in
+	     that set, so a seeded profile passes it untouched. -->
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(hide_mediaflags)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(circle_rating)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(no_fanart)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetString(home_items,10)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetString(pov_menu_defaults,1)</onload>
 	<controls>
 		<control type="button" id="20000">

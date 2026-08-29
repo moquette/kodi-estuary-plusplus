@@ -1,3 +1,42 @@
+[B]1.2.7[/B]
+• Apple TV only: installing this skin on a brand new box no longer throws an
+  error at you. Kodi installs a skin's dependencies before the skin itself, so
+  POV was being installed and started before the skin that repaired Apple TV's
+  Python was even on the box, and POV failed in front of you. Measured on a real
+  box: POV was installed at 07:42:31.754, died at 07:42:32.991, and this skin did
+  not reach the disk until 07:42:33.108.
+• The repair now ships as its own small add-on, tvOS Python Fix, declared as a
+  dependency of this skin so Kodi installs it FIRST. On the bench the shim is on
+  disk 5 ms after that add-on lands and several seconds before POV is installed.
+• That also means the repair works for every add-on that fetches anything over
+  the internet, whether or not this skin is the one you use. Multi Weather and
+  EZ Maintenance++ included.
+• The order the dependencies are listed in is now load bearing and is pinned by
+  a test: the fix add-on first, POV last, so the other dependencies' download
+  time separates the two.
+• A NEW install now seeds four more settings, under the same one-shot marker
+  1.2.5 uses for the main menu, so a box that has already run 1.2.4 or later gets
+  none of them and keeps every choice its owner made:
+    - "Show media flags" starts OFF (General). The key is hide_mediaflags and it
+      is inverted, so SETTING it is what switches the row off.
+    - "Choose rating to display for media items" starts on "Rating" rather than
+      "None" (General). circle_rating is set and circle_userrating and
+      circle_bothrating are deliberately left unset, which is exactly the state
+      that setting's own dialog produces for "Rating".
+    - "Show media fanart as background" starts OFF (Artwork). no_fanart is
+      inverted the same way as hide_mediaflags.
+    - The home row size starts at 10 rather than 15. It is seeded from Home
+      rather than only repaired in SkinSettings.xml:11, because that repair only
+      runs when somebody opens skin settings and a fresh box may never do so. The
+      two do not fight: the repair rewrites the value only when it is not one of
+      5/10/15/20/25, and 10 is in that set.
+• "Number of items to show in home screen lists" is renamed to "Number of media
+  items to show in home screen list". The number counts films, episodes, albums
+  and channels rather than the menu items beside it.
+• There is no 1.2.6. It was built and tested but never published, and the number
+  is skipped rather than reused so that no two builds can share a version.
+• No change on Fire TV, Android or desktop. The Siri remote keymap is unchanged.
+
 [B]1.2.5[/B]
 • A NEW install now starts with five main menu items: Movies, TV shows, TV,
   Add-ons and Weather. Music, Music videos, Radio, Pictures, Videos, Games and

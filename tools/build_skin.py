@@ -123,12 +123,23 @@ def verify(out: pathlib.Path, addon_id: str, version: str, count: int) -> None:
             sys.exit(f"archive needs exactly one top-level dir, found {sorted(roots)}")
         if names[0] != f"{addon_id}/":
             sys.exit(f"first archive entry must be {addon_id}/, found {names[0]}")
-        for required in (f"{addon_id}/addon.xml", f"{addon_id}/xml/Home.xml"):
-            if required not in names:
-                sys.exit(f"archive is missing {required}")
-        inner = archive.read(f"{addon_id}/addon.xml").decode("utf-8")
-        if f'version="{version}"' not in inner:
-            sys.exit(f"addon.xml in the archive does not declare version {version}")
+        required = [f"{addon_id}/addon.xml"]
+        if f"{addon_id}/addon.xml" in names:
+            inner = archive.read(f"{addon_id}/addon.xml").decode("utf-8")
+            # xml/Home.xml is the cheapest proof that a SKIN archive carries its
+            # payload rather than just its metadata, and it has caught a
+            # truncated build before. It is meaningless for the service add-on
+            # this repo also ships, so the check follows the extension point
+            # rather than the tool's name.
+            if "xbmc.gui.skin" in inner:
+                required.append(f"{addon_id}/xml/Home.xml")
+            for path in required:
+                if path not in names:
+                    sys.exit(f"archive is missing {path}")
+            if f'version="{version}"' not in inner:
+                sys.exit(f"addon.xml in the archive does not declare version {version}")
+        else:
+            sys.exit(f"archive is missing {required[0]}")
 
 
 def git_dirty(rel: str) -> list[str]:

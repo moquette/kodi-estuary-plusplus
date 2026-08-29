@@ -1010,6 +1010,10 @@ msgstr ""
 #. shows. The value beside it is a bare numeral rendered by HomeItemLimitVar, so it
 #. needs no string ids of its own; 31617 to 31621 held those numerals for an
 #. abandoned Skin.SelectBool design and were removed with it.
+#. "media items" rather than "items" because the number governs films, episodes,
+#. albums and channels, not the menu entries beside it, and the singular "list"
+#. because the row reads as one setting applied to each list rather than a count
+#. spread across all of them. Owner's wording, 2026-08-29.
 msgctxt "#31616"
-msgid "Number of items to show in home screen lists"
+msgid "Number of media items to show in home screen list"
 msgstr ""

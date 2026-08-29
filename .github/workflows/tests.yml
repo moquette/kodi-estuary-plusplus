@@ -1,8 +1,11 @@
 name: tests
 
-# The boot service is tvOS-only and MUST stay a no-op on Fire OS. That is
-# asserted by tests/test_services_keymap.py, and this workflow is what makes the
-# assertion binding rather than intended.
+# Both boot services in this repo, the skin's keymap writer and
+# service.tvos.pythonfix's _scproxy shim, are tvOS-only and MUST stay a no-op on
+# Fire OS. That is asserted by tests/test_services_keymap.py and
+# tests/test_pythonfix_service.py, and this workflow is what makes the assertion
+# binding rather than intended. The same suite also pins the ORDER in which the
+# skin declares its dependencies, which is what makes a fresh install work.
 on:
   push:
   pull_request:
@@ -19,6 +22,8 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-ci.txt
       - run: python -m pytest tests/ -q
-      - run: ruff check skin.estuary.pov/scripts/ tools/ tests/
-      - name: the zip must be byte-reproducible
-        run: python tools/build_skin.py skin.estuary.pov --check
+      - run: ruff check skin.estuary.pov/scripts/ service.tvos.pythonfix/scripts/ tools/ tests/
+      - name: the zips must be byte-reproducible
+        run: |
+          python tools/build_skin.py skin.estuary.pov --check
+          python tools/build_skin.py service.tvos.pythonfix --check
