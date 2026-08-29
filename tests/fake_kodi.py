@@ -1,7 +1,7 @@
-"""Minimal xbmc / xbmcvfs stand-ins, enough to boot the real services.py.
+"""Minimal xbmc / xbmcvfs stand-ins, enough to boot the real service.py.
 
 Deliberately NOT a mock of the module under test: the tests import the real
-scripts/services.py and run its real payload against these. A substring check on
+scripts/service.py and run its real payload against these. A substring check on
 the source text would pass even if the platform gate were deleted.
 """
 
@@ -21,8 +21,6 @@ class Recorder:
         self.logs = []
         self.conditions = []
         self.translated = []
-        self.waits = []
-        self.aborting = False
 
 
 def install(platform, profile_dir):
@@ -43,17 +41,13 @@ def install(platform, profile_dir):
     def log(message, level=LOGINFO):
         rec.logs.append((level, message))
 
-    class Monitor:
-        """Kodi's abort monitor. Records the wait; answers with rec.aborting."""
-
-        def waitForAbort(self, seconds):
-            rec.waits.append(seconds)
-            return rec.aborting
-
     xbmc.getCondVisibility = getCondVisibility
     xbmc.executebuiltin = executebuiltin
     xbmc.log = log
-    xbmc.Monitor = Monitor
+
+    # NO xbmc.Monitor. It existed here only for the ten second Weather.Refresh
+    # wait that 1.1.0 removed, and leaving it would let a reintroduced wait pass
+    # the suite silently. The service must not hold an interpreter open at all.
 
     xbmcvfs = types.ModuleType("xbmcvfs")
 

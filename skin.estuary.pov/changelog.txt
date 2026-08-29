@@ -1,3 +1,25 @@
+[B]1.3.0[/B]
+• The Siri remote fixes have moved out of this skin and into the Apple TV
+  Fixes add-on, which is the same add-on that carries the Python repair and is
+  in the same repository. If you are on an Apple TV, install it once and both
+  fixes are yours whatever skin you use afterwards.
+• Apple TV owners already running it: update it to 1.1.0 and the remote keeps
+  behaving exactly as it does now. There is nothing else to do.
+• Apple TV owners NOT running it: your Siri remote goes back to Kodi's stock
+  behaviour when you update this skin. Back stops playback in fullscreen video,
+  there is no button that returns to fullscreen, and back at the home screen
+  opens the Favourites window. Installing Apple TV Fixes puts all of it right.
+• Why it moved: a remote belongs to the box, not to a skin. Written from a skin
+  it only worked while you used this skin, an Apple TV owner who changed skin
+  lost it with no way to see why, and every other skin copying the idea would
+  write the same file. The bindings never named a single skin control; they name
+  Kodi's own windows and Kodi's own actions.
+• This skin now runs no code of its own on any platform. It has no boot
+  service, no scripts directory and no Python, and it no longer declares the
+  Python api it needed only for that service.
+• Nothing changes on Fire TV, Android, Windows, Linux or macOS, and nothing
+  that draws on screen changed at all.
+
 [B]1.2.8[/B]
 • The Apple TV Python fix is now a separate add-on that Apple TV users install
   themselves. It is called tvOS Python Fix and it is in the same repository as

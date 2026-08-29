@@ -1,0 +1,10 @@
+Apple TV Fixes (service.tvos.pythonfix) by Tony.7.Bones
+
+Licensed under the GNU General Public License, version 2 or (at your option)
+any later version. You can find the license details here:
+<https://www.gnu.org/licenses/gpl-2.0>.
+
+This add-on writes two files onto Apple TV boxes and ships no third-party code.
+The _scproxy stand-in it writes is an original implementation of the two-function
+contract CPython's urllib.request expects, taken from the documented interface
+rather than from CPython's own _scproxy sources.

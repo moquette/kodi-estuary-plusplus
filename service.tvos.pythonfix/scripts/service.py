@@ -1,101 +1,92 @@
-"""tvOS Python Fix: put back the _scproxy module Kodi's tvOS build removes.
+"""Everything Kodi's Apple TV build needs put right, in one place. tvOS only.
 
-Kodi's tvOS build disables CPython's _scproxy extension while CPython carries on
-reporting sys.platform == "darwin", so Lib/urllib/request.py:2035 imports a module
-that is not there, at MODULE TOP LEVEL. Anything that touches requests or urllib
-therefore dies at import on every tvOS box: POV, Multi Weather, and EZ
-Maintenance++'s Dropbox and pastebin paths, none of which are ours to patch.
+Two repairs, both of them KODI's business rather than any skin's or any other
+add-on's, and both of which can only be done by a running process because Kodi
+reads the files at startup and no package can ship into them:
 
-Upstream cause, measured against atv1's own build commit 77395cf42e:
-tools/depends/target/python3/Makefile:81-83 sets py_cv_module__scproxy=n/a for all
-darwin_embedded, and the compensating 16-ios-platform.patch that stops CPython
-reporting "darwin" is applied only under findstring iphone, while
-configure.ac:490-493 maps tvos to appletvos. iOS gets both halves; tvOS gets only
-the removal.
+1. THE _scproxy SHIM. Kodi's tvOS build disables CPython's _scproxy extension
+   while CPython carries on reporting sys.platform == "darwin", so
+   Lib/urllib/request.py:2035 imports a module that is not there, at MODULE TOP
+   LEVEL. Anything that touches requests or urllib dies at import on every tvOS
+   box: POV, Multi Weather, and EZ Maintenance++'s Dropbox and pastebin paths,
+   none of which are ours to patch.
 
-DELETE THIS ADD-ON the first time a tvOS Kodi build imports urllib.request without
-_scproxy. It is a workaround for someone else's defect, not a feature, and the
-directory it writes into is at sys.path index 0 for its consumers, so once
-upstream ships a real _scproxy on the path this file would shadow it. It cannot
-shadow a BUILT-IN _scproxy, which wins over sys.path outright, so the worst case
-is proxy discovery staying disabled on a box that has no proxy anyway.
+   Upstream cause, measured against atv1's own build commit 77395cf42e:
+   tools/depends/target/python3/Makefile:81-83 sets py_cv_module__scproxy=n/a
+   for all darwin_embedded, and the compensating 16-ios-platform.patch that
+   stops CPython reporting "darwin" is applied only under findstring iphone,
+   while configure.ac:490-493 maps tvos to appletvos. iOS gets both halves;
+   tvOS gets only the removal.
 
-WHY THIS IS ITS OWN ADD-ON AND NOT A SKIN SERVICE
--------------------------------------------------
-It lived in skin.estuary.pov's boot service in 1.2.2 through 1.2.5, and that
-placement could not fix a fresh install, structurally. MEASURED on atv1
-2026-08-29 07:42, from the owner's own first-run, and reproduced on a clean
-macOS Kodi 22 bench with an isolated HOME the same morning:
+2. THE SIRI REMOTE KEYMAP. Kodi's shipped
+   system/keymaps/customcontroller.SiriRemote.xml makes four choices the owner
+   does not want, and Kodi reads keymaps ONLY from userdata/keymaps/, which no
+   package can ship into. The bindings name Kodi windows and Kodi actions and
+   nothing else, so this is a correction to Kodi's own remote handling and it
+   belongs with the other one.
+
+WHY BOTH LIVE HERE AND NOT IN A SKIN
+------------------------------------
+The shim lived in skin.estuary.pov's boot service in 1.2.2 through 1.2.5 and the
+keymap lived there through 1.2.8, and neither placement was right.
+
+The shim's case is structural. MEASURED on atv1 2026-08-29 07:42, from the
+owner's own first run, and reproduced on a clean macOS Kodi 22 bench with an
+isolated HOME the same morning:
 
     07:42:31.660  Found addon: 'script.module.requests v2.31.0'
     07:42:31.754  Found addon: 'plugin.video.pov v6.08.15'
     07:42:31.884  >> POV <<: Main Monitor Service Starting
     07:42:32.991  ModuleNotFoundError: No module named '_scproxy'   <- the error
     07:42:33.108  Found addon: 'skin.estuary.pov v1.2.5'            <- 117 ms LATER
-    07:42:43.140  estuary.pov: tvOS start: wrote _scproxy.py        <- 10 s later
 
 Kodi installs a parent's dependencies BEFORE the parent, so POV was installed,
 started and dead before the skin carrying its fix was on disk at all. No skin can
-win that, because the fix has to exist before the thing it fixes is installed. An
-add-on that is itself a DEPENDENCY can, which is the whole reason this exists.
+win that, because the fix has to exist before the thing it fixes is installed.
 
-THE ORDERING THIS RELIES ON, ALL MEASURED ON A CLEAN KODI 22 BENCH
-------------------------------------------------------------------
-1. Dependencies install depth first, a node's own dependencies before the node.
-   That is what puts script.module.requests and its four modules ahead of this
-   add-on, and it is why the target directory is guaranteed to exist.
-2. Sibling dependencies install in the order the parent DECLARES them, not
-   alphabetically. Measured by flipping two <import> lines in the skin and
-   watching the install order flip with them.
-3. A newly installed service add-on is started IMMEDIATELY, mid session, with no
-   Kodi restart. Measured with a throwaway probe service: Kodi logged
-   "Found addon" and "CServiceAddonManager: starting" in the SAME millisecond and
-   the script's own first line 4 ms later.
+The keymap's case is ownership, and it is the simpler argument. A Siri remote
+belongs to the box, not to whatever skin happens to be selected. Written from a
+skin it arrives only for users of that skin, it is written again by every other
+skin that copies the idea, and an Apple TV owner who switches skins loses it for
+no reason he can see. Written from here it is one add-on, installed once, and
+the skin is a skin.
 
-So the skin declares this add-on ahead of plugin.video.pov, this add-on declares
-script.module.requests, and the resulting order is
-certifi, chardet, idna, urllib3, requests, THIS, ... , plugin.video.pov.
+So skin.estuary.pov has NO boot service, NO scripts directory and no tvOS code of
+any kind as of 1.3.0, and this add-on is the only thing on the box that knows
+tvOS is different. Do not put either write back into a skin.
 
-It is still a race and that is stated rather than glossed: this service is
-dispatched asynchronously, so what is guaranteed is the INSTALL order, not that
-this Python interpreter has finished before POV's install completes.
+INSTALLED FIRST AND ALONE, SO THERE IS NO RACE TO WIN
+-----------------------------------------------------
+This add-on is user-installed from the Tony.7.Bones repository, not pulled in as
+anybody's dependency. skin.estuary.pov 1.2.7 declared it as a hard <import>,
+which fixed the ordering but shipped a tvOS-only workaround to every Fire TV,
+Android, Windows, Linux and macOS box, and 1.2.8 removed that import.
 
-THE MARGIN IS MILLISECONDS, NOT SECONDS, and an earlier version of this comment
-had that wrong. MEASURED 2026-08-29 over three first installs from the live
-repository onto three clean Kodi 22 profiles, which is the case that matters
-because it is the one the owner hit:
+That change is what makes the ordering question go away rather than sharpen it.
+As a sibling dependency the margin was won by FIFO position on the Python invoker
+queue and was MEASURED at 7 ms, 11 ms and 12 ms over three first installs from
+the live repository, which is not a margin anybody should be relying on.
+Installed deliberately, before anything that needs it, the shim is on disk before
+the consumer exists. Do not reintroduce an <import> of this add-on anywhere to
+"guarantee" ordering; installing it first is the guarantee.
 
-    install gap, this add-on to POV      5.87 s, 4.20 s, 3.53 s
-    EXECUTION gap, this script's first
-    line to POV's service starting       11 ms,  7 ms,   12 ms
+Losing anyway costs exactly one add-on's service start on one boot, because Kodi
+rebuilds an add-on's sys.path from its declared dependencies on EVERY invocation
+(PythonInvoker.cpp:203-228), so everything invoked afterwards picks the file up
+with no restart.
 
-The install gap is comfortable and is what declaring the autocompletion subtree
-between the two buys. The execution gap is not, and the reason is that a service
-add-on's interpreter does not run when it is dispatched. On run 3 this add-on was
-installed at 09:53:14.331, CPythonInvoker(2) logged "start processing" at
-09:53:14.332, and the script's first line did not appear until 09:53:21.219,
-6.887 s later: Python execution is queued behind the install storm, and every
-service that was dispatched during it runs in a burst once the storm ends.
-
-So what actually protects this is NOT slack, it is FIFO: this add-on's
-interpreter is dispatched seconds before POV's, so it is ahead of POV's in that
-queue and runs first, by the milliseconds above rather than by the seconds the
-install gap suggests. Do not read the install gap as headroom, and do not remove
-the ordering on the strength of it. Won 3 of 3 there, and 5 of 5 on an earlier
-bench where the dependencies were already present and the margin was 0.455 s to
-3.9 s, which is the same mechanism under less contention.
-
-Losing the race costs exactly one add-on's service start on one boot, because
-Kodi rebuilds an add-on's sys.path from its declared dependencies on EVERY
-invocation (PythonInvoker.cpp:203-228), so everything invoked afterwards picks
-the file up with no restart.
+DELETE THIS ADD-ON the first time a tvOS Kodi build imports urllib.request
+without _scproxy and ships a Siri remote keymap worth keeping. It is a workaround
+for someone else's defects, not a feature. The shim cannot shadow a BUILT-IN
+_scproxy, which wins over sys.path outright, so a leftover copy on a repaired
+build costs nothing but a stale file.
 
 Strict no-op off tvOS, gated on xbmc.getCondVisibility('System.Platform.TVOS'),
 and that gate is enforced by tests rather than merely intended: Fire TV, Android
-and desktop boxes must get nothing.
+and desktop boxes must get nothing at all.
 
-The write is idempotent BY CONTENT: the file is read back and rewritten only if
-its bytes differ, so a normal start does no disk IO at all.
+Both writes are idempotent BY CONTENT: each file is read back and rewritten only
+if its bytes differ, so a normal start does no disk IO at all.
 """
 
 import os
@@ -103,11 +94,11 @@ import os
 import xbmc
 import xbmcvfs
 
-LOG_PREFIX = "tvos.pythonfix: "
+LOG_PREFIX = "tvos.fixes: "
 
 SCPROXY_NAME = "_scproxy.py"
 
-# WHERE, and why not the obvious place.
+# WHERE THE SHIM GOES, why not the obvious place, and why more than one.
 #
 # NOT the per-user site directory. CPython resolves that to
 # $HOME/.local/lib/python<X.Y>/site-packages, and $HOME on tvOS is the app DATA
@@ -119,26 +110,67 @@ SCPROXY_NAME = "_scproxy.py"
 # site.py from an environment Kodi has already finished setting before
 # Py_Initialize (XBPython.cpp:44-63). devicectl cannot reach the stock path
 # either: `copy to` returns CoreDeviceError 7000 for any destination containing
-# a dot-directory component.
+# a dot-directory component. That route is closed; do not re-derive it.
 #
-# THIS instead: script.module.requests' library directory, which is inside
-# special://home where Kodi can write, and which is already on the sys.path of
-# every add-on that declares it. PythonInvoker builds an add-on's path from its
-# declared dependencies and RECURSES through them (PythonInvoker.cpp:203-228,
-# the walk at :709-727, each inserted at index 0), and script.module.requests
-# declares library="lib".
+# THESE instead: the library directories of script.module.requests and of its own
+# four dependencies. All five live inside special://home where Kodi can write,
+# all five declare <extension point="xbmc.python.module" library="lib">, and
+# PythonInvoker builds an add-on's sys.path from its declared dependencies and
+# RECURSES through them (PythonInvoker.cpp:203-228, the walk at :709-727, each
+# inserted at index 0). So an add-on that declares script.module.requests gets
+# all five directories on its path, not just the one.
 #
-# So the shim reaches exactly the add-ons whose dependency closure contains
-# script.module.requests, and nothing else. MEASURED on atv1 by reading each
-# installed addon.xml: plugin.video.pov, weather.multi and
-# script.openweathermap.maps all declare it, as does script.ezmaintenanceplusplus
-# in this tree. The metadata scrapers and service.xbmc.versioncheck do NOT, so
-# they are not covered by this and must not be claimed as fixed.
+# The redundancy is the point, and it is the answer to the one recurring failure
+# this add-on would otherwise have. MEASURED against the Kodi 22 source: an
+# update is a directory SWAP, not an extract over the top.
+# CAddonInstallJob::Install calls CFilesystemInstaller::InstallToFilesystem
+# (AddonInstaller.cpp:1203-1204), which unpacks the new tree into a temp uuid
+# folder, renames the WHOLE old directory aside, moves the new one into place and
+# then RemoveRecursive's the old one (FilesystemInstaller.cpp:74-89). Files that
+# were never in any zip go with it. So an update to script.module.requests
+# deletes the shim, and every networked add-on on the box breaks again until this
+# service next runs. Uninstall is the same code shape (:96-110).
 #
-# The other four directories on POV's path, certifi, chardet, idna and urllib3,
-# would work identically. requests is chosen because it is the one whose import
-# raises the error and the one every affected add-on declares directly, so a
-# reader who finds the file has the shortest path back to the reason.
+# Writing all five turns "one module updated" from an outage into a no-op,
+# because urllib only needs to find _scproxy on ONE path entry, and five
+# independent upstream modules do not update in the same instant. The next start
+# repairs whichever ones were replaced.
+#
+# THE THREE ALTERNATIVES WERE MEASURED AND ARE WORSE. Do not re-derive them.
+#   - A directory Kodi owns and nobody can update. There isn't one. Every entry
+#     on an add-on's sys.path comes from PythonInvoker.cpp:230-239, fed by
+#     exactly three producers: the invoking script's own directory (:205, useless
+#     for shimming another add-on's interpreter), each SCRIPT_MODULE dependency's
+#     LibPath (:208-213 and the walk at :709-727, which is these five), and a
+#     no-addon-context fallback (:224-227) that is the same third-party dirs.
+#     Everything else is PYTHONHOME/PYTHONPATH pointed at special://frameworks
+#     (XBPython.cpp:56-57), inside the read-only app bundle.
+#   - A resident service that reacts to the update. Kodi 22 has no AddOn
+#     announcement flag at all (IAnnouncer.h:16-30) and nothing under xbmc/addons/
+#     calls Announce, so xbmc.Monitor never hears about an install, update or
+#     uninstall. The C++ AddonEvents::ReInstalled bus (AddonEvents.h:41-123) has
+#     no Python bridge, and Service.cpp:43-47 restarts only the add-on that was
+#     itself reinstalled, never its dependents.
+#   - A resident service that POLLS. Possible, but it buys a shorter window at
+#     the cost of a Python interpreter resident for the whole session on a box
+#     with a documented memory-kill history. Redundancy removes the window
+#     instead of shrinking it, and costs nothing after the write.
+#
+# Cost of the redundancy, stated rather than glossed: five 1 KB files instead of
+# one, written once, only when their bytes differ. Deleting this add-on leaves up
+# to five stale files behind instead of one, and each of those is removed by the
+# next update to the module it sits in. A stale shim cannot shadow a real
+# _scproxy, because a built-in module wins over sys.path outright.
+#
+# requests is FIRST deliberately: it is the module whose import raises the error
+# and the one every affected add-on declares directly, so a reader who finds the
+# file has the shortest path back to the reason. The other four are insurance.
+#
+# MEASURED on atv1 by reading each installed addon.xml: plugin.video.pov,
+# weather.multi and script.openweathermap.maps all declare
+# script.module.requests, as does script.ezmaintenanceplusplus in this tree. The
+# metadata scrapers and service.xbmc.versioncheck do NOT, so they are not covered
+# by this and must not be claimed as fixed.
 #
 # Writing a file into an add-on we do not own is NOT the prohibited thing. This
 # project's standing rule forbids forking, versioning, patching or SHIPPING
@@ -146,7 +178,13 @@ SCPROXY_NAME = "_scproxy.py"
 # leaves us carrying a copy nobody knows about. Nothing here is shipped or
 # forked: upstream's own bytes are untouched, an update simply removes the shim,
 # and the next start puts it back.
-SHIM_DIR_PATH = "special://home/addons/script.module.requests/lib/"
+SHIM_DIR_PATHS = (
+    "special://home/addons/script.module.requests/lib/",
+    "special://home/addons/script.module.urllib3/lib/",
+    "special://home/addons/script.module.certifi/lib/",
+    "special://home/addons/script.module.idna/lib/",
+    "special://home/addons/script.module.chardet/lib/",
+)
 
 SCPROXY = "\n".join(
     [
@@ -159,6 +197,11 @@ SCPROXY = "\n".join(
         "reports the truth: no proxies are configured. urllib.request then makes",
         "direct connections, and http_proxy / https_proxy environment variables are",
         "still honoured, because getproxies_environment is consulted first.",
+        "",
+        "Copies of this file are written into several script.module.* library",
+        "directories on purpose, so that updating any one of those modules cannot",
+        "take the shim off the path. Delete them all, and the add-on, once Kodi's",
+        "Apple TV build ships a real _scproxy.",
         "",
         "Contract taken from CPython 3.14 Lib/urllib/request.py:2035 and the",
         "_proxy_bypass_macosx_sysconf docstring at :1953.",
@@ -175,42 +218,90 @@ SCPROXY = "\n".join(
     ]
 )
 
-# Long enough for Kodi's own doomed startup fetch to finish and release the
-# weather job, short enough that nobody watches a blank panel. MEASURED on atv1:
-# that fetch ran 05:14:33.391 to 05:14:34.895, and a refresh fired 100 ms into it
-# was silently dropped, which is the bug this constant exists to avoid.
-WEATHER_RETRY_SECONDS = 10
+# Kodi's shipped system/keymaps/customcontroller.SiriRemote.xml makes four
+# choices the owner does not want. See the Apple TV playbook section 15 for the
+# full stock-versus-ours table. In short:
+#
+#   FullscreenVideo + FullscreenLiveTV, button 6 (back): stock Stop -> Back.
+#     Back killed playback outright; now it leaves fullscreen and keeps playing,
+#     which is what the Fire TV remote does.
+#   FullscreenLiveTV only, button 5 (select): stock Pause -> OSD. Pause is a
+#     dead button on live streams with no timeshift.
+#   Home, button 6 (back): stock ActivateWindow(FavouritesBrowser) -> FullScreen.
+#     That stock binding is the Favourites window that will not go away when you
+#     exit a video. FullScreen is a no-op when nothing is playing.
+#   global, button 21 (double play/pause): stock noop -> FullScreen, so there is
+#     a way back INTO fullscreen once back has left it. Without this, changing
+#     back away from Stop would strand playback with no route to the video.
+#
+# Written with plain open() on purpose. Per playbook section 8 the only filename
+# prefix excluded from NSUserDefaults vectoring is customcontroller.SiriRemote*,
+# and t7b-siriremote.xml does NOT carry that prefix, so it IS vectoring-eligible.
+# It stays a POSIX file only because the write API here is open() rather than
+# xbmcvfs. Do NOT "fix" this to use xbmcvfs: that would spend the 512 KB key
+# budget on a file Kodi's keymap loader reads happily from disk, and would leave
+# a durable key shadowing the file after a restore.
+KEYMAP_DIR_PATH = "special://profile/keymaps/"
+
+KEYMAP_NAME = "t7b-siriremote.xml"
+
+KEYMAP = "\n".join(
+    [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        "<!-- Written by service.tvos.pythonfix. Back exits fullscreen video with",
+        "     playback continuing, double play/pause returns to it, and back at Home",
+        "     no longer opens the Favourites browser. Delete this file and run",
+        "     Action(reloadkeymaps) to revert to stock behaviour. -->",
+        "<keymap>",
+        "  <FullscreenVideo>",
+        '    <customcontroller name="SiriRemote">',
+        '      <button id="6">Back</button>',
+        "    </customcontroller>",
+        "  </FullscreenVideo>",
+        "  <FullscreenLiveTV>",
+        "    <!-- Kodi consults the live-TV section first when PVR content plays and",
+        "         falls back to FullscreenVideo, so both are written. select opens",
+        "         the OSD on live TV only; movies and shows keep select=Pause. -->",
+        '    <customcontroller name="SiriRemote">',
+        '      <button id="5">OSD</button>',
+        '      <button id="6">Back</button>',
+        "    </customcontroller>",
+        "  </FullscreenLiveTV>",
+        "  <Home>",
+        "    <!-- stock opens the Favourites browser here, which is the window that",
+        "         will not go away on exiting a video. FullScreen is a no-op when",
+        "         nothing is playing. -->",
+        '    <customcontroller name="SiriRemote">',
+        '      <button id="6">FullScreen</button>',
+        "    </customcontroller>",
+        "  </Home>",
+        "  <global>",
+        "    <!-- stock maps double play/pause to noop, which leaves no way back",
+        "         into fullscreen once back has exited it. Stop stays on hold",
+        "         play/pause (button 20) and in the OSD. -->",
+        '    <customcontroller name="SiriRemote">',
+        '      <button id="21">FullScreen</button>',
+        "    </customcontroller>",
+        "  </global>",
+        "</keymap>",
+        "",
+    ]
+)
 
 
 def _log(message, level=xbmc.LOGINFO):
     xbmc.log(LOG_PREFIX + message, level=level)
 
 
-def _shim_target_dir():
-    """Resolve SHIM_DIR_PATH through Kodi. The why is on SHIM_DIR_PATH above.
+def _write_if_changed(directory, name, body):
+    """Write body to directory/name only if the bytes differ. True if written.
 
-    Resolved through xbmcvfs rather than built from os.path.expanduser, because
-    expanduser on tvOS returns the container root, which is the unwritable place
-    this whole approach exists to avoid.
+    Returns None when the directory is absent, which is a reportable state rather
+    than a failure, and the two callers treat it differently.
     """
-    return xbmcvfs.translatePath(SHIM_DIR_PATH)
-
-
-def write_scproxy():
-    """Write the shim if its bytes differ. Returns a one-line summary."""
-    directory = _shim_target_dir()
-    path = os.path.join(directory, SCPROXY_NAME)
-
-    # Deliberately NOT os.makedirs. script.module.requests is a declared
-    # dependency of this add-on, so Kodi has installed it before this runs and
-    # the directory is there. If it somehow is not, then nothing on the box
-    # depends on it, the shim would help nobody, and creating
-    # addons/script.module.requests/ with no addon.xml in it would leave a
-    # malformed add-on directory for Kodi's scanner to find and for a later
-    # dependency install to land on top of. Absent is a reportable state, not a
-    # failure: it is logged and the boot carries on.
+    path = os.path.join(directory, name)
     if not os.path.isdir(directory):
-        return "%s skipped, script.module.requests is not installed" % SCPROXY_NAME
+        return None
 
     current = None
     if os.path.isfile(path):
@@ -220,86 +311,119 @@ def write_scproxy():
         except OSError:
             current = None
 
-    if current == SCPROXY:
-        return "%s already current in %s" % (SCPROXY_NAME, SHIM_DIR_PATH)
+    if current == body:
+        return False
 
     with open(path, "w") as handle:
-        handle.write(SCPROXY)
-    return "wrote %s to %s" % (SCPROXY_NAME, SHIM_DIR_PATH)
+        handle.write(body)
+    return True
 
 
-def refresh_weather():
-    """Re-fetch the weather, because Kodi's own startup fetch loses the race.
+def write_scproxy():
+    """Write the shim into every module library directory present.
 
-    Kodi has no hook that runs before add-ons do, and it kicks its startup
-    weather fetch off about a second before service add-ons get their
-    interpreters. weather.multi declares script.module.requests (measured on
-    atv1), so on any start where the shim is not already on disk, that fetch has
-    already died on the missing _scproxy and the weather stays blank until the
-    next scheduled refresh, up to half an hour later. The start after an update
-    to script.module.requests is exactly that case, because the update takes the
-    shim with it.
+    Deliberately NOT os.makedirs. script.module.requests is a declared dependency
+    of this add-on, so Kodi has installed it and its own four dependencies before
+    this runs and the directories are there. If one somehow is not, then nothing
+    on the box depends on it, a shim there would help nobody, and creating
+    addons/script.module.<x>/ with no addon.xml in it would leave a malformed
+    add-on directory for Kodi's scanner to find and for a later dependency
+    install to land on top of. Absent is skipped, not created.
 
-    Unconditional rather than conditional on having just written the file, and
-    that is the behaviour this add-on inherited rather than a fresh choice. The
-    cost of being wrong is one extra HTTP fetch per start.
-
-    Weather.Refresh is a Kodi builtin (WeatherBuiltins.cpp), not an add-on call,
-    so this names no add-on, works with whatever provider the box is set to, and
-    does nothing at all if none is set.
-
-    The wait is not politeness, it is required: firing while the first fetch is
-    still in flight is a no-op, because Kodi will not queue a second weather job
-    over a running one. waitForAbort rather than sleep so a box shut down inside
-    the window exits immediately instead of holding the service open.
+    All-absent is the only case worth reporting on its own, because it means
+    nothing on this box could have been using requests in the first place.
     """
-    monitor = xbmc.Monitor()
-    if monitor.waitForAbort(WEATHER_RETRY_SECONDS):
-        return "weather re-fetch skipped, Kodi is shutting down"
-    xbmc.executebuiltin("Weather.Refresh")
-    return "weather re-fetch requested"
+    written = []
+    present = 0
+    for path in SHIM_DIR_PATHS:
+        directory = xbmcvfs.translatePath(path)
+        result = _write_if_changed(directory, SCPROXY_NAME, SCPROXY)
+        if result is None:
+            continue
+        present += 1
+        if result:
+            written.append(path.split("/")[-3])
+
+    if not present:
+        return "%s skipped, no script.module.* target is installed" % SCPROXY_NAME
+    if not written:
+        return "%s already current in %d of %d dirs" % (
+            SCPROXY_NAME,
+            present,
+            len(SHIM_DIR_PATHS),
+        )
+    return "wrote %s to %d of %d dirs (%s)" % (
+        SCPROXY_NAME,
+        len(written),
+        len(SHIM_DIR_PATHS),
+        ", ".join(written),
+    )
 
 
-# The shim comes first: it is the one that other add-ons are racing, and every
-# instruction between here and the write is time POV or Multi Weather can spend
-# dying at import. Each step is isolated, so one failing never costs the other.
+def write_keymap():
+    """Write the keymap if its bytes differ, and reload keymaps only then.
+
+    os.makedirs here and NOT in write_scproxy, and the difference is ownership:
+    special://profile/keymaps/ is Kodi's own directory for exactly this file and
+    may legitimately not exist yet on a fresh profile, whereas the shim targets
+    belong to other add-ons and creating one would fabricate a broken add-on.
+    """
+    directory = xbmcvfs.translatePath(KEYMAP_DIR_PATH)
+    if not os.path.isdir(directory):
+        os.makedirs(directory)
+
+    if not _write_if_changed(directory, KEYMAP_NAME, KEYMAP):
+        return "%s already current" % KEYMAP_NAME
+    xbmc.executebuiltin("Action(reloadkeymaps)")
+    return "wrote %s and reloaded keymaps" % KEYMAP_NAME
+
+
+# The shim comes FIRST and the order is load bearing, not cosmetic. It is the one
+# other add-ons can be racing on a box where this was installed mid session, and
+# every instruction in front of it is time POV or Multi Weather can spend dying at
+# import. The keymap is only read when the user next presses a button, so it can
+# never be the urgent one.
 #
-# The flag on each row says whether its result is logged the INSTANT it lands as
-# well as in the summary. Only the shim carries it, and it is not decoration:
-# the summary cannot be emitted until refresh_weather's ten second wait is over,
-# so it timestamps the shim ten seconds late. That is useless for the one
-# question anybody will ever ask this log, which is whether the shim beat POV's
-# service start. That gap was 0.455 s to 3.9 s on a bench whose dependencies were
-# already installed, and 7 ms to 12 ms on three first installs from the live
-# repository (see the module docstring), so ten seconds of slack in the timestamp
-# is not a rounding error, it is the difference between a measurement and a
-# guess. It cost three of those five bench runs their evidence.
+# A table rather than two bare calls, because main() isolates each row in its own
+# try: a keymap failure can never cost the shim, and a third repair added later
+# inherits that for free without touching main().
 WRITES = (
-    ("_scproxy shim", write_scproxy, True),
-    ("weather refresh", refresh_weather, False),
+    ("_scproxy shim", write_scproxy),
+    ("Siri remote keymap", write_keymap),
 )
 
 
 def main():
-    """tvOS only. On every other platform this service does nothing at all."""
+    """tvOS only. On every other platform this service does nothing at all.
+
+    NO xbmc.executebuiltin call belongs here beyond the keymap reload, and that
+    one is inside write_keymap where it only fires on a real write. In particular
+    do not add Weather.Refresh back. 1.0.x fired it ten seconds into every tvOS
+    start and it never did anything: WeatherBuiltins.cpp:83 maps weather.refresh
+    to SwitchLocation<0>, which sends GUI_MSG_MOVE_OFFSET to WINDOW_WEATHER
+    (WeatherBuiltins.cpp:36-43) rather than calling CWeatherManager::Refresh();
+    GUIWindowWeather.cpp:103-116 handles that message only when m_maxLocation > 0;
+    the only assignment to m_maxLocation is in UpdateLocations()
+    (GUIWindowWeather.cpp:143), which returns immediately unless the Weather
+    window is the one on screen (:132-134). At boot it never is, so the message
+    was dropped every time. Removing it also gave this service its life back: it
+    now exits as soon as both files are on disk instead of holding an interpreter
+    open for ten seconds on every start.
+    """
     if not xbmc.getCondVisibility("System.Platform.TVOS"):
         _log("not tvOS, service is a no-op", level=xbmc.LOGDEBUG)
         return
-    # INFO rather than debug, deliberately. A repair that only reports itself at
-    # debug level is a repair nobody can confirm happened without reproducing the
-    # whole boot with debug logging on, and this one runs on a box where getting
-    # a log at all costs a devicectl round trip.
+    # One INFO line per start, deliberately, and INFO rather than debug. A repair
+    # that only reports itself at debug level is a repair nobody can confirm
+    # happened without reproducing the whole boot with debug logging on, and this
+    # one runs on a box where getting a log at all costs a devicectl round trip.
     done = []
-    for label, write, log_immediately in WRITES:
+    for label, write in WRITES:
         try:
-            result = write()
+            done.append(write())
         except Exception as error:  # noqa: BLE001 - a boot service must never die
-            result = "%s FAILED: %s" % (label, error)
+            done.append("%s FAILED: %s" % (label, error))
             _log("%s failed: %s" % (label, error), level=xbmc.LOGWARNING)
-        else:
-            if log_immediately:
-                _log(result)
-        done.append(result)
     _log("tvOS start: " + "; ".join(done))
 
 
