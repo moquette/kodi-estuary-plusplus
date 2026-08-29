@@ -180,25 +180,46 @@ def test_the_skin_no_longer_writes_the_shim(tmp_path):
     )
 
 
-def test_the_skin_declares_the_shim_addon_before_the_addons_that_need_it():
-    """Declaration order in addon.xml IS the fix. Measured, not assumed.
+def test_the_skin_does_not_declare_the_shim_addon():
+    """The 1.2.8 decoupling, asserted rather than remembered.
 
-    Kodi installs sibling dependencies in the order the parent declares them, and
-    starts a service add-on within milliseconds of installing it (measured on a
-    clean Kodi 22 bench: "Found addon" and "CServiceAddonManager: starting" in the
-    same millisecond, the script's own first line 4 ms later). So the shim add-on
-    has to be declared ahead of plugin.video.pov, and POV last, or the ordering
-    that makes a fresh install work quietly goes away with no test failing.
+    1.2.7 imported service.tvos.pythonfix non-optionally, so every Fire TV,
+    Android, Windows, Linux and macOS box installing this skin downloaded and
+    installed a tvOS-only workaround that does nothing there and carries a row
+    in Settings > Add-ons > My add-ons > Services. tvOS is under 1% of Kodi
+    installs; it does not get to shape the other 99%.
+
+    Re-adding the import is the easy mistake, because it reads like making a
+    fresh Apple TV install "just work". Three reasons it is still wrong, all
+    measured:
+
+    1. As a sibling dependency the ordering was won by FIFO position on the
+       Python invoker queue, with a margin of 7 to 12 ms. Installed deliberately
+       first there is no ordering to win at all.
+    2. The add-on's own disclaimer tells the user to delete it once Kodi ships
+       an Apple TV build that no longer needs it. A hard import here makes that
+       instruction unfollowable.
+    3. When upstream fixes _scproxy, decoupled means a user deletes an add-on.
+       Coupled means we cut a skin release.
+
+    An existing box does NOT lose the add-on on update. MEASURED on a clean
+    Kodi 22.0-BETA1 (21.90.801) bench: RemoveOrphanedDepsRecursively has exactly
+    two callers, CAddonUnInstallJob::DoWork (AddonInstaller.cpp:1308) and the
+    "remove orphaned dependencies" settings action (AddonSystemSettings.cpp:74),
+    and neither runs on an update. Belt and braces, CAddonMgr::IsOrphaned
+    (AddonManager.cpp:344-349) returns false for anything whose MainType is not
+    in dependencyTypes, which is {SCRAPER_LIBRARY, SCRIPT_LIBRARY, SCRIPT_MODULE}
+    (AddonType.cpp:20-24). xbmc.service maps to AddonType::SERVICE
+    (AddonInfo.cpp:76), so this add-on can never be classified orphaned by
+    either path.
     """
     text = (ROOT / "skin.estuary.pov" / "addon.xml").read_text(encoding="utf-8")
     order = re.findall(r'<import addon="([^"]+)"', text)
-    assert "service.tvos.pythonfix" in order, (
-        "the shim add-on must be a declared dependency, or Kodi never installs it"
-    )
-    assert order.index("service.tvos.pythonfix") < order.index("plugin.video.pov"), (
-        "the shim must install before POV, or POV starts and dies before it exists"
+    assert "service.tvos.pythonfix" not in order, (
+        "the shim is a STANDALONE add-on as of 1.2.8; importing it here puts a "
+        "tvOS-only workaround on every non-tvOS box that installs this skin"
     )
     assert order[-1] == "plugin.video.pov", (
-        "POV goes last so the other dependencies' download time separates it from "
-        "the shim add-on's service start"
+        "POV stays last. Nothing depends on that any more, but moving it is a "
+        "behaviour change for no gain"
     )

@@ -37,23 +37,38 @@
 	     (AddonsDirectory.cpp:915-949), so a service cannot reach them. -->
 	<extension point="xbmc.service" library="scripts/service.py" start="startup"/>
 	<extension point="xbmc.addon.metadata">
-		<!-- all, and do NOT narrow it to tvos. It reads like the obvious way to
-		     keep a tvOS-only add-on off other boxes, and it BREAKS THE SKIN.
+		<!-- all, and do NOT narrow it to tvos. "tvos" IS a valid platform tag
+		     (AddonInfoBuilder.cpp:875-877), so nothing rejects the edit and the
+		     damage is invisible until a box tries to install this. Narrowing it
+		     is the obvious-looking way to keep a tvOS-only add-on off other
+		     boxes, and it is wrong for a reason that outlives whoever declares
+		     it: this add-on is USER-INSTALLED, from a repository listing.
+
 		     PlatformSupportsAddon returning false makes CAddonInfoBuilder::Generate
 		     return nullptr (AddonInfoBuilder.cpp:224-243) for BOTH the local scan
-		     and the repository addons.xml parse, so a Fire TV never sees this
-		     add-on in the repo listing at all. skin.estuary.pov imports it
-		     non-optionally, so CheckDependencies then fails with "requires X
-		     version Y which is not available" (AddonInstaller.cpp:580-592) and the
-		     SKIN'S OWN install and update fail on every Fire TV, Android, Windows,
-		     Linux and macOS box. Measured on a bench with <platform>tvos</platform>:
-		     "No platform for add-on service.tvos.pythonfix", followed by
-		     "CAddonDatabase: service.tvos.pythonfix has been uninstalled".
-		     optional="true" does not rescue it either: an optional dependency that
-		     is not installed is never installed at all (AddonInstaller.cpp:1097-1102),
-		     including on tvOS, which removes the only reason this exists.
+		     and the repository addons.xml parse. That is not "hidden on the wrong
+		     platform"; it is absent from the repository listing entirely, and it
+		     is also the parse of the WHOLE addons.xml, which is shared by every
+		     box. Measured on a bench with <platform>tvos</platform>: "No platform
+		     for add-on service.tvos.pythonfix", followed by "CAddonDatabase:
+		     service.tvos.pythonfix has been uninstalled" - Kodi tears the add-on
+		     out of its database rather than leaving it dormant.
+
+		     skin.estuary.pov 1.2.7 imported this add-on, and while that was true
+		     narrowing the platform ALSO failed the skin's own install and update
+		     on every non-tvOS box: CheckDependencies fails with "requires X
+		     version Y which is not available" (AddonInstaller.cpp:580-592). The
+		     skin stopped importing it in 1.2.8, so that particular blast radius
+		     is gone. The rule is unchanged, because it never rested on the skin:
+		     an add-on that Kodi refuses to build an info object for cannot be
+		     listed, installed or updated by anybody, on any box, and the one
+		     platform that needs it would still get it only by luck of the repo
+		     cache. Keep it at all.
+
 		     The gate that actually matters is the runtime one in scripts/service.py,
-		     System.Platform.TVOS, and it is enforced by tests. -->
+		     System.Platform.TVOS, and it is enforced by tests. Off tvOS this
+		     add-on starts, checks that one condition and returns, which is what
+		     "does nothing on other platforms" is supposed to cost. -->
 		<platform>all</platform>
 		<license>GPL-2.0-or-later</license>
 		<source>https://github.com/moquette/kodi-estuary-pov</source>

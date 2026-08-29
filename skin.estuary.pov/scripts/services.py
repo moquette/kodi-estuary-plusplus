@@ -19,11 +19,17 @@ parent, so on the owner's own first run on atv1 (MEASURED 2026-08-29, kodi.log)
 plugin.video.pov was installed at 07:42:31.754, its service started at
 07:42:31.884 and died on the missing _scproxy at 07:42:32.991, and this skin was
 not found on disk until 07:42:33.108, 117 ms after the error the user was staring
-at. It is now service.tvos.pythonfix, declared in this skin's addon.xml ahead of
-plugin.video.pov, because a DEPENDENCY installs before the add-ons that need it
-and a skin never can. That also makes it work for boxes with no skin of ours on
-them at all, which was always the honest shape: repairing the box's Python
-runtime is not a skin's business.
+at. It is now service.tvos.pythonfix, a SEPARATE add-on in the same repository,
+and as of skin 1.2.8 this skin does not import it either. An Apple TV owner
+installs it himself, once, before this skin.
+
+That is the honest shape and it is worth being explicit about, because the
+in-between state lasted one release. 1.2.7 declared it as a hard dependency
+here, which fixed the ordering but shipped a tvOS-only workaround to every Fire
+TV, Android, Windows, Linux and macOS box that installed this skin. Repairing
+the box's Python runtime is not a skin's business on ANY platform, including the
+one that needs it. Do not add the import back; the fix reaching the boxes that
+have no skin of ours on them is the point, not a side effect.
 """
 
 import os

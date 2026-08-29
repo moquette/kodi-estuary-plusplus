@@ -1,3 +1,27 @@
+[B]1.2.8[/B]
+• The Apple TV Python fix is now a separate add-on that Apple TV users install
+  themselves. It is called tvOS Python Fix and it is in the same repository as
+  this skin. Install it before this skin, once, and you will not need to think
+  about it again.
+• 1.2.7 installed it automatically, as a dependency of this skin. That fixed the
+  ordering, and it also put an Apple TV workaround on every Fire TV, Android,
+  Windows, Linux and macOS box that installed the skin, where it starts, checks
+  one condition and does nothing. Under 1% of Kodi installs are Apple TVs.
+• If you are already on 1.2.7 and have tvOS Python Fix installed, updating to
+  this release LEAVES IT INSTALLED and working. Nothing is removed from your box.
+  Kodi only removes orphaned dependencies on an uninstall or when you press the
+  button for it yourself, and a service add-on is never classified as orphaned in
+  the first place.
+• Installing it deliberately is also safer than having the skin pull it in. As a
+  sibling dependency its head start over POV was won by declaration order, with a
+  measured margin of 7 to 12 ms. Installed on its own, before the skin, there is
+  no ordering left to win.
+• It also means you can follow that add-on's own advice and delete it once Kodi
+  ships an Apple TV build that no longer needs it. While the skin imported it,
+  deleting it was not something Kodi would let you do.
+• Nothing changes on Fire TV, Android, Windows, Linux or macOS. No skin file
+  changed in this release apart from this one and the dependency list.
+
 [B]1.2.7[/B]
 • Apple TV only: installing this skin on a brand new box no longer throws an
   error at you. Kodi installs a skin's dependencies before the skin itself, so
