@@ -1,3 +1,39 @@
+[B]1.2.5[/B]
+• A NEW install now starts with five main menu items: Movies, TV shows, TV,
+  Add-ons and Weather. Music, Music videos, Radio, Pictures, Videos, Games and
+  Favourites start switched off.
+• None of those seven are gone. Every one of them is still listed, and switching
+  any of them back on is one click, under Settings, Skin Settings, Main menu
+  items.
+• EXISTING boxes: if yours is updating from 1.2.4 the main menu you arranged is
+  left exactly as it is and nothing changes. If yours is updating from 1.2.3 or
+  earlier straight to this release, its main menu WILL be set to those same five
+  items, because 1.2.4 is the release that marks a box as already arranged and
+  yours never ran it. Switch the ones you want back on in Skin Settings.
+• The seed runs once per profile and is stamped afterwards, so it can never
+  rearrange a menu a second time. The seven Skin.SetBool lines run before the
+  stamp on purpose: if a load is cut short part way through, the stamp is not
+  written and the whole set is reapplied on the next Home load rather than
+  leaving a half applied menu.
+
+[B]1.2.4[/B]
+• Skin settings no longer show rows that cannot do anything. Switch a home menu
+  item off and its "Edit widgets" and "Default select action" rows disappear
+  rather than sitting there greyed out. Movies, TV shows, Music, Music videos,
+  TV, Radio and Add-ons all behave this way.
+• Turn off "Show media fanart as background" and the three fanart pack pickers
+  go with it. Turn off the video OSD autoclose and its seconds row goes too.
+• "Choose genre fanart pack" was worse than greyed out. With fanart switched off
+  it stayed fully clickable and picking a pack did nothing at all. It now hides
+  alongside the other two pickers.
+• The virtual keyboard suggests words as you type. Kodi installs the
+  AutoCompletion add-on together with the skin, on an update as well as on a
+  fresh install, so the suggestion strip above the keyboard is no longer
+  permanently empty.
+• Groundwork with no visible effect: marks profiles that already run the skin as
+  arranged by their owner, so that a later release can lay out a default home
+  menu on brand new installs only.
+
 [B]1.2.3[/B]
 • "Number of items to show in home screen lists" now applies to every home row.
   The Movies and TV shows poster rows already followed it. The Music, Music

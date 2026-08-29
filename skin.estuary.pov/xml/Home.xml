@@ -2,12 +2,18 @@
 <window>
 	<defaultcontrol>9000</defaultcontrol>
 	<backgroundcolor>background</backgroundcolor>
-	<!-- Stamp only. This release changes nothing a user can see, and that is the
-	     whole point of it: it marks every profile that already runs POV as
-	     "configured by its owner", so that a later release can seed the default
-	     set of home menu items onto genuinely NEW installs only, and can never
-	     reset a box that is already set up the way its owner wants it. Ship this
-	     first, let it reach every box, and only then ship the seed.
+	<!-- Seed the default home menu once, on a profile that has never been stamped,
+	     then stamp it so it never runs again. A new install lands on Movies, TV
+	     shows, TV, Add-ons and Weather. The other seven items are switched off
+	     here and stay fully available in Settings > Skin Settings > Main menu
+	     items, so switching any of them back on is one click and sticks. The five
+	     keys that stay untouched are HomeMenuNoMovieButton, HomeMenuNoTVShowButton,
+	     HomeMenuNoTVButton, HomeMenuNoProgramsButton and HomeMenuNoWeatherButton.
+
+	     ORDER IS LOAD-BEARING. The seven Skin.SetBool lines run FIRST and the
+	     Skin.SetString stamp LAST. If a load is cut short part way through, the
+	     guard is still empty and the whole set is reapplied on the next Home
+	     load. Stamping first would strand a half applied menu with no retry.
 
 	     The marker has to be a STRING, not a bool. Kodi writes every skin setting
 	     into addon_data/skin.estuary.pov/settings.xml on the first skin load, all
@@ -16,7 +22,19 @@
 	     key existing can tell "never configured" from "switched back on by hand",
 	     and Skin.HasSetting has no third state to read. Only a string has an empty
 	     value that String.IsEmpty can test, which is why the guarded first run
-	     default in SkinSettings.xml is built the same way. -->
+	     default in SkinSettings.xml is built the same way.
+
+	     1.2.4 shipped the stamp on its own, so any box that has run 1.2.4 is
+	     already marked and keeps the menu its owner arranged. A box coming from
+	     1.2.3 or earlier straight to this release carries no stamp and does get
+	     the five item menu. That is stated plainly in the changelog. -->
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoMusicButton)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoMusicVideoButton)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoRadioButton)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoPicturesButton)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoVideosButton)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoGamesButton)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoFavButton)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetString(pov_menu_defaults,1)</onload>
 	<controls>
 		<control type="button" id="20000">
