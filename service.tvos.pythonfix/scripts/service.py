@@ -58,13 +58,37 @@ certifi, chardet, idna, urllib3, requests, THIS, ... , plugin.video.pov.
 
 It is still a race and that is stated rather than glossed: this service is
 dispatched asynchronously, so what is guaranteed is the INSTALL order, not that
-this Python interpreter has finished before POV's install completes. The measured
-margin is seconds against 4 ms of work, because the skin deliberately declares
-its other dependency subtree between this add-on and POV. Losing the race costs
-exactly one add-on's service start on one boot, because Kodi rebuilds an add-on's
-sys.path from its declared dependencies on EVERY invocation
-(PythonInvoker.cpp:203-228), so everything invoked afterwards picks the file up
-with no restart.
+this Python interpreter has finished before POV's install completes.
+
+THE MARGIN IS MILLISECONDS, NOT SECONDS, and an earlier version of this comment
+had that wrong. MEASURED 2026-08-29 over three first installs from the live
+repository onto three clean Kodi 22 profiles, which is the case that matters
+because it is the one the owner hit:
+
+    install gap, this add-on to POV      5.87 s, 4.20 s, 3.53 s
+    EXECUTION gap, this script's first
+    line to POV's service starting       11 ms,  7 ms,   12 ms
+
+The install gap is comfortable and is what declaring the autocompletion subtree
+between the two buys. The execution gap is not, and the reason is that a service
+add-on's interpreter does not run when it is dispatched. On run 3 this add-on was
+installed at 09:53:14.331, CPythonInvoker(2) logged "start processing" at
+09:53:14.332, and the script's first line did not appear until 09:53:21.219,
+6.887 s later: Python execution is queued behind the install storm, and every
+service that was dispatched during it runs in a burst once the storm ends.
+
+So what actually protects this is NOT slack, it is FIFO: this add-on's
+interpreter is dispatched seconds before POV's, so it is ahead of POV's in that
+queue and runs first, by the milliseconds above rather than by the seconds the
+install gap suggests. Do not read the install gap as headroom, and do not remove
+the ordering on the strength of it. Won 3 of 3 there, and 5 of 5 on an earlier
+bench where the dependencies were already present and the margin was 0.455 s to
+3.9 s, which is the same mechanism under less contention.
+
+Losing the race costs exactly one add-on's service start on one boot, because
+Kodi rebuilds an add-on's sys.path from its declared dependencies on EVERY
+invocation (PythonInvoker.cpp:203-228), so everything invoked afterwards picks
+the file up with no restart.
 
 Strict no-op off tvOS, gated on xbmc.getCondVisibility('System.Platform.TVOS'),
 and that gate is enforced by tests rather than merely intended: Fire TV, Android
@@ -245,10 +269,11 @@ def refresh_weather():
 # the summary cannot be emitted until refresh_weather's ten second wait is over,
 # so it timestamps the shim ten seconds late. That is useless for the one
 # question anybody will ever ask this log, which is whether the shim beat POV's
-# service start. MEASURED on a clean Kodi 22 bench over five installs: the gap
-# between the shim landing and POV's service starting ranged from 0.455 s to
-# 3.9 s, so ten seconds of slack in the timestamp is the difference between a
-# measurement and a guess. It cost three of those five runs their evidence.
+# service start. That gap was 0.455 s to 3.9 s on a bench whose dependencies were
+# already installed, and 7 ms to 12 ms on three first installs from the live
+# repository (see the module docstring), so ten seconds of slack in the timestamp
+# is not a rounding error, it is the difference between a measurement and a
+# guess. It cost three of those five bench runs their evidence.
 WRITES = (
     ("_scproxy shim", write_scproxy, True),
     ("weather refresh", refresh_weather, False),
