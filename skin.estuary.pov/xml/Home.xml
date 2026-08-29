@@ -2,6 +2,22 @@
 <window>
 	<defaultcontrol>9000</defaultcontrol>
 	<backgroundcolor>background</backgroundcolor>
+	<!-- Stamp only. This release changes nothing a user can see, and that is the
+	     whole point of it: it marks every profile that already runs POV as
+	     "configured by its owner", so that a later release can seed the default
+	     set of home menu items onto genuinely NEW installs only, and can never
+	     reset a box that is already set up the way its owner wants it. Ship this
+	     first, let it reach every box, and only then ship the seed.
+
+	     The marker has to be a STRING, not a bool. Kodi writes every skin setting
+	     into addon_data/skin.estuary.pov/settings.xml on the first skin load, all
+	     of them as type="bool" false, so a profile nobody has ever touched still
+	     carries all twelve HomeMenuNo*Button keys. Neither the file existing nor a
+	     key existing can tell "never configured" from "switched back on by hand",
+	     and Skin.HasSetting has no third state to read. Only a string has an empty
+	     value that String.IsEmpty can test, which is why the guarded first run
+	     default in SkinSettings.xml is built the same way. -->
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetString(pov_menu_defaults,1)</onload>
 	<controls>
 		<control type="button" id="20000">
 			<include>HiddenObject</include>
