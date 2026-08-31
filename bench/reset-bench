@@ -1,0 +1,226 @@
+#!/usr/bin/env bash
+# Wipe the macOS Kodi bench to a clean install and bring it up on Estuary POV.
+#
+#   bench/reset-bench            back up, wipe, seed, install POV, launch
+#   bench/reset-bench --keep     do not wipe; stage POV onto what is there
+#   bench/reset-bench --no-skin  wipe and seed only, leave Kodi on stock Estuary
+#
+# Rescued 2026-08-31 from the estuary-8 bench during the E7/E8 decommission and
+# adapted to POV. The division of labor is unchanged and deliberate: this
+# script does NOT reimplement bench setup. The wipe-and-seed layer lives in the
+# meta-root's bin/reset-kodi (backup, wipe, windowed geometry, web server,
+# unknown sources, Expert level), and copying that here would create a second
+# copy that drifts, which this tree has been burned by before. The estuary-8
+# version delegated to the bootstrapper checkout's reset-kodi; that checkout is
+# gone (verified 2026-08-31: ~/Code/moquette/kodi/ does not exist), and the
+# same tool now lives at <tree-root>/bin/reset-kodi, so the delegation moved.
+#
+# What reset-kodi does not do is skins and add-on enablement. This script is
+# only that missing layer:
+#
+#   1. stage skin.estuary.pov from this repo, digest-verified
+#   2. write its enable row OFFLINE into Addons33.db, because a hand-copied
+#      add-on lands DISABLED and enabling it any other way costs an extra
+#      Kodi launch (schema captured from the live bench 2026-08-31, Kodi 22
+#      Piers, version row 33|0)
+#   3. select it in guisettings.xml while Kodi is stopped, which avoids the
+#      "keep this skin?" countdown a JSON-RPC switch raises
+#   4. write the F5 -> ReloadSkin() keymap that bench/kodi reload presses
+#   5. launch once, and prove against the RUNNING Kodi that POV resolved
+#
+# It needs nothing vendored: skin.estuary.pov imports only xbmc.gui, which is
+# what freed this bench from the dependency staging the estuary-8 one carried.
+set -euo pipefail
+
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TREE="$(cd "$REPO/.." && pwd)"
+RESET_KODI="$TREE/bin/reset-kodi"
+PROFILE="${KODI_HOME:-$HOME/Library/Application Support/Kodi}"
+SKINID="skin.estuary.pov"
+SKINSRC="$REPO/$SKINID"
+
+wipe=1
+skin=1
+for a in "$@"; do
+  case "$a" in
+    --keep) wipe=0 ;;
+    --no-skin) skin=0 ;;
+    *)
+      echo "unknown option: $a" >&2
+      exit 2
+      ;;
+  esac
+done
+
+# Refuse BEFORE anything, including the quit, so "nothing has been touched" is
+# true when printed. Losing the profile and then failing is strictly worse
+# than not starting.
+if [ "$skin" -eq 1 ] && [ ! -d "$SKINSRC" ]; then
+  echo "REFUSED: no skin source at $SKINSRC. Nothing has been touched." >&2
+  exit 1
+fi
+if [ "$wipe" -eq 1 ] && [ ! -x "$RESET_KODI" ]; then
+  cat >&2 <<EOF
+reset-kodi not found at $RESET_KODI
+
+REFUSING TO WIPE. Nothing has been touched. The wipe-and-seed layer (backup,
+profile wipe, windowed geometry, web server on :8080) lives there, and a wipe
+without it leaves a profile this script cannot finish provisioning.
+
+  bench/reset-bench --keep     installs onto the profile you already have
+EOF
+  exit 1
+fi
+
+stop_kodi() {
+  pgrep -f 'MacOS/Kodi' >/dev/null || return 0
+  osascript -e 'quit app "Kodi"' >/dev/null 2>&1 || true
+  for _ in $(seq 1 30); do
+    pgrep -f 'MacOS/Kodi' >/dev/null || return 0
+    sleep 1
+  done
+  echo "Kodi did not exit cleanly. Quit it and re-run." >&2
+  return 1
+}
+
+# The exclusion list MUST match the rsync exclusions in stage_skin exactly, or
+# the sent-versus-landed comparison fails on files that never meant to travel.
+dir_digest() {
+  (
+    cd "$1" || return 1
+    find . -type f ! -name '.DS_Store' ! -name '*.pyc' \
+      -not -path '*/__pycache__/*' \
+      -exec shasum -a 256 {} \; | sort -k2 | shasum -a 256 | cut -d' ' -f1
+  )
+}
+
+stage_skin() {
+  mkdir -p "$PROFILE/addons"
+  local want landed
+  # Hash BEFORE sending, so the comparison is against what we meant to send,
+  # not against whatever is on the other end afterwards.
+  want=$(dir_digest "$SKINSRC")
+  rsync -a --delete \
+    --exclude '__pycache__' --exclude '*.pyc' --exclude '.DS_Store' \
+    "$SKINSRC/" "$PROFILE/addons/$SKINID/"
+  # Verify what LANDED, not what was sent: a stale directory underneath rsync
+  # is the failure mode, and --delete only helps against the right target.
+  landed=$(dir_digest "$PROFILE/addons/$SKINID")
+  if [ "$landed" != "$want" ]; then
+    cat >&2 <<EOF
+REFUSED: the staged copy of $SKINID does not match its source.
+  sent   $want
+  landed $landed
+EOF
+    return 1
+  fi
+  echo "  staged $SKINID (digest ${want:0:12})"
+}
+
+enable_offline() {
+  local db="$PROFILE/userdata/Database/Addons33.db"
+  mkdir -p "$(dirname "$db")"
+  ADDON_ID="$1" DB="$db" python3 - <<'PY'
+import datetime, os, sqlite3
+db, addon = os.environ["DB"], os.environ["ADDON_ID"]
+con = sqlite3.connect(db)
+cur = con.cursor()
+cur.executescript("""
+CREATE TABLE IF NOT EXISTS version (idVersion integer, iCompressCount integer);
+CREATE TABLE IF NOT EXISTS addons (id INTEGER PRIMARY KEY,metadata BLOB,addonID TEXT NOT NULL,version TEXT NOT NULL,name TEXT NOT NULL,summary TEXT NOT NULL,news TEXT NOT NULL,description TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS repo (id integer primary key, addonID text,checksum text, lastcheck text, version text, nextcheck TEXT);
+CREATE TABLE IF NOT EXISTS addonlinkrepo (idRepo integer, idAddon integer);
+CREATE TABLE IF NOT EXISTS update_rules (id integer primary key, addonID TEXT, updateRule INTEGER);
+CREATE TABLE IF NOT EXISTS package (id integer primary key, addonID text, filename text, hash text);
+CREATE TABLE IF NOT EXISTS installed (id INTEGER PRIMARY KEY, addonID TEXT UNIQUE, enabled BOOLEAN, installDate TEXT, lastUpdated TEXT, lastUsed TEXT, origin TEXT NOT NULL DEFAULT '', disabledReason INTEGER NOT NULL DEFAULT 0);
+CREATE INDEX IF NOT EXISTS idxAddons ON addons(addonID);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_addonlinkrepo_1 ON addonlinkrepo ( idAddon, idRepo );
+CREATE UNIQUE INDEX IF NOT EXISTS ix_addonlinkrepo_2 ON addonlinkrepo ( idRepo, idAddon );
+CREATE UNIQUE INDEX IF NOT EXISTS idxUpdate_rules ON update_rules(addonID, updateRule);
+CREATE UNIQUE INDEX IF NOT EXISTS idxPackage ON package(filename);
+""")
+if not cur.execute("SELECT 1 FROM version").fetchone():
+    cur.execute("INSERT INTO version (idVersion, iCompressCount) VALUES (33, 0)")
+now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+cur.execute(
+    "INSERT INTO installed (addonID, enabled, installDate) VALUES (?, 1, ?) "
+    "ON CONFLICT(addonID) DO UPDATE SET enabled=1, disabledReason=0",
+    (addon, now))
+con.commit()
+con.close()
+print(f"  enabled {addon} in {os.path.basename(db)}")
+PY
+}
+
+select_skin() {
+  # Insert or replace the lookandfeel.skin row in the seeded guisettings.xml.
+  # Kodi is stopped here, so there is no dialog and no flush to race.
+  SKIN="$SKINID" GS="$PROFILE/userdata/guisettings.xml" python3 - <<'PY'
+import os, re
+p, skin = os.environ["GS"], os.environ["SKIN"]
+row = f'<setting id="lookandfeel.skin">{skin}</setting>'
+s = open(p, encoding="utf-8").read()
+s2, n = re.subn(r'<setting id="lookandfeel\.skin"[^>]*>[^<]*</setting>', row, s, count=1)
+if n == 0:
+    s2 = s.replace("<settings version=\"2\">",
+                   "<settings version=\"2\">\n    " + row, 1)
+    assert s2 != s, "no <settings version=\"2\"> root in guisettings.xml"
+open(p, "w", encoding="utf-8").write(s2)
+print(f"  selected {skin} in guisettings.xml")
+PY
+  # F5 -> ReloadSkin(), which bench/kodi reload presses over JSON-RPC. Keymaps
+  # load at Kodi start, so writing it before the launch makes reload work from
+  # the first boot.
+  mkdir -p "$PROFILE/userdata/keymaps"
+  printf '<keymap>\n  <global>\n    <keyboard>\n      <f5>ReloadSkin()</f5>\n    </keyboard>\n  </global>\n</keymap>\n' \
+    > "$PROFILE/userdata/keymaps/pov-dev.xml"
+}
+
+# ---------------------------------------------------------------------------
+# 1. wipe and seed, delegated to the meta-root reset-kodi
+# ---------------------------------------------------------------------------
+if [ "$wipe" -eq 1 ]; then
+  # reset-kodi refuses to run while Kodi is up, and it is right to: Kodi
+  # flushes settings on shutdown, so wiping underneath a live instance can
+  # leave a half-written profile.
+  stop_kodi
+  echo "==> reset-kodi (backup, wipe, seed)"
+  if [ "$skin" -eq 1 ]; then
+    # --no-launch: the single launch belongs to the skin layer below, so a
+    # clean install costs exactly one Kodi start.
+    "$RESET_KODI" --yes --no-launch
+  else
+    "$RESET_KODI" --yes
+  fi
+else
+  echo "==> --keep: leaving the existing profile in place"
+fi
+
+# ---------------------------------------------------------------------------
+# 2. the skin layer, which reset-kodi does not do
+# ---------------------------------------------------------------------------
+if [ "$skin" -eq 0 ]; then
+  echo "==> --no-skin: done. Kodi is up on stock Estuary."
+  exit 0
+fi
+
+echo "==> $SKINID"
+stop_kodi
+stage_skin || exit 4
+enable_offline "$SKINID"
+select_skin
+"$REPO/bench/kodi" start
+
+# ---------------------------------------------------------------------------
+# 3. prove what Kodi actually RESOLVED, against the running Kodi. Asking the
+#    running instance is strictly better than checking the directory: it is
+#    the only thing that reports what got loaded and enabled.
+# ---------------------------------------------------------------------------
+active=$(curl -s -m 10 -u kodi:kodi -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","method":"Settings.GetSettingValue","params":{"setting":"lookandfeel.skin"},"id":1}' \
+  http://localhost:8080/jsonrpc | sed 's/.*"value":"//;s/".*//')
+if [ "$active" != "$SKINID" ]; then
+  echo "FAIL: active skin is '$active', expected $SKINID" >&2
+  exit 4
+fi
+echo "==> $SKINID is the active skin, verified against the running Kodi"
