@@ -1953,6 +1953,54 @@
 			</definition>
 		</include>
 
+	<!-- The donor's (estuary8) flag chip, ported under its own name because this
+	     skin's MediaFlag include keeps stock Estuary's contract (flag_label /
+	     flag_visible) and the two cannot share a name. -->
+	<include name="PosterMediaFlag">
+		<param name="width">104</param>
+		<param name="height">40</param>
+		<param name="label_width">50</param>
+		<param name="label_left">52</param>
+		<param name="visible">true</param>
+		<param name="visible2">true</param>
+		<param name="colordiffuse">$VAR[MediaFlagsColorVar]</param>
+		<param name="has_background">true</param>
+		<param name="fallback" />
+		<definition>
+			<control type="group">
+				<width>$PARAM[width]</width>
+				<visible>$PARAM[visible] + $PARAM[visible2]</visible>
+				<control type="image">
+					<width>$PARAM[width]</width>
+					<height>$PARAM[height]</height>
+					<fadetime>0</fadetime>
+					<aspectratio align="right" aligny="center">keep</aspectratio>
+					<texture colordiffuse="$PARAM[colordiffuse]" fallback="$PARAM[fallback]">$PARAM[texture]</texture>
+					<bordertexture colordiffuse="80FFFFFF">dialogs/back.png</bordertexture>
+					<bordersize>1</bordersize>
+					<visible>$PARAM[has_background]</visible>
+				</control>
+				<control type="image">
+					<width>$PARAM[width]</width>
+					<height>$PARAM[height]</height>
+					<fadetime>0</fadetime>
+					<aspectratio align="right" aligny="center">keep</aspectratio>
+					<texture colordiffuse="$PARAM[colordiffuse]" fallback="$PARAM[fallback]">$PARAM[texture]</texture>
+					<bordersize>1</bordersize>
+					<visible>!$PARAM[has_background]</visible>
+				</control>
+				<control type="label">
+					<left>$PARAM[label_left]</left>
+					<width>$PARAM[label_width]</width>
+					<height>$PARAM[height]</height>
+					<align>center</align>
+					<label>$PARAM[label]</label>
+					<font>Font-Flag-Small3</font>
+					<textcolor>$PARAM[colordiffuse]</textcolor>
+				</control>
+			</control>
+		</definition>
+	</include>
 	<include name="MediaFlagsAudioSubs">
 			<param name="infolabel_prefix"/>
 			<definition>
@@ -1960,7 +2008,7 @@
 					<width>104</width>
 					<height>40</height>
 					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.2)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.3))</visible>
-					<include content="MediaFlag">
+					<include content="PosterMediaFlag">
 						<param name="texture" value="flags/language.png" />
 						<param name="width" value="104" />
 						<param name="label_width" value="56" />
@@ -1972,7 +2020,7 @@
 					<width>164</width>
 					<height>40</height>
 					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.2)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.3))</visible>
-					<include content="MediaFlag">
+					<include content="PosterMediaFlag">
 						<param name="texture" value="flags/language.2.png" />
 						<param name="width" value="164" />
 						<param name="label_width" value="56" />
@@ -1993,7 +2041,7 @@
 					<width>224</width>
 					<height>40</height>
 					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.1)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.2)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(AudioLanguage.3))</visible>
-					<include content="MediaFlag">
+					<include content="PosterMediaFlag">
 						<param name="texture" value="flags/language.3.png" />
 						<param name="width" value="224" />
 						<param name="label_width" value="56" />
@@ -2023,7 +2071,7 @@
 					<width>104</width>
 					<height>40</height>
 					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.2)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.3))</visible>
-					<include content="MediaFlag">
+					<include content="PosterMediaFlag">
 						<param name="texture" value="flags/st_language.png" />
 						<param name="width" value="104" />
 						<param name="label_width" value="56" />
@@ -2035,7 +2083,7 @@
 					<width>164</width>
 					<height>40</height>
 					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.2)) + String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.3))</visible>
-					<include content="MediaFlag">
+					<include content="PosterMediaFlag">
 						<param name="texture" value="flags/st_language.2.png" />
 						<param name="width" value="164" />
 						<param name="label_width" value="56" />
@@ -2056,7 +2104,7 @@
 					<width>224</width>
 					<height>40</height>
 					<visible>!String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.1)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.2)) + !String.IsEmpty($PARAM[infolabel_prefix]ListItem.Property(SubtitleLanguage.3))</visible>
-					<include content="MediaFlag">
+					<include content="PosterMediaFlag">
 						<param name="texture" value="flags/st_language.3.png" />
 						<param name="width" value="224" />
 						<param name="label_width" value="56" />

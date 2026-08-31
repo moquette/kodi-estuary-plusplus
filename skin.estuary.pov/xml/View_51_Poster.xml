@@ -87,10 +87,10 @@
 					<include content="MediaFlagsAudioSubs">
 						<param name="infolabel_prefix"/>
 					</include>
-					<include content="MediaFlag">
+					<include content="PosterMediaFlag">
 						<param name="width" value="5" />
 					</include>
-					<include content="MediaFlag">
+					<include content="PosterMediaFlag">
 						<param name="texture" value="flags/lastseen.png" />
 						<param name="width" value="200" />
 						<param name="label_width" value="146" />

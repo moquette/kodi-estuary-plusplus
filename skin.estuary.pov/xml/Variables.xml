@@ -313,14 +313,6 @@
 		<value condition="ListItem.IsAutoUpdateable">icons/addonstatus/install.png</value>
 		<value>icons/addonstatus/install-pinned.png</value>
 	</variable>
-	<variable name="ResolutionFlagVar">
-		<value condition="ListItem.IsStereoscopic">flags/videoresolution/3D.png</value>
-		<value>$INFO[ListItem.VideoResolution,flags/videoresolution/,.png]</value>
-	</variable>
-	<variable name="ContainerResolutionFlagVar">
-		<value condition="Container.ListItem.IsStereoscopic">flags/videoresolution/3D.png</value>
-		<value>$INFO[Container.ListItem.VideoResolution,flags/videoresolution/,.png]</value>
-	</variable>
 	<variable name="BannerVar">
 		<value condition="!String.IsEmpty(ListItem.Art(banner))">$INFO[ListItem.Art(banner)]</value>
 		<value>$INFO[ListItem.Art(tvshow.banner)]</value>
@@ -2549,8 +2541,8 @@
 			<value condition="ListItem.IsPlaying">overlays/watched/OverlayPlaying-List.png</value>
 			<value condition="ListItem.IsResumable + !String.IsEqual(ListItem.DBType,tvshow)">overlays/watched/OverlayResume.png</value>
 			<value condition="Integer.IsGreater(ListItem.Playcount,0) + [Window.IsVisible(script-globalsearch-main.xml) | Window.IsVisible(script-globalsearch.xml)]">OverlayWatched.png</value>
-			<value condition="Integer.IsGreater(ListItem.Playcount,0) + [String.IsEqual(Container(9000).ListItem.Property(widget),PersonalWidgetList) | String.IsEqual(Container(9000).ListItem.Property(widget),PersonalWidgetPanel)]">overlaywatched.png</value>
-			<value condition="Integer.IsGreater(ListItem.Playcount,0)">overlaywatched.png</value>
+			<value condition="Integer.IsGreater(ListItem.Playcount,0) + [String.IsEqual(Container(9000).ListItem.Property(widget),PersonalWidgetList) | String.IsEqual(Container(9000).ListItem.Property(widget),PersonalWidgetPanel)]">OverlayWatched.png</value>
+			<value condition="Integer.IsGreater(ListItem.Playcount,0)">OverlayWatched.png</value>
 			<value condition="ListItem.HasArchive">windows/pvr/archive.png</value>
 			<value condition=" !String.StartsWith(container.folderpath,plugin://) + Container.Content(seasons)">overlays/watched/set.png</value>
 		</variable>

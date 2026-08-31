@@ -3,6 +3,11 @@
 	<fontset id="Default" idloc="15109">
 		<!-- Normal Fonts -->
 		<font>
+			<name>font09</name>
+			<filename>NotoSans-Regular.ttf</filename>
+			<size>20</size>
+		</font>
+		<font>
 			<name>font10</name>
 			<filename>NotoSans-Regular.ttf</filename>
 			<size>23</size>
@@ -89,6 +94,14 @@
 			<size>18</size>
 			<style>bold</style>
 		</font>
+		<!-- The donor (estuary8) set this in RobotoCondensed at 28; this skin does not
+		     ship a condensed face, and NotoSans at 25 matches that width in the fixed
+		     50-56px label slots of the flags/*.png chips. -->
+		<font>
+			<name>Font-Flag-Small3</name>
+			<filename>NotoSans-Regular.ttf</filename>
+			<size>25</size>
+		</font>
 		<font>
 			<name>font20_title</name>
 			<filename>NotoSans-Regular.ttf</filename>
@@ -158,6 +171,11 @@
 	</fontset>
 	<fontset id="Arial" idloc="31053">
 		<!-- Arial Font better for non English -->
+		<font>
+			<name>font09</name>
+			<filename>arial.ttf</filename>
+			<size>17</size>
+		</font>
 		<font>
 			<name>font10</name>
 			<filename>arial.ttf</filename>
@@ -233,6 +251,11 @@
 			<name>font_flag</name>
 			<filename>arial.ttf</filename>
 			<size>18</size>
+		</font>
+		<font>
+			<name>Font-Flag-Small3</name>
+			<filename>arial.ttf</filename>
+			<size>25</size>
 		</font>
 		<font>
 			<name>font20_title</name>

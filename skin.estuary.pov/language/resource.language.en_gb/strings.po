@@ -889,7 +889,24 @@ msgctxt "#31177"
 msgid "Choose weather icon pack"
 msgstr ""
 
-#empty strings from id 31178 to 31596
+#empty strings from id 31178 to 31229
+
+#: /xml/Variables.xml
+#. Shown in place of the plot for unwatched episodes when spoiler protection is on
+msgctxt "#31230"
+msgid "Plot masked to avoid spoilers."
+msgstr ""
+
+#empty strings from id 31231 to 31577
+
+#: /xml/View_54_InfoWall.xml
+#. Sentinel value the donor's episode-count setting cycles through; the InfoWall
+#. episode chip hides while Skin.String(EpisodesDisplay) holds it.
+msgctxt "#31578"
+msgid "disabled"
+msgstr ""
+
+#empty strings from id 31579 to 31596
 
 #: /xml/Includes_SettingsDialog.xml
 #. Button to select Player Process Info window
@@ -1016,4 +1033,20 @@ msgstr ""
 #. spread across all of them. Owner's wording, 2026-08-29.
 msgctxt "#31616"
 msgid "Number of media items to show in home screen list"
+msgstr ""
+
+#empty strings from id 31617 to 31679
+
+#: /xml/View_54_InfoWall.xml
+#. Value of Skin.String(EpisodesDisplay) that shows the watched / total episode
+#. counts on the InfoWall chip.
+msgctxt "#31680"
+msgid "watched / total"
+msgstr ""
+
+#: /xml/View_54_InfoWall.xml
+#. Value of Skin.String(EpisodesDisplay) that shows the unwatched / total episode
+#. counts on the InfoWall chip.
+msgctxt "#31681"
+msgid "unwatched / total"
 msgstr ""
