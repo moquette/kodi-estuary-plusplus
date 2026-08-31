@@ -44,6 +44,16 @@
 				<right>0</right>
 				<height>518</height>
 				<onclick condition="$PARAM[onclick_condition]">$PARAM[onclick_action]</onclick>
+				<!-- POV playable items go out as RunPlugin, never as a play resolution.
+				     POV ignores the plugin handle (it plays via xbmc.Player from inside
+				     the script and never calls setResolvedUrl), so the default click
+				     starts a resolution nothing will ever answer. Backing out of the
+				     source results then trips Kodi's playlist failure timer (20s,
+				     PlayListPlayer.cpp) and throws the "One or more items failed to
+				     play" dialog. RunPlugin has no contract to abandon; one-click play
+				     is unchanged because POV starts playback itself. Folder items
+				     (TV shows) keep the default browse. -->
+				<onclick condition="String.Contains(ListItem.FilenameAndPath,plugin.video.pov) + !ListItem.IsFolder">RunPlugin($ESCINFO[ListItem.FilenameAndPath])</onclick>
 				<include content="WidgetListCommon">
 					<param name="list_id" value="$PARAM[list_id]"/>
 				</include>
