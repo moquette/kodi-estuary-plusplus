@@ -19,12 +19,14 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP="${KODI_APP:-$HOME/Applications/Kodi22.app}"
-# ~/Applications/Kodi22.app is a SYMLINK to /Applications/Kodi.app, so that the
-# 22 bundle owns the bare name `Kodi` that `open -a Kodi` resolves while this
-# hardcoded path still works. `ps -o comm=` always reports the PHYSICAL path, so
-# the bundle check in start() has to compare against the resolved path or a
-# perfectly healthy launch reports WRONG BUNDLE and exits 1. Measured 2026-07-28.
+APP="${KODI_APP:-/Applications/Kodi.app}"
+# /Applications/Kodi.app is 22.0.beta1 (measured 2026-08-31); the old
+# ~/Applications/Kodi22.app symlink the estuary-8 bench used no longer exists.
+# /Applications/Kodi21.app (the negative rig) also declares bundle id
+# org.xbmc.kodi, so `open -a` is verified below rather than trusted.
+# `ps -o comm=` always reports the PHYSICAL path, so the bundle check in
+# start() compares against the resolved path or a perfectly healthy launch
+# reports WRONG BUNDLE and exits 1. Measured 2026-07-28.
 APP_REAL="$(cd "$APP" 2>/dev/null && pwd -P || echo "$APP")"
 KHOME="${KODI_HOME:-$HOME/Library/Application Support/Kodi}"
 LOG="${KODI_LOG:-$HOME/Library/Logs/kodi.log}"
