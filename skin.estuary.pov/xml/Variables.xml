@@ -1130,12 +1130,20 @@
 		<value condition="String.IsEqual(ListItem.FirstAudioCodec,wmav2)">WMA</value>
 		<value>$INFO[ListItem.FirstAudioCodec]</value>
 	</variable>
+	<!-- ListItem.FirstAudioCodec/FirstAudioChannels/FirstAudioLanguage render empty
+	     on this bench's Kodi build (nightly 20260727): measured blank in the
+	     Versions Manager list, and the labels appear nowhere in this Kodi
+	     install's bundled skins or core language files. The !String.IsEmpty
+	     guards below fall back to the pre-existing AudioCodecVar/AudioChannelsVar/
+	     ListItem.AudioLanguage path (which reads correctly per-version, since
+	     each version row is its own ListItem/file) whenever the First* labels
+	     are unavailable, so the row is never blank either way. -->
 	<variable name="VideoAssetAudioPropertyVar">
-		<value condition="Window.IsVisible(managevideoversions) | Window.IsVisible(managevideoextras)">$VAR[FirstAudioCodecVar, | ]$INFO[ListItem.FirstAudioChannels(DefaultLayout), ]</value>
+		<value condition="[Window.IsVisible(managevideoversions) | Window.IsVisible(managevideoextras)] + !String.IsEmpty(ListItem.FirstAudioCodec)">$VAR[FirstAudioCodecVar, | ]$INFO[ListItem.FirstAudioChannels(DefaultLayout), ]</value>
 		<value>$VAR[AudioCodecVar, | ]$VAR[AudioChannelsVar, ]</value>
 	</variable>
 	<variable name="VideoLanguagesVar">
-		<value condition="!String.IsEqual(ListItem.AudioLanguage,und) + [Window.IsVisible(managevideoversions) | Window.IsVisible(managevideoextras)]">$INFO[ListItem.FirstAudioLanguage, | ]</value>
+		<value condition="!String.IsEqual(ListItem.AudioLanguage,und) + [Window.IsVisible(managevideoversions) | Window.IsVisible(managevideoextras)] + !String.IsEmpty(ListItem.FirstAudioLanguage)">$INFO[ListItem.FirstAudioLanguage, | ]</value>
 		<value condition="!String.IsEqual(ListItem.AudioLanguage,und)">$INFO[ListItem.AudioLanguage, | ]</value>
 	</variable>
 	<variable name="PVRInstanceName">

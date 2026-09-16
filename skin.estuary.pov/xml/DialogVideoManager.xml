@@ -120,7 +120,7 @@
 				</include>
                 <include content="DefaultDialogButton">
 					<param name="id" value="29" />
-					<param name="label" value="$LOCALIZE[40046]" />
+					<param name="label" value="$LOCALIZE[31682]" />
 					<param name="visible">Window.IsVisible(managevideoversions)</param>
 				</include>
 				<include content="DefaultDialogButton">

@@ -1050,3 +1050,26 @@ msgstr ""
 msgctxt "#31681"
 msgid "unwatched / total"
 msgstr ""
+
+#: /xml/DialogVideoManager.xml
+#. Label for the Ungroup button in the Versions Manager dialog. Core Kodi
+#. reserves #40046 for this same label, but this bench's build (nightly
+#. 20260727) does not define it yet, and a skin's own strings.po cannot
+#. override an id below 31000 (measured: defining #40046 locally rendered
+#. blank, same as leaving it undefined). Using the skin's own reserved range
+#. instead guarantees the button always has a label regardless of core's
+#. string table.
+msgctxt "#31682"
+msgid "Ungroup"
+msgstr ""
+
+#: /xml/SmartPlaylistEditor.xml
+#. Label for the Watched Mode button in the Smart Playlist Editor. Core Kodi
+#. reserves #20479 for this same label (it lands immediately after #20478,
+#. the last string defined in xbmc/playlists/SmartPlayList.cpp on this bench's
+#. build, nightly 20260727), but this build does not define it yet. Measured
+#. blank in the editor. Same fix as #31682 above: route through the skin's
+#. own reserved range instead of a not-yet-shipped core id.
+msgctxt "#31683"
+msgid "Watched Mode"
+msgstr ""
