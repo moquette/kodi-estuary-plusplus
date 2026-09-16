@@ -1133,7 +1133,7 @@
 						<height>50</height>
 						<fadetime>300</fadetime>
 						<aspectratio aligny="center" align="left">keep</aspectratio>
-						<texture>$INFO[Weather.Data(Current.FanartCode),weather/small/,.png]</texture>
+						<texture>$VAR[WeatherOutlookIconPrefixVar]$INFO[Weather.Data(Current.FanartCode)]$VAR[WeatherOutlookIconPostfixVar]</texture>
 						<visible>Skin.HasSetting(show_weatherinfo) + Weather.IsFetched + ![String.IsEqual(Weather.Data(Current.FanartCode),na)]</visible>
 						<visible>!Window.IsActive(weather) + [!Window.IsActive(home) | !String.IsEqual(Container(9000).ListItem.Property(id),weather)]</visible>
 					</control>
