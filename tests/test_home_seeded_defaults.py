@@ -7,7 +7,7 @@ owner's six boxes are stamped, and a regression here would rearrange all of them
 on the next update with nothing in the log to say what happened. There is no way
 to notice that from a code review of Home.xml alone, so it is pinned here.
 
-TWO OF THE FOUR SETTINGS ARE INVERTED KEYS, and that is the fragile part. Setting
+TWO OF THE FIVE SETTINGS ARE INVERTED KEYS, and that is the fragile part. Setting
 hide_mediaflags is what makes "Show media flags" read OFF, because control 705's
 <selected> negates it. A well meaning tidy-up of SkinSettings.xml that removed the
 negation would silently flip both defaults to the opposite of what the owner asked
@@ -161,7 +161,7 @@ def test_the_reload_is_never_called_anywhere_else():
 
 
 # --------------------------------------------------------------------------- #
-# The four settings added in 1.2.7
+# The five settings added in 1.2.7 and 1.3.6
 # --------------------------------------------------------------------------- #
 def test_media_flags_start_off():
     assert "Skin.SetBool(hide_mediaflags)" in ACTIONS
@@ -230,6 +230,26 @@ def test_the_rating_row_reads_rating_when_only_circle_rating_is_set():
     )
 
 
+def test_weather_info_starts_on():
+    assert "Skin.SetBool(show_weatherinfo)" in ACTIONS
+
+
+def test_setting_show_weatherinfo_is_the_ordinary_way_round():
+    """Unlike hide_mediaflags and no_fanart, control 704 is NOT negated.
+
+    Setting show_weatherinfo is what switches the row ON here, which only
+    matters once a weather add-on is configured (the other half of the
+    <selected> condition). A box with none configured stays exactly as before.
+    """
+    assert (
+        "<selected>Skin.HasSetting(show_weatherinfo) + !String.IsEmpty(Weather.Plugin)</selected>"
+        in SKIN_SETTINGS
+    ), (
+        "control 704's selected state must stay un-negated, or Home.xml's "
+        "Skin.SetBool(show_weatherinfo) starts meaning the opposite of ON"
+    )
+
+
 def test_home_rows_start_at_ten():
     assert "Skin.SetString(home_items,10)" in ACTIONS
 
@@ -294,6 +314,7 @@ def test_nothing_else_has_crept_into_the_first_run_block():
             "Skin.SetBool(hide_mediaflags)",
             "Skin.SetBool(circle_rating)",
             "Skin.SetBool(no_fanart)",
+            "Skin.SetBool(show_weatherinfo)",
             "Skin.SetString(home_items,10)",
             STAMP,
             ARM,

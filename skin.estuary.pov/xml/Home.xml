@@ -39,11 +39,11 @@
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoVideosButton)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoGamesButton)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(HomeMenuNoFavButton)</onload>
-	<!-- Four more first run defaults, sharing the SAME marker as the menu above on
+	<!-- Five more first run defaults, sharing the SAME marker as the menu above on
 	     purpose. A second marker would be a second thing to reason about and a
 	     second way for a box to end up half seeded, and the owner asked for one.
 
-	     TWO OF THESE FOUR ARE INVERTED KEYS and read backwards, so do not "correct"
+	     TWO OF THESE FIVE ARE INVERTED KEYS and read backwards, so do not "correct"
 	     them to a Skin.Reset. In both cases SETTING the key is what switches the
 	     row OFF, because the control's <selected> tag negates it:
 
@@ -67,6 +67,12 @@
 	     This governs the rating badge on library views and the info dialogs; POV's
 	     own Home rows carry no rating control at all, so nothing on Home changes.
 
+	     show_weatherinfo is also the ordinary way round, control 704 in
+	     SkinSettings.xml, <selected>Skin.HasSetting(show_weatherinfo) +
+	     !String.IsEmpty(Weather.Plugin)</selected>. Setting it here only arms the
+	     top bar and home outlook icons to show once a weather add-on is actually
+	     configured; a box with none configured yet stays exactly as before.
+
 	     home_items is set HERE and not only at SkinSettings.xml:11 because that
 	     line is inside the settings window and therefore only runs when somebody
 	     opens skin settings. A new box that never opens them would keep an empty
@@ -78,6 +84,7 @@
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(hide_mediaflags)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(circle_rating)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(no_fanart)</onload>
+	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetBool(show_weatherinfo)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetString(home_items,10)</onload>
 	<onload condition="String.IsEmpty(Skin.String(pov_menu_defaults))">Skin.SetString(pov_menu_defaults,1)</onload>
 	<!-- ARMS THE ONE SHOT RELOAD, and 1.3.2 is broken without it. Two of the
