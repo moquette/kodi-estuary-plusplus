@@ -21,7 +21,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-KODI_APP="${KODI_APP:-$HOME/Applications/Kodi22.app}"
+KODI_APP="${KODI_APP:-/Applications/Kodi.app}"
 KODI_HOME="${KODI_HOME:-$HOME/Library/Application Support/Kodi}"
 MEDIA="$REPO/bench/media"
 RPC="http://localhost:8080/jsonrpc"
