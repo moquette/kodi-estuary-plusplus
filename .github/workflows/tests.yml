@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.14"
       - run: pip install -r requirements-ci.txt
       - run: python -m pytest tests/ -q
       - run: ruff check service.tvos.pythonfix/scripts/ tools/ tests/
@@ -101,7 +101,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       # A PLAIN build per add-on, deliberately. `--check` builds twice into
       # temp dirs, byte-compares and leaves NOTHING in dist/, so using it here
