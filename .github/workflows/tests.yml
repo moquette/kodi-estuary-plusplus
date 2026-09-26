@@ -11,6 +11,14 @@ name: tests
 # Siri remote keymap. Its service is tvOS-only and MUST stay a strict no-op on
 # Fire OS, Android and desktop, and this workflow is what makes that assertion
 # binding rather than intended.
+#
+# Since 2026-09-26 this workflow also PUBLISHES. A version bump pushed to main
+# becomes a GitHub release with the built zip attached, and the hub
+# (tony7bones/tony7bones.github.io) resolves the skin's newest release at
+# build time, so releasing here IS publishing there. Two add-ons share this
+# repo and a repo has one releases/latest, so each add-on tags its own
+# namespace: skin.estuary.pov-v1.4.3, service.tvos.pythonfix-v1.1.0. The hub's
+# _tools/static_catalog.py matches exactly that shape.
 on:
   push:
   pull_request:
@@ -20,8 +28,14 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Tags and full history: the two release checks below diff against
+          # the last release tag and against the pushed range.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -32,3 +46,135 @@ jobs:
         run: |
           python tools/build_skin.py skin.estuary.pov --check
           python tools/build_skin.py service.tvos.pythonfix --check
+
+      # Deliberately a WARNING, never a failure. The publish job is idempotent
+      # by tag: if an add-on's tag already exists it publishes nothing and
+      # exits 0, so source that moved at a released version reaches zero boxes
+      # with nothing red anywhere. This makes that state loud without fighting
+      # the normal batch-then-bump workflow. The version-bump gate below is
+      # the hard half.
+      - name: Unreleased-changes check (warning only)
+        run: |
+          python tools/check_unreleased_changes.py | tee unreleased.txt
+          if grep -q WARNING unreleased.txt; then
+            {
+              echo "### Unreleased changes"
+              echo
+              echo '```'
+              cat unreleased.txt
+              echo '```'
+              echo
+              echo "Bump the add-on's addon.xml before this can reach a box."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # The hard gate: an add-on whose files changed in this push (or this
+      # pull request) must have bumped its version. Kodi upgrades by version
+      # number only. On a push to main origin/main already IS the pushed HEAD,
+      # so the range start is passed explicitly, as the hub's
+      # check_versions.py does; a branch creation (all-zero before) skips.
+      - name: Version-bump gate (every changed add-on bumped)
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: python tools/check_version_bump.py --base "$BASE"
+
+  # Publishing is CI's job, not a hand-run script. Once `tests` is green on
+  # main, every add-on whose tag does not exist yet is built and published as
+  # a GitHub release carrying its zip, and the hub is told. Idempotent: a tag
+  # that exists is a no-op, so a release happens exactly once per version bump.
+  publish:
+    needs: tests
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # A PLAIN build per add-on, deliberately. `--check` builds twice into
+      # temp dirs, byte-compares and leaves NOTHING in dist/, so using it here
+      # would break the release step. The determinism gate is in `tests`.
+      - name: Build and publish each add-on whose release does not exist yet
+        id: pub
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          REPO="${GITHUB_REPOSITORY}"
+          PUBLISHED=0
+          attr() { python3 -c 'import sys, xml.etree.ElementTree as E; print(E.parse(sys.argv[1]).getroot().get(sys.argv[2]))' "$1" "$2"; }
+          for ADDON in skin.estuary.pov service.tvos.pythonfix; do
+            NAME=$(attr "$ADDON/addon.xml" name)
+            VERSION=$(attr "$ADDON/addon.xml" version)
+            TAG="${ADDON}-v${VERSION}"
+            ZIP="dist/${ADDON}-${VERSION}.zip"
+            ASSET_URL="https://github.com/${REPO}/releases/download/${TAG}/${ADDON}-${VERSION}.zip"
+            echo "== ${ADDON} ${VERSION} (tag ${TAG})"
+
+            if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+              echo "release ${TAG} already exists - nothing to publish (idempotent no-op)."
+              continue
+            fi
+
+            python3 tools/build_skin.py "$ADDON"
+            SHA256=$(shasum -a 256 "$ZIP" | awk '{print $1}')
+            echo "sha256=${SHA256}"
+
+            # --target the pushed SHA: the tag resolves against exactly what
+            # `tests` just passed, never local work.
+            gh release create "$TAG" "$ZIP" \
+              --repo "$REPO" \
+              --target "${GITHUB_SHA}" \
+              --title "${NAME} ${VERSION}" \
+              --notes "sha256: ${SHA256}"
+
+            echo "verifying the published asset is downloadable and byte-correct..."
+            TMP=$(mktemp -d)
+            if curl -sSfL "$ASSET_URL" -o "$TMP/asset.zip"; then
+              echo "anonymous download OK: ${ASSET_URL}"
+            else
+              # A private repository refuses anonymous downloads. The hub can
+              # still resolve the release, but only with a token that reads
+              # this repo; say so where it is visible.
+              echo "::warning::${ASSET_URL} is not anonymously downloadable (private repository?). The hub needs a token that can read ${REPO}, or the repo made public, before it can serve this release."
+              gh release download "$TAG" --repo "$REPO" \
+                --pattern "${ADDON}-${VERSION}.zip" --output "$TMP/asset.zip"
+            fi
+            DOWNLOADED_SHA=$(shasum -a 256 "$TMP/asset.zip" | awk '{print $1}')
+            rm -rf "$TMP"
+            if [ "$DOWNLOADED_SHA" != "$SHA256" ]; then
+              echo "FATAL: published asset sha256 mismatch for ${TAG} (expected ${SHA256}, got ${DOWNLOADED_SHA})" >&2
+              exit 1
+            fi
+            echo "OK - ${TAG} published, asset sha256-verified against the CI build"
+            PUBLISHED=1
+          done
+          echo "published=${PUBLISHED}" >> "$GITHUB_OUTPUT"
+
+      # A release created with GITHUB_TOKEN emits no `release: published`
+      # event (GitHub suppresses it to prevent recursive runs), so the hub's
+      # rebuild is dispatched directly, and only when this run published.
+      # The event type `ezmpp-release` is HISTORICAL: it was named for the
+      # first sibling repo to dispatch the hub and pages.yml still lists
+      # exactly that type; the hub does the same rebuild for every add-on.
+      # Benign on failure: the hub's daily cron catches the release within 24h.
+      - name: Dispatch hub catalog rebuild
+        if: steps.pub.outputs.published == '1'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.T7B_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::T7B_DISPATCH_TOKEN is not set on ${GITHUB_REPOSITORY}: the hub was NOT dispatched. Add that repository secret (a token with repo scope on tony7bones/tony7bones.github.io); until then the hub's daily cron picks this release up within 24h."
+            exit 1
+          fi
+          gh api repos/tony7bones/tony7bones.github.io/dispatches \
+            -f event_type=ezmpp-release
+          echo "hub dispatched"

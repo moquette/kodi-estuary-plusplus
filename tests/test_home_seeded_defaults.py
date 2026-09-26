@@ -315,6 +315,17 @@ def test_nothing_else_has_crept_into_the_first_run_block():
             "Skin.SetBool(circle_rating)",
             "Skin.SetBool(no_fanart)",
             "Skin.SetBool(show_weatherinfo)",
+            # 1.4.2: six more widget rows off on a new install (three TV
+            # widgets, three add-on widgets), all still one click to re-enable
+            # under Skin Settings. Deliberate, per the 1.4.2 news; this list
+            # was not updated with it, and CI was red on that push (measured
+            # 2026-09-26, run for 7588de5) until this entry.
+            "Skin.SetBool(home_no_tv_recentrecordings_widget)",
+            "Skin.SetBool(home_no_tv_timers_widget)",
+            "Skin.SetBool(home_no_tv_savedsearches_widget)",
+            "Skin.SetBool(home_no_addons_music_widget)",
+            "Skin.SetBool(home_no_addons_android_widget)",
+            "Skin.SetBool(home_no_addons_image_widget)",
             "Skin.SetString(home_items,10)",
             STAMP,
             ARM,
