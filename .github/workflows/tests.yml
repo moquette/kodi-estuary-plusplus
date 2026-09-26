@@ -31,12 +31,12 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Tags and full history: the two release checks below diff against
           # the last release tag and against the pushed range.
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install -r requirements-ci.txt
@@ -83,18 +83,23 @@ jobs:
   # main, every add-on whose tag does not exist yet is built and published as
   # a GitHub release carrying its zip, and the hub is told. Idempotent: a tag
   # that exists is a no-op, so a release happens exactly once per version bump.
+  #
+  # A manual run on main (`gh workflow run tests.yml --ref main`) publishes
+  # nothing new but ALWAYS re-sends the hub dispatch: the way to re-notify the
+  # hub after a dispatch that failed (the secret was missing on the first
+  # release, 2026-09-26) without burning a version number.
   publish:
     needs: tests
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -166,7 +171,7 @@ jobs:
       # exactly that type; the hub does the same rebuild for every add-on.
       # Benign on failure: the hub's daily cron catches the release within 24h.
       - name: Dispatch hub catalog rebuild
-        if: steps.pub.outputs.published == '1'
+        if: steps.pub.outputs.published == '1' || github.event_name == 'workflow_dispatch'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.T7B_DISPATCH_TOKEN }}

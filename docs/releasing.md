@@ -62,6 +62,10 @@ hub (the name is historical, from the first sibling repo to do this) with the
 repository secret `T7B_DISPATCH_TOKEN`. Without the secret that step fails on
 its own, with `continue-on-error`, and prints one line naming the secret; the
 hub's daily cron is the backstop and picks the release up within 24 hours.
+A manual run of the workflow on `main` (`gh workflow run tests.yml --ref main
+-R moquette/kodi-estuary-pov`) publishes nothing new but always re-sends the
+dispatch, which is how a missed notification is repaired without burning a
+version number.
 
 ## 7. Visibility
 
@@ -69,5 +73,6 @@ The hub reads the release through the GitHub API and downloads the asset
 through its API URL, so it works on a public repo without a token and on a
 private repo with a token that can read it. This repo is PRIVATE as of
 2026-09-26, and the hub's CI builds with its own `GITHUB_TOKEN`, which cannot
-read it: until the repo is public or the hub carries such a token, the hub
-serves its last-good copy of the skin and marks it `stale`.
+read it: until the repo is public or the hub carries such a token (its
+`pages.yml` reads the repository secret `T7B_SOURCE_READ_TOKEN` first), the
+hub serves its last-good copy of the skin and marks it `stale`.
