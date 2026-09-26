@@ -4,7 +4,8 @@
 # Idempotent. Safe to re-run any time the library looks wrong. Takes about a
 # minute, most of which is waiting for Kodi's scanner.
 #
-# Order matters and each step exists for a reason recorded in RUNBOOK.md:
+# Order matters and each step exists for a reason, recorded in the clean-bench
+# skill (.claude/skills/clean-bench/SKILL.md at the meta root):
 #   1. stop Kodi          Kodi caches sources and add-on settings in memory and
 #                         will overwrite anything written underneath it
 #   2. generate media     posters, fanart, NFOs, stub .mkv files

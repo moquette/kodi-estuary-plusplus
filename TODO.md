@@ -1,6 +1,6 @@
 # TODO
 
-## Port "sticky RSS" from Estuary 8
+## 1. Port "sticky RSS" from Estuary 8
 
 Bring over E8's opt-in "Always show RSS feed": the ticker draws in every menu
 window (via the shared BottomBar include) and stays up over movies, TV shows and
@@ -13,7 +13,7 @@ one-expression yield rule, the load-bearing rss control ids, where the ticker
 stands down instead of content yielding), and the bench checklist:
 [docs/sticky-rss-plan.md](docs/sticky-rss-plan.md).
 
-## Revisit the Categories widgets on Movies and TV Shows
+## 2. Revisit the Categories widgets on Movies and TV Shows
 
 Both tabs lost their "Categories" row (`$LOCALIZE[31148]`) when the stock
 library rows were replaced with POV rows. That was deliberate, per the

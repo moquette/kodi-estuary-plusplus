@@ -142,16 +142,8 @@ jobs:
 
             echo "verifying the published asset is downloadable and byte-correct..."
             TMP=$(mktemp -d)
-            if curl -sSfL "$ASSET_URL" -o "$TMP/asset.zip"; then
-              echo "anonymous download OK: ${ASSET_URL}"
-            else
-              # A private repository refuses anonymous downloads. The hub can
-              # still resolve the release, but only with a token that reads
-              # this repo; say so where it is visible.
-              echo "::warning::${ASSET_URL} is not anonymously downloadable (private repository?). The hub needs a token that can read ${REPO}, or the repo made public, before it can serve this release."
-              gh release download "$TAG" --repo "$REPO" \
-                --pattern "${ADDON}-${VERSION}.zip" --output "$TMP/asset.zip"
-            fi
+            curl -sSfL "$ASSET_URL" -o "$TMP/asset.zip"
+            echo "anonymous download OK: ${ASSET_URL}"
             DOWNLOADED_SHA=$(shasum -a 256 "$TMP/asset.zip" | awk '{print $1}')
             rm -rf "$TMP"
             if [ "$DOWNLOADED_SHA" != "$SHA256" ]; then

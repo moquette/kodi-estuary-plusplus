@@ -173,21 +173,6 @@ def test_requests_is_written_first(tmp_path):
     assert service.SHIM_DIR_PATHS[0] == "special://home/addons/%s/lib/" % REQUESTS_ID
 
 
-def test_the_addon_declares_the_dependency_it_writes_into():
-    """The declaration is what guarantees the directories exist when this runs.
-
-    Kodi installs a dependency's own dependencies before the dependency itself,
-    so declaring script.module.requests is not decoration: it is what makes the
-    "the directories are already there" assumption true on a fresh install, and
-    it pulls in the other four transitively. Dropping the import line would leave
-    a service that silently skips on exactly the box it exists for.
-    """
-    text = (ADDON / "addon.xml").read_text(encoding="utf-8")
-    assert re.search(r'<import addon="%s"' % re.escape(REQUESTS_ID), text), (
-        "service.tvos.pythonfix must declare the add-on whose directory it writes into"
-    )
-
-
 def test_only_requests_is_declared(tmp_path):
     """One import, not five, and the service adapts instead of failing a check.
 
@@ -386,18 +371,6 @@ def test_the_keymap_directory_is_created_when_absent(tmp_path):
 # --------------------------------------------------------------------------- #
 # Everything that is not tvOS: strict no-op
 # --------------------------------------------------------------------------- #
-def test_nothing_is_written_on_android(tmp_path):
-    """Fire TV and every other Android box must stay untouched.
-
-    This is the test the owner's "will this break Fire OS" question rests on.
-    Fire OS has a working _scproxy, so a shim there would shadow a real module,
-    and its remote is not a Siri remote.
-    """
-    _boot(tmp_path, "ANDROID")
-    assert _scproxy_files(tmp_path) == []
-    assert not _keymap(tmp_path).exists()
-
-
 @pytest.mark.parametrize("platform", ["ANDROID", "LINUX", "OSX", "WINDOWS", "IOS"])
 def test_no_op_on_every_non_tvos_platform(tmp_path, platform):
     rec, _ = _boot(tmp_path, platform)

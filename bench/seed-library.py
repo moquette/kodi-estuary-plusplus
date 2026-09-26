@@ -7,9 +7,10 @@ watched checkmark bottom-left) need ROWS, ART, RATINGS, WATCHED FLAGS and
 RESUME POINTS. Real media gives the first two and nothing else without hours of
 playback. This gives all six, deterministically, in about ten seconds.
 
-The backed-up databases at bench/backup-2026-07-27/Database/ were checked first
-and are EMPTY (0 movies, 0 tvshows, 0 episodes in both MyVideos131 and
-MyVideos147), so restoring them would not have helped.
+The owner's backed-up databases were checked first (2026-07-27, on the
+estuary-8 bench this tooling was rescued from) and were EMPTY (0 movies,
+0 tvshows, 0 episodes in both MyVideos131 and MyVideos147), so restoring them
+would not have helped. That backup directory is not kept in this repo.
 
 Writes only into bench/media/. Nothing here touches userdata.
 Run bench/seed-library.sh, which also registers the sources and scans.
