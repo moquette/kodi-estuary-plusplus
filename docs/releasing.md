@@ -43,11 +43,14 @@ workflow's load-bearing lines.
 
 ## 4. Which add-ons the hub resolves this way
 
-- `skin.estuary.pov`: since 2026-09-26, release-asset on the hub. Bump,
-  push, done.
-- `service.tvos.pythonfix`: CI publishes its release too, but the hub still
-  serves the zip committed under `repo/addons/hosted/service.tvos.pythonfix/`
-  until its own switch. Until then a bump here still needs that copy updated.
+Both, since 2026-09-26. Bump, push, done.
+
+- `skin.estuary.pov`: 1.4.3 was the first CI-built release the hub served.
+- `service.tvos.pythonfix`: switched later the same day (hub commit `fe283c3`);
+  its release asset `service.tvos.pythonfix-1.1.0.zip` is byte-identical to the
+  copy the hub used to commit under `repo/addons/hosted/service.tvos.pythonfix/`,
+  so 1.1.0 stayed and that directory is deleted. Nothing is copied into the hub
+  for either add-on any more; a committed copy there is a bug.
 
 ## 5. Burned numbers
 
@@ -59,9 +62,10 @@ carries no other change. 1.2.6 was burned the same way earlier.
 
 The publish job dispatches `repository_dispatch` type `ezmpp-release` at the
 hub (the name is historical, from the first sibling repo to do this) with the
-repository secret `T7B_DISPATCH_TOKEN`. Without the secret that step fails on
-its own, with `continue-on-error`, and prints one line naming the secret; the
-hub's daily cron is the backstop and picks the release up within 24 hours.
+repository secret `T7B_DISPATCH_TOKEN` (set on this repo 2026-09-26). Without
+the secret that step fails on its own, with `continue-on-error`, and prints one
+line naming the secret; the hub's daily cron is the backstop and picks the
+release up within 24 hours.
 A manual run of the workflow on `main` (`gh workflow run tests.yml --ref main
 -R moquette/kodi-estuary-pov`) publishes nothing new but always re-sends the
 dispatch, which is how a missed notification is repaired without burning a
@@ -71,8 +75,10 @@ version number.
 
 The hub reads the release through the GitHub API and downloads the asset
 through its API URL, so it works on a public repo without a token and on a
-private repo with a token that can read it. This repo is PRIVATE as of
-2026-09-26, and the hub's CI builds with its own `GITHUB_TOKEN`, which cannot
-read it: until the repo is public or the hub carries such a token (its
-`pages.yml` reads the repository secret `T7B_SOURCE_READ_TOKEN` first), the
-hub serves its last-good copy of the skin and marks it `stale`.
+private repo with a token that can read it. This repo is PUBLIC since
+2026-09-26 (it was private for a few hours that morning, during which the
+hub's own `GITHUB_TOKEN` could not read it and the skin served stale at
+1.4.2). The hub's `pages.yml` still reads an optional `T7B_SOURCE_READ_TOKEN`
+secret first; it is an escape hatch for a private source repo, not a
+requirement. Keep this repo public, or store that token on the hub before
+making it private again.
