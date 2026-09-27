@@ -70,7 +70,7 @@ the secret that step fails on its own, with `continue-on-error`, and prints one
 line naming the secret; the hub's daily cron is the backstop and picks the
 release up within 24 hours.
 A manual run of the workflow on `main` (`gh workflow run tests.yml --ref main
--R moquette/kodi-estuary-plusplus`) publishes nothing new but always re-sends the
+-R moquette/kodi-estuarypp`) publishes nothing new but always re-sends the
 dispatch, which is how a missed notification is repaired without burning a
 version number.
 

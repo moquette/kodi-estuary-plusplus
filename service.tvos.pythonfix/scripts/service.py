@@ -51,9 +51,10 @@ skin that copies the idea, and an Apple TV owner who switches skins loses it for
 no reason he can see. Written from here it is one add-on, installed once, and
 the skin is a skin.
 
-So skin.estuary.pov has NO boot service, NO scripts directory and no tvOS code of
-any kind as of 1.3.0, and this add-on is the only thing on the box that knows
-tvOS is different. Do not put either write back into a skin.
+So the skin (skin.estuary.pov then, skin.estuary.plusplus since 1.5.0) has NO boot
+service, NO scripts directory and no tvOS code of any kind as of 1.3.0, and this
+add-on is the only thing on the box that knows tvOS is different. Do not put
+either write back into a skin.
 
 INSTALLED FIRST AND ALONE, SO THERE IS NO RACE TO WIN
 -----------------------------------------------------

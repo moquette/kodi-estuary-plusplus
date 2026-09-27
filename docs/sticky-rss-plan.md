@@ -184,7 +184,7 @@ Default OFF.
    new expressions are defined in Step 2 and the one new string in Step 1; no new fonts or
    textures are introduced.
 2. **Repo gates**: a qa agent (not the main assistant, per project rule) runs
-   `bin/check-all estuary-plusplus` from the kodi meta-root - all 5 gates green (pytest,
+   `bin/check-all estuarypp` from the kodi meta-root - all 5 gates green (pytest,
    ruff, the two `build_skin.py --check` runs, `check_version_bump.py`).
 3. **Bench observation** (bench/reset-bench, bench/kodi; mirrors the donor's 0.1.45 pass):
    - Toggle OFF: pixel-identical to stock (ticker only on Home under existing rules).
