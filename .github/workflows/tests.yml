@@ -42,6 +42,15 @@ jobs:
       - run: pip install -r requirements-ci.txt
       - run: python -m pytest tests/ -q
       - run: ruff check service.tvos.pythonfix/scripts/ tools/ tests/
+      # Documentation drift: retired names, dead links and paths, unresolved
+      # section signs, banned dashes and stale add-on versions in this repo's
+      # living docs. .github/doccheck.py + .github/doccheck.json are a
+      # byte-identical copy of the meta root's bin/doccheck (moquette/kodi is
+      # private, so this public repo cannot fetch it); the meta root's
+      # tests/test_doccheck.py fails when the copy drifts.
+      # The publish job needs this one, so docs that drifted block the release.
+      - name: Documentation drift (doccheck)
+        run: python3 .github/doccheck.py --repo .
       - name: the zips must be byte-reproducible
         run: |
           python tools/build_skin.py skin.estuary.plusplus --check

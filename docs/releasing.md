@@ -41,6 +41,11 @@ owns the shape on this side (`release_tag`).
 Both are tested in `tests/test_release_checks.py`, which also pins the
 workflow's load-bearing lines.
 
+The same job also runs `.github/doccheck.py`, the documentation-drift gate (a
+byte-identical copy of the meta root's `bin/doccheck`; the rules are in the
+meta-root `CLAUDE.md`, "Doc drift is a gate"). The publish job needs the test
+job, so a release whose docs drifted does not publish.
+
 ## 4. Which add-ons the hub resolves this way
 
 Both, since 2026-09-26. Bump, push, done.
