@@ -2,8 +2,8 @@
 
 This file replaces test_pythonfix_service.py and test_services_keymap.py, which
 covered the same two payloads while they lived in two different add-ons. As of
-skin.estuary.pov 1.3.0 both are in this one add-on and the skin ships no Python,
-so one suite covers one service.
+skin 1.3.0 (then skin.estuary.pov, now skin.estuary.plusplus) both are in this
+one add-on and the skin ships no Python, so one suite covers one service.
 
 The no-op tests are the load-bearing ones. The shim writes into directories
 belonging to third parties, so on any box that is not tvOS those directories must
@@ -302,7 +302,7 @@ def test_the_keymap_names_kodi_windows_and_no_skin_control(tmp_path):
     """Why this payload could move out of a skin at all, asserted not assumed.
 
     Every binding names a Kodi WINDOW and a Kodi ACTION. Nothing here is specific
-    to Estuary POV, to any skin's control ids, or to any skin at all, which is
+    to Estuary++, to any skin's control ids, or to any skin at all, which is
     what makes a Siri remote the box's property rather than a skin's. If a future
     edit introduced a skin-specific binding this add-on would silently become
     skin-coupled, so it fails here instead.
@@ -537,7 +537,7 @@ def test_the_icon_is_the_size_and_mode_this_repo_uses_for_services():
 
 
 def test_the_addon_id_never_changes():
-    """Kodi keys installs, the repository catalog and the hosted mirror on the id.
+    """Kodi keys installs and the repository catalog on the id.
 
     The display name broadened at 1.1.0 when the keymap moved in, and the id
     deliberately did not follow it. Renaming the id would orphan every box that

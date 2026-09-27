@@ -34,7 +34,7 @@ through `additional_tvshow_items`.
 To restore either verbatim, take the row from the baseline commit:
 
     git show aa31e34:skin.estuary.mymod/xml/Home.xml | sed -n '54,60p'   # movies
-    git show aa31e34:skin.estuary.mymod/xml/Home.xml | sed -n '85,91p'   # tvshows
+    git show aa31e34:skin.estuary.mymod/xml/Home.xml | sed -n '123,129p' # tvshows
 
 **The open question is which categories row belongs there.** The stock one
 navigates the local Kodi library, which sits oddly on a tab where every
@@ -45,3 +45,10 @@ dependency, and is the same destination the main-menu item now opens.
 
 Undecided: POV, stock library, or both; and whether it sits above the
 In Progress row where it used to be, or below the poster rows.
+
+## 3. Closed
+
+Nothing yet. Checked 2026-09-26 against the skin: no `rss_ticker_visible`,
+`show_rss_always` or string 31178 in `skin.estuary.plusplus/` (§1 open), and no
+`library://video/movies/` or `library://video/tvshows/` categories row in
+`skin.estuary.plusplus/xml/Home.xml` (§2 open).

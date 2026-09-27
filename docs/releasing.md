@@ -49,8 +49,11 @@ Both, since 2026-09-26. Bump, push, done.
 - `service.tvos.pythonfix`: switched later the same day (hub commit `fe283c3`);
   its release asset `service.tvos.pythonfix-1.1.0.zip` is byte-identical to the
   copy the hub used to commit under `repo/addons/hosted/service.tvos.pythonfix/`,
-  so 1.1.0 stayed and that directory is deleted. Nothing is copied into the hub
-  for either add-on any more; a committed copy there is a bug.
+  so 1.1.0 stayed and that directory is deleted. 1.1.1 (tag
+  `service.tvos.pythonfix-v1.1.1`, same day) was the first release of this add-on
+  built by CI; it changes nothing but the news line, recording the repository
+  move. Nothing is copied into the hub for either add-on any more; a committed
+  copy there is a bug.
 
 ## 5. Burned numbers
 

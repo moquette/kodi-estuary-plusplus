@@ -17,7 +17,7 @@ name: tests
 # (tony7bones/tony7bones.github.io) resolves the skin's newest release at
 # build time, so releasing here IS publishing there. Two add-ons share this
 # repo and a repo has one releases/latest, so each add-on tags its own
-# namespace: skin.estuary.plusplus-v1.5.0, service.tvos.pythonfix-v1.1.0. The hub's
+# namespace: skin.estuary.plusplus-v1.5.0, service.tvos.pythonfix-v1.1.1. The hub's
 # _tools/static_catalog.py matches exactly that shape.
 on:
   push:

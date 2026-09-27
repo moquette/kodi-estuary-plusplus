@@ -1,7 +1,12 @@
 # Future item: port "sticky RSS" from Estuary 8
 
-Status: PLANNED, not started. Anchors verified against `skin.estuary.pov` (now `skin.estuary.plusplus`) at commit
-`dffd7a8` (2026-08-31); re-verify line numbers before executing if the skin has moved.
+Status: PLANNED, not started. Re-checked 2026-09-26: nothing from this plan is in the
+skin (no `rss_ticker_visible`, `player_osd_active`, `show_rss_always`, string 31178 or
+rss control 9906/9907/9908 under `skin.estuary.plusplus/`). The line numbers below were
+verified against the skin (then `skin.estuary.pov`, now `skin.estuary.plusplus`) at
+commit `dffd7a8` (2026-08-31) and the skin has moved since: at 1.5.0 `Includes.xml` has
+`MediaFlags` at line 306, `BottomBar` at 1324 and `BottomBarTwoListInfo` at 1386, and
+`strings.po` has `#31177` at 888. Re-verify every anchor before executing.
 
 ## Context
 
@@ -35,9 +40,9 @@ The donor's final state was verified end-to-end on a Piers bench and its two com
   the playback ticker because a bare ticker over near-white video measured 1.53:1
   (illegible). Owner rejected non-stock treatment, so the playback tickers rely on
   `shadowcolor` alone - recorded here as an accepted risk. In menu windows the ticker sits
-  on the stock `frame/InfoBar.png` gradient POV's BottomBar already draws.
+  on the stock `frame/InfoBar.png` gradient Estuary++'s BottomBar already draws.
 
-All paths below are under `skin.estuary.plusplus/`. POV idiom for colors: `button_focus` /
+All paths below are under `skin.estuary.plusplus/`. Estuary++ idiom for colors: `button_focus` /
 `text_shadow` (match Home.xml:1262-1277), not the donor's `$VAR[SkinColorVar]`.
 
 ## Steps
@@ -65,11 +70,11 @@ why both switches are ANDed.
 <expression name="player_osd_active">Player.Seeking | Player.HasPerformedSeek(3) | [Player.Paused + !Player.Caching] | Player.Forwarding | Player.Rewinding | Player.ShowInfo | Player.ShowTime | Window.IsActive(seekbar) | Window.IsActive(fullscreeninfo) | Window.IsActive(videoosd) | Window.IsActive(musicosd) | Window.IsActive(playerprocessinfo) | Window.IsActive(pvrosdchannels) | Window.IsActive(pvrchannelguide) | Window.IsActive(videobookmarks) | Window.IsActive(subtitlesearch) | Window.IsActive(osdvideosettings) | Window.IsActive(osdaudiosettings) | Window.IsActive(osdsubtitlesettings) | Window.IsActive(osdcmssettings) | Window.IsActive(gameosd) | Window.IsActive(pvrradiordsinfo) | Window.IsVisible(1103) | !String.IsEmpty(Player.SeekNumeric) | !String.IsEmpty(PVR.ChannelNumberInput) | $EXP[infodialog_active]</expression>
 ```
 
-`player_osd_active` is POV-measured, not copied: the player-state cluster is the verbatim
-trigger list of DialogSeekBar.xml:5 (POV has no `Hide_OSDInfo` setting and no `isSeeking`
-expression; `[Player.Paused + !Player.Caching]` is POV's own idiom); each window term is a
+`player_osd_active` is measured on Estuary++, not copied: the player-state cluster is the verbatim
+trigger list of DialogSeekBar.xml:5 (Estuary++ has no `Hide_OSDInfo` setting and no `isSeeking`
+expression; `[Player.Paused + !Player.Caching]` is Estuary++'s own idiom); each window term is a
 bottom-anchored or band-crossing overlay reachable during playback, verified per file.
-Donor windows POV trimmed (1134/1135/1138/1141, lrclyrics) are dropped; POV's
+Donor windows Estuary++ trimmed (1134/1135/1138/1141, lrclyrics) are dropped; Estuary++'s
 Custom_1110 Tempo and sliderdialog are top-anchored and excluded.
 
 ### 3. Includes.xml - shared ticker in BottomBar (reaches 25 windows)
@@ -129,7 +134,7 @@ Line 1275 becomes:
 ```
 Home keeps its own full-width id-0 ticker; the shared 9906 stays suppressed on Home by
 `!Window.IsVisible(home)` plus its unique id. The donor's menu-editor exclusion is omitted:
-POV ships no script window that overlays Home (verified).
+Estuary++ ships no script window that overlays Home (verified).
 
 ### 7 + 8. Playback tickers
 Append as last control before `</controls>`:
@@ -179,7 +184,8 @@ Default OFF.
    new expressions are defined in Step 2 and the one new string in Step 1; no new fonts or
    textures are introduced.
 2. **Repo gates**: a qa agent (not the main assistant, per project rule) runs
-   `bin/check-all estuary-plusplus` from the kodi meta-root - all 4 gates green.
+   `bin/check-all estuary-plusplus` from the kodi meta-root - all 5 gates green (pytest,
+   ruff, the two `build_skin.py --check` runs, `check_version_bump.py`).
 3. **Bench observation** (bench/reset-bench, bench/kodi; mirrors the donor's 0.1.45 pass):
    - Toggle OFF: pixel-identical to stock (ticker only on Home under existing rules).
    - Both switches ON: ticker in menu windows; MediaFlags rows, PVR labels, playlist-editor

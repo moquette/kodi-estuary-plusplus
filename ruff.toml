@@ -7,8 +7,9 @@
 #
 # required-version also disarms the global auto-format hook, which runs
 # `ruff format` then `ruff check --fix` with whatever ruff is on PATH after
-# every Python edit. scripts/services.py ships inside a byte-reproducible zip,
-# so a silent wholesale rewrite is exactly what must not happen to it.
+# every Python edit. service.tvos.pythonfix/scripts/service.py ships inside a
+# byte-reproducible zip, so a silent wholesale rewrite is exactly what must not
+# happen to it.
 required-version = "==0.15.22"
 
 [lint]
