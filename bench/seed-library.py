@@ -242,7 +242,7 @@ def main():
   <premiered>{year}-{rnd.randint(1, 12):02d}-{rnd.randint(1, 28):02d}</premiered>
   <runtime>{minutes}</runtime>
   <mpaa>{rnd.choice(MPAA)}</mpaa>
-  <plot>{esc(title)} is synthetic bench content generated for Estuary POV widget development. It exists so a widget row has something to draw and so ratings, watched state and resume points can be judged against real library rows.</plot>
+  <plot>{esc(title)} is synthetic bench content generated for Estuary++ widget development. It exists so a widget row has something to draw and so ratings, watched state and resume points can be judged against real library rows.</plot>
   <outline>Synthetic bench content for widget development.</outline>
   <tagline>Bench fixture, not real media.</tagline>
   <ratings>
@@ -311,7 +311,7 @@ def main():
   <year>{year}</year>
   <premiered>{year}-{rnd.randint(1, 12):02d}-{rnd.randint(1, 28):02d}</premiered>
   <status>Continuing</status>
-  <plot>{esc(show)} is synthetic bench content generated for Estuary POV widget development.</plot>
+  <plot>{esc(show)} is synthetic bench content generated for Estuary++ widget development.</plot>
   <ratings>
     <rating name="themoviedb" max="10" default="true"><value>{rating}</value><votes>{rnd.randint(200, 22000)}</votes></rating>
   </ratings>

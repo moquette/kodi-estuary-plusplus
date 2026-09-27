@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Wipe the macOS Kodi bench to a clean install and bring it up on Estuary POV.
+# Wipe the macOS Kodi bench to a clean install and bring it up on Estuary++.
 #
-#   bench/reset-bench            back up, wipe, seed, install POV, launch
-#   bench/reset-bench --keep     do not wipe; stage POV onto what is there
+#   bench/reset-bench            back up, wipe, seed, install Estuary++, launch
+#   bench/reset-bench --keep     do not wipe; stage Estuary++ onto what is there
 #   bench/reset-bench --no-skin  wipe and seed only, leave Kodi on stock Estuary
 #
 # Rescued 2026-08-31 from the estuary-8 bench during the E7/E8 decommission and
-# adapted to POV. The division of labor is unchanged and deliberate: this
+# adapted to Estuary++. The division of labor is unchanged and deliberate: this
 # script does NOT reimplement bench setup. The wipe-and-seed layer lives in the
 # meta-root's bin/reset-kodi (backup, wipe, windowed geometry, web server,
 # unknown sources, Expert level), and copying that here would create a second
@@ -18,7 +18,7 @@
 # What reset-kodi does not do is skins and add-on enablement. This script is
 # only that missing layer:
 #
-#   1. stage skin.estuary.pov from this repo, digest-verified
+#   1. stage skin.estuary.plusplus from this repo, digest-verified
 #   2. write its enable row OFFLINE into Addons33.db, because a hand-copied
 #      add-on lands DISABLED and enabling it any other way costs an extra
 #      Kodi launch (schema captured from the live bench 2026-08-31, Kodi 22
@@ -26,9 +26,9 @@
 #   3. select it in guisettings.xml while Kodi is stopped, which avoids the
 #      "keep this skin?" countdown a JSON-RPC switch raises
 #   4. write the F5 -> ReloadSkin() keymap that bench/kodi reload presses
-#   5. launch once, and prove against the RUNNING Kodi that POV resolved
+#   5. launch once, and prove against the RUNNING Kodi that Estuary++ resolved
 #
-# It needs nothing vendored: skin.estuary.pov imports only xbmc.gui, which is
+# It needs nothing vendored: skin.estuary.plusplus imports only xbmc.gui, which is
 # what freed this bench from the dependency staging the estuary-8 one carried.
 set -euo pipefail
 
@@ -36,7 +36,7 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TREE="$(cd "$REPO/.." && pwd)"
 RESET_KODI="$TREE/bin/reset-kodi"
 PROFILE="${KODI_HOME:-$HOME/Library/Application Support/Kodi}"
-SKINID="skin.estuary.pov"
+SKINID="skin.estuary.plusplus"
 SKINSRC="$REPO/$SKINID"
 
 wipe=1

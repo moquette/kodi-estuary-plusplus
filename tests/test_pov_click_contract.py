@@ -29,7 +29,7 @@ import pathlib
 import re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-XML = ROOT / "skin.estuary.pov" / "xml"
+XML = ROOT / "skin.estuary.plusplus" / "xml"
 
 HOME = (XML / "Home.xml").read_text(encoding="utf-8")
 INCLUDES = (XML / "Includes_Home.xml").read_text(encoding="utf-8")

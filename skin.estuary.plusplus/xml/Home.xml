@@ -16,7 +16,7 @@
 	     load. Stamping first would strand a half applied menu with no retry.
 
 	     The marker has to be a STRING, not a bool. Kodi writes every skin setting
-	     into addon_data/skin.estuary.pov/settings.xml on the first skin load, all
+	     into addon_data/skin.estuary.plusplus/settings.xml on the first skin load, all
 	     of them as type="bool" false, so a profile nobody has ever touched still
 	     carries all twelve HomeMenuNo*Button keys. Neither the file existing nor a
 	     key existing can tell "never configured" from "switched back on by hand",

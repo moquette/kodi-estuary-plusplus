@@ -2,7 +2,7 @@ name: tests
 
 # This repo ships TWO independent products and exactly ONE of them runs code.
 #
-# skin.estuary.pov is a skin and nothing else. As of 1.3.0 it has no scripts
+# skin.estuary.plusplus is a skin and nothing else. As of 1.3.0 it has no scripts
 # directory, no xbmc.service extension and no Python at all, which
 # tests/test_skin_has_no_tvos_code.py asserts so that a well meant revert fails
 # here rather than on a box.
@@ -17,7 +17,7 @@ name: tests
 # (tony7bones/tony7bones.github.io) resolves the skin's newest release at
 # build time, so releasing here IS publishing there. Two add-ons share this
 # repo and a repo has one releases/latest, so each add-on tags its own
-# namespace: skin.estuary.pov-v1.4.3, service.tvos.pythonfix-v1.1.0. The hub's
+# namespace: skin.estuary.plusplus-v1.5.0, service.tvos.pythonfix-v1.1.0. The hub's
 # _tools/static_catalog.py matches exactly that shape.
 on:
   push:
@@ -44,7 +44,7 @@ jobs:
       - run: ruff check service.tvos.pythonfix/scripts/ tools/ tests/
       - name: the zips must be byte-reproducible
         run: |
-          python tools/build_skin.py skin.estuary.pov --check
+          python tools/build_skin.py skin.estuary.plusplus --check
           python tools/build_skin.py service.tvos.pythonfix --check
 
       # Deliberately a WARNING, never a failure. The publish job is idempotent
@@ -115,7 +115,7 @@ jobs:
           REPO="${GITHUB_REPOSITORY}"
           PUBLISHED=0
           attr() { python3 -c 'import sys, xml.etree.ElementTree as E; print(E.parse(sys.argv[1]).getroot().get(sys.argv[2]))' "$1" "$2"; }
-          for ADDON in skin.estuary.pov service.tvos.pythonfix; do
+          for ADDON in skin.estuary.plusplus service.tvos.pythonfix; do
             NAME=$(attr "$ADDON/addon.xml" name)
             VERSION=$(attr "$ADDON/addon.xml" version)
             TAG="${ADDON}-v${VERSION}"

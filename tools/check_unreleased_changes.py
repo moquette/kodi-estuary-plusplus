@@ -10,7 +10,7 @@ reaches zero boxes, and NOTHING GOES RED ANYWHERE.
 
 Two add-ons share this repo, so each has its own tag namespace:
 
-    skin.estuary.pov-v<version>
+    skin.estuary.plusplus-v<version>
     service.tvos.pythonfix-v<version>
 
 A repository has one releases/latest, which is why the hub resolves each of
@@ -44,7 +44,7 @@ import re
 import subprocess
 import sys
 
-ADDONS = ("skin.estuary.pov", "service.tvos.pythonfix")
+ADDONS = ("skin.estuary.plusplus", "service.tvos.pythonfix")
 
 
 def repo_root() -> str:

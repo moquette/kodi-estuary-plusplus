@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Build a Kodi-installable, byte-reproducible zip for a skin in this repo.
 
-Why this exists: the first skin.estuary.pov zip was hand-made, which left the
+Why this exists: the first skin.estuary.plusplus zip was hand-made, which left the
 served bytes with no provenance and no way to prove they equal the committed
 source. This script builds from the git working tree, pins every timestamp, and
 can build twice and byte-compare, so "the repo serves exactly this commit" is a
 measurement rather than a claim.
 
-    python3 tools/build_skin.py skin.estuary.pov            # build into dist/
-    python3 tools/build_skin.py skin.estuary.pov --check    # build twice, byte-compare
-    python3 tools/build_skin.py skin.estuary.pov --verify-clean
+    python3 tools/build_skin.py skin.estuary.plusplus            # build into dist/
+    python3 tools/build_skin.py skin.estuary.plusplus --check    # build twice, byte-compare
+    python3 tools/build_skin.py skin.estuary.plusplus --verify-clean
 
 --verify-clean additionally asserts the skin dir has no uncommitted change, so a
 release zip can never carry an edit that is not in git.
@@ -154,7 +154,7 @@ def git_dirty(rel: str) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("skin", help="the skin directory, e.g. skin.estuary.pov")
+    parser.add_argument("skin", help="the skin directory, e.g. skin.estuary.plusplus")
     parser.add_argument("--out", default="dist", help="output dir (default: dist)")
     parser.add_argument(
         "--check",

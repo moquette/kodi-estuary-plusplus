@@ -1,4 +1,4 @@
-"""skin.estuary.pov ships NO tvOS code, no Python, and no service. Asserted.
+"""skin.estuary.plusplus ships NO tvOS code, no Python, and no service. Asserted.
 
 This is the file that makes "tvOS is somebody else's problem" a property of the
 build rather than an intention. It replaces test_services_keymap.py, whose
@@ -28,7 +28,7 @@ import re
 
 from conftest import ROOT
 
-SKIN = ROOT / "skin.estuary.pov"
+SKIN = ROOT / "skin.estuary.plusplus"
 ADDON_XML = (SKIN / "addon.xml").read_text(encoding="utf-8")
 
 

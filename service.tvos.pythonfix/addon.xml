@@ -93,7 +93,7 @@
 		     returns, which is what "does nothing on other platforms" costs. -->
 		<platform>all</platform>
 		<license>GPL-2.0-or-later</license>
-		<source>https://github.com/moquette/kodi-estuary-pov</source>
+		<source>https://github.com/moquette/kodi-estuary-plusplus</source>
 		<!-- ONE asset, and the decision recorded at 1.0.1 ("no <assets> yet,
 		     deliberately") is REVERSED here rather than silently dropped. The
 		     old reason was that the only icon in this repo belonged to the skin

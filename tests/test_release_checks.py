@@ -32,13 +32,13 @@ def test_release_tag_is_namespaced_per_addon():
     """Two add-ons share this repo and a repo has ONE releases/latest, so
     each add-on tags its own namespace. The hub's static_catalog.py matches
     exactly ``<id>-v<version>``: change both or neither."""
-    assert unreleased.release_tag("skin.estuary.pov", "1.4.3") == (
-        "skin.estuary.pov-v1.4.3"
+    assert unreleased.release_tag("skin.estuary.plusplus", "1.4.3") == (
+        "skin.estuary.plusplus-v1.4.3"
     )
     assert unreleased.release_tag("service.tvos.pythonfix", "1.1.0") == (
         "service.tvos.pythonfix-v1.1.0"
     )
-    assert unreleased.ADDONS == ("skin.estuary.pov", "service.tvos.pythonfix")
+    assert unreleased.ADDONS == ("skin.estuary.plusplus", "service.tvos.pythonfix")
 
 
 def test_every_addon_dir_in_the_repo_is_covered():
@@ -63,19 +63,19 @@ def test_the_real_addon_versions_are_readable():
 # unreleased-changes: the three states
 # --------------------------------------------------------------------------- #
 def test_unreleased_when_the_tag_does_not_exist():
-    state, msg = unreleased.classify("skin.estuary.pov", "1.4.3", False, [])
+    state, msg = unreleased.classify("skin.estuary.plusplus", "1.4.3", False, [])
     assert state == "unreleased"
-    assert "skin.estuary.pov-v1.4.3" in msg
+    assert "skin.estuary.plusplus-v1.4.3" in msg
 
 
 def test_clean_when_tagged_and_nothing_moved():
-    state, _ = unreleased.classify("skin.estuary.pov", "1.4.3", True, [])
+    state, _ = unreleased.classify("skin.estuary.plusplus", "1.4.3", True, [])
     assert state == "clean"
 
 
 def test_dirty_when_tagged_and_source_moved():
     state, msg = unreleased.classify(
-        "skin.estuary.pov", "1.4.3", True, ["skin.estuary.pov/xml/Home.xml"]
+        "skin.estuary.plusplus", "1.4.3", True, ["skin.estuary.plusplus/xml/Home.xml"]
     )
     assert state == "dirty"
     assert "xml/Home.xml" in msg and "NO box" in msg

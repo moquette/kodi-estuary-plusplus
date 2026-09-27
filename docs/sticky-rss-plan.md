@@ -1,6 +1,6 @@
 # Future item: port "sticky RSS" from Estuary 8
 
-Status: PLANNED, not started. Anchors verified against `skin.estuary.pov` at commit
+Status: PLANNED, not started. Anchors verified against `skin.estuary.pov` (now `skin.estuary.plusplus`) at commit
 `dffd7a8` (2026-08-31); re-verify line numbers before executing if the skin has moved.
 
 ## Context
@@ -8,7 +8,7 @@ Status: PLANNED, not started. Anchors verified against `skin.estuary.pov` at com
 Estuary 8 (decommissioned 2026-08-31, archived at `moquette/kodi-estuary8`) shipped an
 opt-in "Always show RSS feed" feature in 0.1.44/0.1.45: the RSS ticker draws in every menu
 window and over fullscreen playback, not only on Home. The owner wants it duplicated in
-`skin.estuary.pov`, including the ticker staying up during movies, TV shows, and IPTV
+`skin.estuary.plusplus`, including the ticker staying up during movies, TV shows, and IPTV
 live TV.
 
 The donor's final state was verified end-to-end on a Piers bench and its two commits
@@ -37,7 +37,7 @@ The donor's final state was verified end-to-end on a Piers bench and its two com
   `shadowcolor` alone - recorded here as an accepted risk. In menu windows the ticker sits
   on the stock `frame/InfoBar.png` gradient POV's BottomBar already draws.
 
-All paths below are under `skin.estuary.pov/`. POV idiom for colors: `button_focus` /
+All paths below are under `skin.estuary.plusplus/`. POV idiom for colors: `button_focus` /
 `text_shadow` (match Home.xml:1262-1277), not the donor's `$VAR[SkinColorVar]`.
 
 ## Steps
@@ -179,7 +179,7 @@ Default OFF.
    new expressions are defined in Step 2 and the one new string in Step 1; no new fonts or
    textures are introduced.
 2. **Repo gates**: a qa agent (not the main assistant, per project rule) runs
-   `bin/check-all estuary-pov` from the kodi meta-root - all 4 gates green.
+   `bin/check-all estuary-plusplus` from the kodi meta-root - all 4 gates green.
 3. **Bench observation** (bench/reset-bench, bench/kodi; mirrors the donor's 0.1.45 pass):
    - Toggle OFF: pixel-identical to stock (ticker only on Home under existing rules).
    - Both switches ON: ticker in menu windows; MediaFlags rows, PVR labels, playlist-editor

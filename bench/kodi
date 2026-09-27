@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One entry point for the Estuary POV macOS workbench.
+# One entry point for the Estuary++ macOS workbench.
 #
 #   bench/kodi start | stop | restart | status
 #   bench/kodi reload                 reload the skin in place, ~1s, no restart
@@ -13,7 +13,7 @@
 #   bench/kodi seed                   rebuild the synthetic library
 #
 # Rescued 2026-08-31 from the estuary-8 bench during the E7/E8 decommission and
-# adapted to POV. The mechanisms (clean quit only, bundle verification, offline
+# adapted to Estuary++. The mechanisms (clean quit only, bundle verification, offline
 # guisettings skin switch) are bench knowledge proven there; see the notes at
 # each command.
 set -euo pipefail
@@ -91,7 +91,7 @@ start() {
   echo "    skin $(rpc '{"jsonrpc":"2.0","method":"Settings.GetSettingValue","params":{"setting":"lookandfeel.skin"},"id":1}' | sed 's/.*"value":"//;s/".*//')"
 }
 
-SKINID="skin.estuary.pov"
+SKINID="skin.estuary.plusplus"
 SKINSRC="$REPO/$SKINID"
 SKINDST="$KHOME/addons/$SKINID"
 KEYMAP="$KHOME/userdata/keymaps/pov-dev.xml"

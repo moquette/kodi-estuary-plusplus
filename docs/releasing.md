@@ -17,7 +17,7 @@ VERSION TO BE WRONG.
 Two add-ons share this repo and a repository has exactly one
 `releases/latest`, so each add-on tags its own namespace:
 
-- `skin.estuary.pov-v<version>`
+- `skin.estuary.plusplus-v<version>`
 - `service.tvos.pythonfix-v<version>`
 
 The asset is `<id>-<version>.zip`. The hub's `_tools/static_catalog.py`
@@ -45,7 +45,7 @@ workflow's load-bearing lines.
 
 Both, since 2026-09-26. Bump, push, done.
 
-- `skin.estuary.pov`: 1.4.3 was the first CI-built release the hub served.
+- `skin.estuary.plusplus` (until 2026-09-26 `skin.estuary.pov`): 1.4.3 was the first CI-built release the hub served; 1.5.0 is the first under the new id.
 - `service.tvos.pythonfix`: switched later the same day (hub commit `fe283c3`);
   its release asset `service.tvos.pythonfix-1.1.0.zip` is byte-identical to the
   copy the hub used to commit under `repo/addons/hosted/service.tvos.pythonfix/`,
@@ -67,7 +67,7 @@ the secret that step fails on its own, with `continue-on-error`, and prints one
 line naming the secret; the hub's daily cron is the backstop and picks the
 release up within 24 hours.
 A manual run of the workflow on `main` (`gh workflow run tests.yml --ref main
--R moquette/kodi-estuary-pov`) publishes nothing new but always re-sends the
+-R moquette/kodi-estuary-plusplus`) publishes nothing new but always re-sends the
 dispatch, which is how a missed notification is repaired without burning a
 version number.
 

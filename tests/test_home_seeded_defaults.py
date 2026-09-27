@@ -19,7 +19,7 @@ import pathlib
 import re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-XML = ROOT / "skin.estuary.pov" / "xml"
+XML = ROOT / "skin.estuary.plusplus" / "xml"
 
 GUARD = "String.IsEmpty(Skin.String(pov_menu_defaults))"
 STAMP = "Skin.SetString(pov_menu_defaults,1)"
